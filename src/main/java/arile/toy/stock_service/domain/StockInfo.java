@@ -25,4 +25,18 @@ public class StockInfo {
     @Enumerated(EnumType.STRING)
     private MarketClass marketClass;
 
+
+
+    protected StockInfo() {} // JPA Entity는 기본생성자 반드시 필요(프록시 생성을 위해)
+
+    public StockInfo(String stockName, String shortCode, MarketClass marketClass) {
+        this.stockName = stockName;
+        this.shortCode = shortCode;
+        this.marketClass = marketClass;
+    }
+
+    public StockInfo(String stockName) {
+        this.stockName = stockName;
+    }
+
 }
