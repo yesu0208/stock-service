@@ -2,11 +2,13 @@ debug: false
 
 logging:
   level:
-    arile.toy.stockservice: debug
+    arile.toy.stock_service: debug
     org.spring.framework.web.servlet: debug
 
 spring:
   application.name: stock-service
+  datasource:
+    url: jdbc:h2:mem:testdb
   jpa:
     open-in-view: false
     defer-datasource-initialization: true
@@ -15,3 +17,11 @@ spring:
     properties:
       hibernate.format_sql: true
   sql.init.mode: always
+
+
+---
+
+spring:
+  config.activate.on-profile: test
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DATABASE_TO_LOWER=TRUE
