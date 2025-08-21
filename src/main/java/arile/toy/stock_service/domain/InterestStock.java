@@ -1,0 +1,34 @@
+package arile.toy.stock_service.domain;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@ToString(callSuper = true)
+@Table(name = "interest_stocks")
+@Entity
+public class InterestStock extends AuditingFields{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Setter
+    @ManyToOne(optional = false) // 반드시 interestGroup을 가져야 함.
+    private InterestGroup interestGroup;
+
+    @OneToOne
+    @JoinColumn(name = "stock_info_id")  // interest_stocks 테이블에 stock_info_id FK 생성
+    private StockInfo stockInfo;
+
+    @Setter @Column private Integer buyingPrice;
+    @Setter @Column private Integer numOfStocks;
+    @Setter @Column private Integer breakEvenPrice;
+    @Setter @Column(nullable = false) private Integer fieldOrder;
+
+
+
+}
+
