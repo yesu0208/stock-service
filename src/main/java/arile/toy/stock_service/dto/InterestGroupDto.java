@@ -14,9 +14,10 @@ public record InterestGroupDto(
 
         LocalDateTime createdAt,
         String createdBy,
-        LocalDateTime modifiedAT,
+        LocalDateTime modifiedAt,
         String modifiedBy
 ) {
+    // Entity -> Dto
     public static InterestGroupDto fromEntity(InterestGroup entity) {
         return new InterestGroupDto(
                 entity.getId(),
