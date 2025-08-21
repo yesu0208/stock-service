@@ -31,4 +31,27 @@ public record InterestGroupDto(
                 entity.getModifiedBy()
         );
     }
+
+    // static method (전체)
+    public static InterestGroupDto of(
+            Long id,
+            String groupName,
+            String userId,
+            Set<InterestStockDto> interestStocks,
+            LocalDateTime createdAt,
+            String createdBy,
+            LocalDateTime modifiedAt,
+            String modifiedBy
+    ) {
+        return new InterestGroupDto(id, groupName, userId, interestStocks, createdAt, createdBy, modifiedAt, modifiedBy);
+    }
+
+    // static method (일부)
+    public static InterestGroupDto of(
+            String groupName,
+            String userId,
+            Set<InterestStockDto> interestStocks
+    ) {
+        return new InterestGroupDto(null, groupName, userId, interestStocks,null, null, null, null);
+    }
 }
