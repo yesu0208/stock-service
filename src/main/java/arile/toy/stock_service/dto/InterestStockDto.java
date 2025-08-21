@@ -1,6 +1,5 @@
 package arile.toy.stock_service.dto;
 
-import arile.toy.stock_service.domain.InterestGroup;
 import arile.toy.stock_service.domain.InterestStock;
 import arile.toy.stock_service.domain.StockInfo;
 
@@ -8,7 +7,7 @@ import java.time.LocalDateTime;
 
 public record InterestStockDto(
         Long id,
-        InterestGroup interestGroup,
+//        InterestGroup interestGroup,
         StockInfo stockInfo,
         Integer buyingPrice,
         Integer numOfStocks,
@@ -17,13 +16,14 @@ public record InterestStockDto(
 
         LocalDateTime createdAt,
         String createdBy,
-        LocalDateTime modifiedAT,
+        LocalDateTime modifiedAt,
         String modifiedBy
 ) {
+    // Entity -> Dto
     public static InterestStockDto fromEntity(InterestStock entity) {
         return new InterestStockDto(
                 entity.getId(),
-                entity.getInterestGroup(),
+//                entity.getInterestGroup(),
                 entity.getStockInfo(),
                 entity.getBuyingPrice(),
                 entity.getNumOfStocks(),
