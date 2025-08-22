@@ -15,4 +15,12 @@ public class SecurityConfig {
                 .logout(logout -> logout.logoutSuccessUrl("/"))
                 .build();
     }
+
+    @Bean
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService() {
+        final DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
+
+        // OAuth2UserService : @FunctionalInterface - 람다식 지원
+        return userRequest -> GithubUser.from(delegate.loadUser(userRequest).getAttributes());
+    }
 }
