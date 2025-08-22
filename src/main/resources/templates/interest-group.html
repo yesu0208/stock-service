@@ -1,10 +1,221 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>관심 그룹</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주식 관심종목 저장소 - 관심종목 그룹</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+    </script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
-<body>
-관심 그룹
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen dark:bg-gray-900 dark:text-gray-100">
+
+<header class="bg-white shadow dark:bg-gray-800">
+    <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+        <a th:href="@{/}" class="text-2xl font-bold text-sky-600 dark:text-sky-400">주식 관심종목 저장소</a>
+        <nav class="flex items-center">
+            <a th:href="@{/interest-group/my-groups}"
+               class="text-gray-600 hover:text-sky-600 dark:text-gray-300 dark:hover:text-sky-400 mx-2">내 관심종목</a>
+            <a th:href="@{/my-account}"
+               class="text-gray-600 hover:text-sky-600 dark:text-gray-300 dark:hover:text-sky-400 mx-2">내 정보</a>
+
+            <a th:href="@{/oauth2/authorization/github}" sec:authorize="!isAuthenticated()"
+               class="text-gray-600 hover:text-sky-600 dark:text-gray-300 dark:hover:text-sky-400 mx-2">
+                <i class="fab fa-github"></i> 로그인
+            </a>
+            <a th:href="@{/logout}" sec:authorize="isAuthenticated()"
+               class="text-gray-600 hover:text-sky-600 dark:text-gray-300 dark:hover:text-sky-400 mx-2 flex items-center">
+                <span sec:authentication="principal.name"
+                      class="text-gray-400 dark:text-gray-500 text-sm mx-1">username</span>
+                로그아웃
+            </a>
+
+            <!-- 다크 모드 토글 버튼 -->
+            <button id="dark-mode-toggle"
+                    class="ml-4 text-gray-600 hover:text-sky-600 dark:text-gray-300 dark:hover:text-sky-400">
+                <i class="fas fa-moon"></i>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container mx-auto px-4 py-8 flex-grow">
+    <form name="interest-group-form" th:action="@{/interest-group}" method="post">
+        <section class="bg-white shadow rounded-lg p-6 mb-6 dark:bg-gray-800 dark:text-gray-100"
+                 th:object="${interestGroup}">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">관심종목 그룹 만들기</h2>
+
+            <div class="flex items-center space-x-4 mb-4">
+                <label for="groupName" class="block text-sm font-medium text-gray-500 dark:text-gray-400 w-24">그룹
+                    이름</label>
+                <input type="text" id="groupName" th:field="*{groupName}"
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+            </div>
+
+            <hr class="mb-4 border-gray-300 dark:border-gray-600">
+
+            <div class="grid grid-cols-4 gap-4 mb-4">
+                <div class="block text-sm font-medium text-gray-400">종목명</div>
+                <div class="block text-sm font-medium text-gray-400">매입가</div>
+                <div class="block text-sm font-medium text-gray-400">보유수량</div>
+                <div class="block text-sm font-medium text-gray-400">손익분기매입가</div>
+            </div>
+
+            <div id="interest-stock-list">
+                <ul id="stock-list" class="list">
+                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-4 gap-4 mb-4"
+                        th:each="stock, iterStat : *{interestStocks}">
+                        <div class="flex items-center">
+                            <i class="handle fas fa-grip-lines mr-2 cursor-move"></i>
+                            <label>
+                                <select th:field="*{interestStocks[__${iterStat.index}__].stockName}"
+                                        class="stock-name-id stock-name-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                        required>
+                                    <option th:each="type : ${stockNames}" th:value="${type}" th:text="${type}">Type
+                                    </option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <label>
+                                <input type="number" th:field="*{interestStocks[__${iterStat.index}__].buyingPrice}"
+                                       class="buying-price-id buying-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                       >
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <label>
+                                <input type="number" th:field="*{interestStocks[__${iterStat.index}__].numOfStocks}"
+                                       class="num-of-stocks-id num-of-stocks-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                       >
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <label>
+                                <input type="number" th:field="*{interestStocks[__${iterStat.index}__].breakEvenPrice}"
+                                       class="break-even-price-id break-even-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                       >
+                            </label>
+                            <i class="delete-row fas fa-trash ml-2 cursor-pointer"></i>
+                        </div>
+                        <input type="hidden" th:field="*{interestStocks[__${iterStat.index}__].fieldOrder}"
+                               class="field-order-id field-order-name field-order-value">
+                    </li>
+                </ul>
+            </div>
+
+            <button type="button" id="add-row" class="mt-4 bg-sky-600 text-white py-2 px-4 rounded hover:bg-sky-700">행
+                추가
+            </button>
+            <button type="submit" class="mt-4 bg-sky-600 text-white py-2 px-4 rounded hover:bg-sky-700">저장</button>
+        </section>
+    </form>
+</main>
+
+<footer class="bg-white shadow w-full mt-auto dark:bg-gray-800 dark:text-gray-400">
+    <div class="container mx-auto px-4 py-6 text-center">
+        © 2025 Arile, Inc
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+    // ===== 다크 모드 버튼 =====
+    const darkToggleBtn = document.getElementById('dark-mode-toggle');
+    const html = document.documentElement;
+
+    // 기본값: 다크 모드 OFF
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        html.classList.add('dark');
+        darkToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
+        html.classList.remove('dark');  // 기본은 라이트 모드
+        darkToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+        localStorage.setItem('darkMode', 'disabled'); // 새로 방문한 유저도 기본 라이트 모드
+    }
+
+    darkToggleBtn.addEventListener('click', () => {
+    html.classList.toggle('dark');
+    if (html.classList.contains('dark')) {
+        darkToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+        localStorage.setItem('darkMode', 'enabled');
+    } else {
+        darkToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+        localStorage.setItem('darkMode', 'disabled');
+    }
+    });
+
+      // ===== List.js + Sortable 기능 =====
+      const interestStockList = new List('interest-stock-list', {
+        valueNames: [
+          { data: ['id'] },
+          { name: 'stock-name-id', attr: 'id' },
+          { name: 'stock-name-name', attr: 'name' },
+          { name: 'buying-price-id', attr: 'id' },
+          { name: 'buying-price-name', attr: 'name' },
+          { name: 'num-of-stocks-id', attr: 'id' },
+          { name: 'num-of-stocks-name', attr: 'name' },
+          { name: 'break-even-price-id', attr: 'id' },
+          { name: 'break-even-price-name', attr: 'name' },
+          { name: 'field-order-id', attr: 'id' },
+          { name: 'field-order-name', attr: 'name' },
+          { name: 'field-order-value', attr: 'value' },
+        ]
+      });
+      interestStockList.sort('field-order-value', { order: 'asc' });
+
+      const sortable = new Sortable.create(document.getElementById('stock-list'), {
+        handle: '.handle',
+        animation: 150,
+        onUpdate: () => { resetData(interestStockList); }
+      });
+
+      function enrollDeleteRowEvent(btn, list) {
+        btn.addEventListener('click', e => {
+          const parentList = e.target.closest('li');
+          const fieldOrderInput = parentList.querySelector('.field-order-value');
+          if (fieldOrderInput) list.remove('field-order-value', fieldOrderInput.value);
+        });
+      }
+
+      document.querySelectorAll('.delete-row').forEach(btn => enrollDeleteRowEvent(btn, interestStockList));
+      interestStockList.on('updated', list => resetData(list));
+
+      document.getElementById('add-row').addEventListener('click', () => {
+        interestStockList.add({});
+        const lastRow = interestStockList.items.at(-1).elm
+        enrollDeleteRowEvent(lastRow.querySelector('.delete-row'), interestStockList);
+      });
+
+      function resetData(list) {
+        list.reIndex();
+        for (const [index, item] of list.items.entries()) {
+          item.values({
+            'id': index + 1,
+            'stock-name-id': `interestGroups${index}.stockName`,
+            'stock-name-name': `interestGroups[${index}].stockName`,
+            'buying-price-id': `interestGroups${index}.buyingPrice`,
+            'buying-price-name': `interestGroups[${index}].buyingPrice`,
+            'num-of-stocks-id': `interestGroups${index}.numOfStocks`,
+            'num-of-stocks-name': `interestGroups[${index}].numOfStocks`,
+            'break-even-price-id': `interestGroups${index}.breakEvenPrice`,
+            'break-even-price-name': `interestGroups[${index}].breakEvenPrice`,
+            'field-order-id': `interestGroups${index}.fieldOrder`,
+            'field-order-name': `interestGroups[${index}].fieldOrder`,
+            'field-order-value': index + 1,
+          });
+        }
+      }
+
+    });
+</script>
 </body>
 </html>
