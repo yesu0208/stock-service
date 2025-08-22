@@ -1,4 +1,4 @@
-package repository;
+package arile.toy.stock_service.repository;
 
 import arile.toy.stock_service.domain.StockInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
