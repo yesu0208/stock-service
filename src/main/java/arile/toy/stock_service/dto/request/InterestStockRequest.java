@@ -15,14 +15,13 @@ public record InterestStockRequest(
             String stockName,
             Integer buyingPrice,
             Integer numOfStocks,
-            Integer breakEvenPrice,
             Integer fieldOrder
     ) {
         return new InterestStockRequest(
                 stockName,
                 buyingPrice,
                 numOfStocks,
-                breakEvenPrice,
+                (int) Math.round(buyingPrice*1.0001), // 수수료 0.01% 가정
                 fieldOrder
         );
     }
