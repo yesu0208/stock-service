@@ -13,7 +13,7 @@ public record InterestStockResponse(
     // Dto -> response
     public static InterestStockResponse fromDto(InterestStockDto dto) {
         return new InterestStockResponse(
-                dto.stockInfo().getStockName(),
+                dto.stockName(),
                 dto.buyingPrice(),
                 dto.numOfStocks(),
                 dto.breakEvenPrice(),

@@ -19,10 +19,7 @@ public class InterestStock extends AuditingFields{
     @ManyToOne(optional = false) // 반드시 interestGroup을 가져야 함.
     private InterestGroup interestGroup;
 
-    @OneToOne
-    @JoinColumn(name = "stock_info_id")  // interest_stocks 테이블에 stock_info_id FK 생성
-    private StockInfo stockInfo;
-
+    @Setter @Column(nullable = false) private String stockName;
     @Setter @Column private Integer buyingPrice;
     @Setter @Column private Integer numOfStocks;
     @Setter @Column private Integer breakEvenPrice;
