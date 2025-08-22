@@ -62,4 +62,15 @@ public record InterestStockDto(
     ) {
         return new InterestStockDto(null, stockName, buyingPrice, numOfStocks, breakEvenPrice, fieldOrder, null, null, null, null);
     }
+
+
+    // Dto -> Entity
+    public InterestStock createEntity() {
+        return InterestStock.of( // id는 자동 생성 - 넣을 필요 x
+                this.stockName,
+                this.buyingPrice,
+                this.numOfStocks,
+                this.breakEvenPrice,
+                this.fieldOrder);
+    }
 }

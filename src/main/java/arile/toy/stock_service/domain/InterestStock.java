@@ -26,6 +26,19 @@ public class InterestStock extends AuditingFields{
     @Setter @Column(nullable = false) private Integer fieldOrder;
 
 
+    protected InterestStock() {}
+
+    public InterestStock(String stockName, Integer buyingPrice, Integer numOfStocks, Integer breakEvenPrice, Integer fieldOrder){
+        this.stockName = stockName;
+        this.buyingPrice = buyingPrice;
+        this.numOfStocks = numOfStocks;
+        this.breakEvenPrice = breakEvenPrice;
+        this.fieldOrder = fieldOrder;
+    }
+
+    public static InterestStock of(String stockName, Integer buyingPrice, Integer numOfStocks, Integer breakEvenPrice, Integer fieldOrder) {
+        return new InterestStock(stockName, buyingPrice, numOfStocks, breakEvenPrice, fieldOrder);
+    }
 
 }
 
