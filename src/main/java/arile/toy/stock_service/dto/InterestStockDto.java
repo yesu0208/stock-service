@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public record InterestStockDto(
         Long id,
 //        InterestGroup interestGroup,
-        StockInfo stockInfo,
+        String stockName,
         Integer buyingPrice,
         Integer numOfStocks,
         Integer breakEvenPrice,
@@ -24,7 +24,7 @@ public record InterestStockDto(
         return new InterestStockDto(
                 entity.getId(),
 //                entity.getInterestGroup(),
-                entity.getStockInfo(),
+                entity.getStockName(),
                 entity.getBuyingPrice(),
                 entity.getNumOfStocks(),
                 entity.getBreakEvenPrice(),
@@ -39,7 +39,7 @@ public record InterestStockDto(
     // static method (전체)
     public static InterestStockDto of(
             Long id,
-            StockInfo stockInfo,
+            String stockName,
             Integer buyingPrice,
             Integer numOfStocks,
             Integer breakEvenPrice,
@@ -49,7 +49,7 @@ public record InterestStockDto(
             LocalDateTime modifiedAt,
             String modifiedBy
     ) {
-        return new InterestStockDto(id, stockInfo, buyingPrice, numOfStocks,breakEvenPrice,fieldOrder, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new InterestStockDto(id, stockName, buyingPrice, numOfStocks,breakEvenPrice,fieldOrder, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     // static method (일부)
@@ -60,6 +60,17 @@ public record InterestStockDto(
             Integer breakEvenPrice,
             Integer fieldOrder
     ) {
-        return new InterestStockDto(null, new StockInfo(stockName), buyingPrice, numOfStocks, breakEvenPrice, fieldOrder, null, null, null, null);
+        return new InterestStockDto(null, stockName, buyingPrice, numOfStocks, breakEvenPrice, fieldOrder, null, null, null, null);
+    }
+
+
+    // Dto -> Entity
+    public InterestStock createEntity() {
+        return InterestStock.of( // id는 자동 생성 - 넣을 필요 x
+                this.stockName,
+                this.buyingPrice,
+                this.numOfStocks,
+                this.breakEvenPrice,
+                this.fieldOrder);
     }
 }

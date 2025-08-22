@@ -55,4 +55,24 @@ public record InterestGroupDto(
     ) {
         return new InterestGroupDto(null, groupName, userId, interestStocks,null, null, null, null);
     }
+
+    // Dto -> Entity
+    public InterestGroup createEntity() {
+        InterestGroup entity = InterestGroup.of(groupName, userId);
+        entity.addInterestStocks(interestStocks.stream().map(InterestStockDto::createEntity).toList()); // Collection을 받을 수 있도록 설계 .toSet()이 없으니, .toList()를 사용
+
+        return entity;
+    }
+
+    // Dto -> Entity
+    public InterestGroup updateEntity(InterestGroup entity) {
+        if (groupName != null) entity.setGroupName(groupName); // null로 요청이 들어오면 무시
+        if (userId != null) entity.setUserId(userId);
+        if (interestStocks != null) { // 아무것도 없으면 무시
+            entity.clearInterestStocks();
+            entity.addInterestStocks(interestStocks.stream().map(InterestStockDto::createEntity).toList());
+        }
+
+        return entity;
+    }
 }
