@@ -63,7 +63,10 @@
                             <input type="text" th:field="*{interestStocks[__${iterStat.index}__].numOfStocks}" class="num-of-stocks-id num-of-stocks-name mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div class="flex items-center">
-                            <input type="text" th:field="*{interestStocks[__${iterStat.index}__].breakEvenPrice}" class="break-even-price-id break-even-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <input type="number"
+                                   th:field="*{interestStocks[__${iterStat.index}__].breakEvenPrice}"
+                                   class="break-even-price-id break-even-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                   readonly>
                             <i class="delete-row fas fa-trash ml-2 cursor-pointer"></i>
                         </div>
                         <input type="hidden" th:field="*{interestStocks[__${iterStat.index}__].fieldOrder}" class="field-order-id field-order-name field-order-value">

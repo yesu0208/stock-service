@@ -7,7 +7,7 @@ public record InterestStockRequest(
         String stockName, // StockInfo 대신 stockName을 받음
         Integer buyingPrice,
         Integer numOfStocks,
-        Integer breakEvenPrice,
+//        Integer breakEvenPrice,
         Integer fieldOrder
 ) {
     // static method
@@ -21,18 +21,18 @@ public record InterestStockRequest(
                 stockName,
                 buyingPrice,
                 numOfStocks,
-                (int) Math.round(buyingPrice*1.0001), // 수수료 0.01% 가정
                 fieldOrder
         );
     }
 
     // request -> Dto
     public InterestStockDto toDto() {
+        var breakEvenPrice = this.buyingPrice() == null ? null : (int) Math.round(this.buyingPrice() * 1.002);
         return InterestStockDto.of(
                 this.stockName(),
                 this.buyingPrice(),
                 this.numOfStocks(),
-                this.breakEvenPrice(),
+                breakEvenPrice,
                 this.fieldOrder()
         );
     }
