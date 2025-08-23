@@ -38,16 +38,17 @@
 
             <hr class="mb-4">
 
-            <div class="grid grid-cols-4 gap-4 mb-4">
+            <div class="grid grid-cols-5 gap-4 mb-4">
                 <div class="block text-sm font-medium text-gray-400">종목명</div>
                 <div class="block text-sm font-medium text-gray-400">매입가</div>
                 <div class="block text-sm font-medium text-gray-400">보유수량</div>
+                <div class="block text-sm font-medium text-gray-400">매입금액</div>
                 <div class="block text-sm font-medium text-gray-400">손익분기매입가</div>
             </div>
 
             <div id="interest-stock-list">
                 <ul id="stock-list" class="list">
-                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-4 gap-4 mb-4" th:each="stock, iterStat : *{interestStocks}">
+                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-5 gap-4 mb-4" th:each="stock, iterStat : *{interestStocks}">
                         <div class="flex items-center">
                             <i class="handle fas fa-grip-lines mr-2 cursor-move"></i>
                             <label>
@@ -61,6 +62,12 @@
                         </div>
                         <div class="flex items-center">
                             <input type="text" th:field="*{interestStocks[__${iterStat.index}__].numOfStocks}" class="num-of-stocks-id num-of-stocks-name mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div class="flex items-center">
+                            <input type="number"
+                                   th:field="*{interestStocks[__${iterStat.index}__].totalBuyingPrice}"
+                                   class="total-buying-price-id total-buying-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                   readonly>
                         </div>
                         <div class="flex items-center">
                             <input type="number"
@@ -96,6 +103,8 @@
             { name: 'buying-price-name', attr: 'name' },
             { name: 'num-of-stocks-id', attr: 'id' },
             { name: 'num-of-stocks-name', attr: 'name' },
+            { name: 'total-buying-price-id', attr: 'id' },
+            { name: 'total-buying-price-name', attr: 'name' },
             { name: 'break-even-price-id', attr: 'id' },
             { name: 'break-even-price-name', attr: 'name' },
             { name: 'field-order-id', attr: 'id' },
@@ -144,6 +153,8 @@
                 'buying-price-name': `interestStocks[${index}].buyingPrice`,
                 'num-of-stocks-id': `interestStocks${index}.numOfStocks`,
                 'num-of-stocks-name': `interestStocks[${index}].numOfStocks`,
+                'total-buying-price-price-id': `interestStocks${index}.totalBuyingPrice`,
+                'total-buying-price-name': `interestStocks[${index}].totalBuyingPrice`,
                 'break-even-price-id': `interestStocks${index}.breakEvenPrice`,
                 'break-even-price-name': `interestStocks[${index}].breakEvenPrice`,
                 'field-order-id': `interestStocks${index}.fieldOrder`,

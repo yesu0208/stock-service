@@ -28,11 +28,14 @@ public record InterestStockRequest(
     // request -> Dto
     public InterestStockDto toDto() {
         var breakEvenPrice = this.buyingPrice() == null ? null : (int) Math.round(this.buyingPrice() * 1.002);
+        var totalBuyingPrice = this.buyingPrice() == null || this.numOfStocks() == null ?
+                null : this.buyingPrice() * this.numOfStocks();
         return InterestStockDto.of(
                 this.stockName(),
                 this.buyingPrice(),
                 this.numOfStocks(),
                 breakEvenPrice,
+                totalBuyingPrice,
                 this.fieldOrder()
         );
     }
