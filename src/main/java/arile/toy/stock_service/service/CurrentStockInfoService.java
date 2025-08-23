@@ -56,7 +56,6 @@ public class CurrentStockInfoService {
                 dto.fieldOrder(),
                 response.result().areas().getFirst().datas().getFirst().nv(),
                 changeValue,
-                riseOrFall,
                 dto.createdAt(),
                 dto.createdBy(),
                 dto.createdAt(),
