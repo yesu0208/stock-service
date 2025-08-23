@@ -1,18 +1,18 @@
 package arile.toy.stock_service.dto.request;
 
 import arile.toy.stock_service.dto.InterestGroupDto;
-import arile.toy.stock_service.dto.InterestStockDto;
 
-import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public record InterestGroupRequest(
         String groupName,
-        Set<InterestStockDto> interestStocks
+        List<InterestStockRequest> interestStocks
 ) {
     // static method
     public static InterestGroupRequest of(
             String groupName,
-            Set<InterestStockDto> interestStocks
+            List<InterestStockRequest> interestStocks
     ) {
         return new InterestGroupRequest(groupName, interestStocks);
     }
@@ -20,9 +20,11 @@ public record InterestGroupRequest(
     // request -> Dto
     public InterestGroupDto toDto(String userId) {
         return InterestGroupDto.of(
-                this.groupName,
+                groupName(),
                 userId,
-                this.interestStocks
+                interestStocks.stream()
+                        .map(InterestStockRequest::toDto)
+                        .collect(Collectors.toUnmodifiableSet())
         );
     }
 

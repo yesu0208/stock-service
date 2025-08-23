@@ -25,7 +25,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/",
-                                "table-schema"
+                                "interest-group"
                         ).permitAll() // 해당 정보는 허용
                         .anyRequest().authenticated() // 나머지는 인증 필요
                 )

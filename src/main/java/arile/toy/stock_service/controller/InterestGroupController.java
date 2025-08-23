@@ -5,7 +5,10 @@ import arile.toy.stock_service.dto.request.InterestGroupRequest;
 import arile.toy.stock_service.dto.response.InterestGroupResponse;
 import arile.toy.stock_service.dto.response.InterestStockResponse;
 import arile.toy.stock_service.dto.response.SimpleInterestGroupResponse;
+import arile.toy.stock_service.dto.security.GithubUser;
+import arile.toy.stock_service.service.InterestGroupService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,18 +26,24 @@ import java.util.List;
 public class InterestGroupController {
 
     private final StockInfoRepository stockInfoRepository;
+    private final InterestGroupService interestGroupService;
 
     // 단일 interest group 조회
     @GetMapping("/interest-group")
     public String interestGroup(
+            @AuthenticationPrincipal GithubUser githubUser,
             @RequestParam(required = false) String groupName, // 필수값이 아닌 옵션값 (내 관심그룹 목록 페이지에서 관심그룹 이름 클릭 시에만 적용)
             Model model) { // redirect를 위해 parameter 후가
-        var interestGroup = defaultInterestGroup(groupName);
+
+        // 비로그인 or 로그인 + groupName x : sample group, 로그인 : 해당 groupName의 interest group 조회
+        InterestGroupResponse interestGroup = (githubUser != null && groupName != null) ?
+                InterestGroupResponse.fromDto(interestGroupService.loadMyGroup(githubUser.id(), groupName)) :
+                defaultInterestGroup(groupName);
 
         List<StockInfo> stockInfo = stockInfoRepository.findAll();
         List<String> stockNames = stockInfo.stream()
-                        .map(StockInfo::getStockName)
-                                .toList();
+                .map(StockInfo::getStockName)
+                .toList();
 
         model.addAttribute("interestGroup", interestGroup);
         model.addAttribute("stockNames", stockNames);
@@ -45,18 +54,29 @@ public class InterestGroupController {
     // 내 interest group 생성/수정
     @PostMapping("/interest-group")
     public String createOrUpdateInterestGroup(
+            @AuthenticationPrincipal GithubUser githubUser,
             InterestGroupRequest interestGroupRequest, // 폼 data로 받음
             RedirectAttributes redirectAttrs // redirection할 때, 생성/수정한 interest-group을 화면에서 유지하고 싶다
     ) {
-        redirectAttrs.addFlashAttribute("interestGroupRequest", interestGroupRequest); // key-value 형식으로 data 전달
+        // redirectAttrs.addFlashAttribute("interestGroupRequest", interestGroupRequest); // key-value 형식으로 data 전달
+
+        // interestGroupRequest form data로 받아 작업을 하고, "/interest-group"으로 redirect할 때 이 정보를 전달하면 어떻까?
+        // redirection하면서 열릴 페이지에 내가 만들었던 것 유지하고 싶다. -> 이를 위해 RedirectAttributes가 필요
+        redirectAttrs.addAttribute("groupName", interestGroupRequest.groupName());
+
+        interestGroupService.upsertInterestGroup(interestGroupRequest.toDto(githubUser.id()));
 
         return "redirect:/interest-group"; // redirection : PRG pattern (POST REDIRECT GET)
     }
 
     // 내 interest group 목록 조회
     @GetMapping("/interest-group/my-groups")
-    public String myGroups(Model model) {
-        var interestGroups = mySampleGroups();
+    public String myGroups(@AuthenticationPrincipal GithubUser githubUser,
+                           Model model) {
+        List<SimpleInterestGroupResponse> interestGroups = interestGroupService.loadMyGroups(githubUser.id())
+                .stream()
+                .map(SimpleInterestGroupResponse::fromDto)
+                .toList();
 
         model.addAttribute("interestGroups", interestGroups);
 
@@ -66,9 +86,10 @@ public class InterestGroupController {
     // 내 interest group 삭제
     @PostMapping("/interest-group/my-groups/{groupName}")
     public String deleteMyGroup(
-            @PathVariable String groupName,
-            RedirectAttributes redirectAttrs // redirection
+            @AuthenticationPrincipal GithubUser githubUser,
+            @PathVariable String groupName
     ){
+        interestGroupService.deleteInterestGroup(githubUser.id(), groupName);
         return "redirect:/my-groups"; // redirection : PRG pattern (POST REDIRECT GET)
     }
 

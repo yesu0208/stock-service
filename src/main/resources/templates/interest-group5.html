@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주식 관심종목 저장소 - 관심종목 그룹</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+    </script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen dark:bg-gray-900 dark:text-gray-100">
+
+<header class="bg-white shadow dark:bg-gray-800">
+    <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+        <a th:href="@{/}" class="text-2xl font-bold text-sky-600 dark:text-sky-400">주식 관심종목 저장소</a>
+        <nav class="flex items-center">
+            <a th:href="@{/interest-group/my-groups}"
+               class="text-gray-600 hover:text-sky-600 dark:text-gray-300 dark:hover:text-sky-400 mx-2">내 관심종목</a>
+            <a th:href="@{/my-account}"
+               class="text-gray-600 hover:text-sky-600 dark:text-gray-300 dark:hover:text-sky-400 mx-2">내 정보</a>
+
+            <a th:href="@{/oauth2/authorization/github}" sec:authorize="!isAuthenticated()"
+               class="text-gray-600 hover:text-sky-600 dark:text-gray-300 dark:hover:text-sky-400 mx-2">
+                <i class="fab fa-github"></i> 로그인
+            </a>
+            <a th:href="@{/logout}" sec:authorize="isAuthenticated()"
+               class="text-gray-600 hover:text-sky-600 dark:text-gray-300 dark:hover:text-sky-400 mx-2 flex items-center">
+                <span sec:authentication="principal.name"
+                      class="text-gray-400 dark:text-gray-500 text-sm mx-1">username</span>
+                로그아웃
+            </a>
+
+            <!-- 다크 모드 토글 버튼 -->
+            <button id="dark-mode-toggle"
+                    class="ml-4 text-gray-600 hover:text-sky-600 dark:text-gray-300 dark:hover:text-sky-400">
+                <i class="fas fa-moon"></i>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container mx-auto px-4 py-8 flex-grow">
+    <form name="interest-group-form" th:action="@{/interest-group}" method="post">
+        <section class="bg-white shadow rounded-lg p-6 mb-6 dark:bg-gray-800 dark:text-gray-100"
+                 th:object="${interestGroup}">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 select-none focus:outline-none">
+                관심종목 그룹 만들기
+            </h2>
+
+            <div class="flex items-center space-x-4 mb-4">
+                <label for="groupName" class="block text-sm font-medium text-gray-500 dark:text-gray-400 w-24 select-none focus:outline-none">그룹
+                    이름</label>
+                <input type="text" id="groupName" th:field="*{groupName}"
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+            </div>
+
+            <hr class="mb-4 border-gray-300 dark:border-gray-600">
+
+            <div class="grid grid-cols-4 gap-4 mb-4 select-none focus:outline-none">
+                <div class="block text-sm font-medium text-gray-400">종목명</div>
+                <div class="block text-sm font-medium text-gray-400">매입가</div>
+                <div class="block text-sm font-medium text-gray-400">보유수량</div>
+                <div class="block text-sm font-medium text-gray-400">손익분기매입가</div>
+            </div>
+
+            <div id="interest-stock-list">
+                <ul id="stock-list" class="list">
+                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-4 gap-4 mb-4"
+                        th:each="stock, iterStat : *{interestStocks}">
+                        <div class="flex items-center">
+                            <i class="handle fas fa-grip-lines mr-2 cursor-move"></i>
+                            <input type="text" readonly placeholder="종목 선택"
+                                   th:value="*{interestStocks[__${iterStat.index}__].stockName}"
+                                   class="stock-name-input mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 cursor-pointer"
+                                   data-index="${iterStat.index}">
+                        </div>
+                        <div class="flex items-center">
+                            <label>
+                                <input type="number" th:field="*{interestStocks[__${iterStat.index}__].buyingPrice}"
+                                       class="buying-price-id buying-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                >
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <label>
+                                <input type="number" th:field="*{interestStocks[__${iterStat.index}__].numOfStocks}"
+                                       class="num-of-stocks-id num-of-stocks-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                >
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <label>
+                                <input type="number" th:field="*{interestStocks[__${iterStat.index}__].breakEvenPrice}"
+                                       class="break-even-price-id break-even-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                >
+                            </label>
+                            <i class="delete-row fas fa-trash ml-2 cursor-pointer"></i>
+                        </div>
+                        <input type="hidden" th:field="*{interestStocks[__${iterStat.index}__].fieldOrder}"
+                               class="field-order-id field-order-name field-order-value">
+                    </li>
+                </ul>
+            </div>
+
+            <button type="button" id="add-row" class="mt-4 bg-sky-600 text-white py-2 px-4 rounded hover:bg-sky-700 select-none focus:outline-none">
+                행 추가
+            </button>
+            <button type="submit" class="mt-4 bg-sky-600 text-white py-2 px-4 rounded hover:bg-sky-700 select-none focus:outline-none">
+                저장
+            </button>
+        </section>
+    </form>
+</main>
+
+<footer class="bg-white shadow w-full mt-auto dark:bg-gray-800 dark:text-gray-400">
+    <div class="container mx-auto px-4 py-6 text-center">
+        © 2025 Arile, Inc
+    </div>
+</footer>
+
+<!-- ===== 종목 선택 모달 ===== -->
+<div id="stock-modal" class="fixed inset-0 pointer-events-none z-50">
+    <div class="modal-overlay fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 opacity-0"></div>
+    <div class="modal-content fixed inset-0 flex items-center justify-center opacity-0 scale-95 transition-all duration-300">
+        <div class="bg-white dark:bg-gray-800 w-96 h-[70vh] rounded-lg shadow-lg flex flex-col p-4 transform transition-all duration-300">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-lg font-semibold dark:text-gray-100">종목 선택</h3>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200">&times;</button>
+            </div>
+            <input type="text" id="search-stock" placeholder="검색..."
+                   class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+            <ul id="stock-options"
+                class="divide-y divide-gray-200 dark:divide-gray-700 overflow-y-auto flex-1 min-h-[50px]">
+                <li class="p-2 cursor-pointer hover:bg-sky-100 dark:hover:bg-gray-700"
+                    th:each="name : ${stockNames}" th:text="${name}"></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // ===== 다크 모드 =====
+        const darkToggleBtn = document.getElementById('dark-mode-toggle');
+        const html = document.documentElement;
+
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            html.classList.add('dark');
+            darkToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            html.classList.remove('dark');
+            darkToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+            localStorage.setItem('darkMode', 'disabled');
+        }
+
+        darkToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                darkToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                darkToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+
+        // ===== List.js + Sortable =====
+        const interestStockList = new List('interest-stock-list', {
+            valueNames: [
+              { data: ['id'] },
+              { name: 'buying-price-id', attr: 'id' },
+              { name: 'buying-price-name', attr: 'name' },
+              { name: 'num-of-stocks-id', attr: 'id' },
+              { name: 'num-of-stocks-name', attr: 'name' },
+              { name: 'break-even-price-id', attr: 'id' },
+              { name: 'break-even-price-name', attr: 'name' },
+              { name: 'field-order-id', attr: 'id' },
+              { name: 'field-order-name', attr: 'name' },
+              { name: 'field-order-value', attr: 'value' },
+            ]
+        });
+        interestStockList.sort('field-order-value', { order: 'asc' });
+
+        const sortable = new Sortable.create(document.getElementById('stock-list'), {
+            handle: '.handle',
+            animation: 150,
+            onUpdate: () => { resetData(interestStockList); }
+        });
+
+        function enrollDeleteRowEvent(btn, list) {
+            btn.addEventListener('click', e => {
+                const parentList = e.target.closest('li');
+                const fieldOrderInput = parentList.querySelector('.field-order-value');
+                if (fieldOrderInput) list.remove('field-order-value', fieldOrderInput.value);
+            });
+        }
+
+        document.querySelectorAll('.delete-row').forEach(btn => enrollDeleteRowEvent(btn, interestStockList));
+        interestStockList.on('updated', list => resetData(list));
+
+        document.getElementById('add-row').addEventListener('click', () => {
+            interestStockList.add({});
+            const lastRow = interestStockList.items.at(-1).elm;
+            const stockInput = lastRow.querySelector('.stock-name-input');
+
+            enrollDeleteRowEvent(lastRow.querySelector('.delete-row'), interestStockList);
+            setupStockInput(stockInput);
+            stockInput.click();
+        });
+
+        function resetData(list) {
+            list.reIndex();
+            for (const [index, item] of list.items.entries()) {
+              item.values({
+                'id': index + 1,
+                'buying-price-id': `interestStocks${index}.buyingPrice`,
+                'buying-price-name': `interestStocks[${index}].buyingPrice`,
+                'num-of-stocks-id': `interestStocks${index}.numOfStocks`,
+                'num-of-stocks-name': `interestStocks[${index}].numOfStocks`,
+                'break-even-price-id': `interestStocks${index}.breakEvenPrice`,
+                'break-even-price-name': `interestStocks[${index}].breakEvenPrice`,
+                'field-order-id': `interestStocks${index}.fieldOrder`,
+                'field-order-name': `interestStocks[${index}].fieldOrder`,
+                'field-order-value': index + 1,
+              });
+            }
+        }
+
+        // ===== 모달 =====
+        const stockModal = document.getElementById('stock-modal');
+        const stockOptions = document.getElementById('stock-options');
+        const searchInput = document.getElementById('search-stock');
+        const modalOverlay = stockModal.querySelector('.modal-overlay');
+        const modalContent = stockModal.querySelector('.modal-content');
+        let activeInput = null;
+
+        function openModal() {
+            stockModal.classList.remove('pointer-events-none');
+            modalOverlay.classList.remove('opacity-0');
+            modalOverlay.classList.add('opacity-50');
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+        }
+
+        function closeModal() {
+            stockModal.classList.add('pointer-events-none');
+            modalOverlay.classList.add('opacity-0');
+            modalOverlay.classList.remove('opacity-50');
+            modalContent.classList.add('opacity-0', 'scale-95');
+            modalContent.classList.remove('opacity-100', 'scale-100');
+        }
+
+        function setupStockInput(input) {
+            input.addEventListener('click', () => {
+                activeInput = input;
+                openModal();
+                searchInput.value = '';
+                filterStocks('');
+            });
+        }
+
+        document.querySelectorAll('.stock-name-input').forEach(input => setupStockInput(input));
+
+        document.getElementById('close-modal').addEventListener('click', closeModal);
+
+        searchInput.addEventListener('input', e => filterStocks(e.target.value));
+
+        function filterStocks(query) {
+            const items = stockOptions.querySelectorAll('li');
+            items.forEach(item => {
+                if (item.textContent.toLowerCase().includes(query.toLowerCase())) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+
+        stockOptions.addEventListener('click', e => {
+            if (e.target.tagName === 'LI' && activeInput) {
+                activeInput.value = e.target.textContent;
+                closeModal();
+                activeInput = null;
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

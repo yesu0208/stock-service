@@ -41,8 +41,8 @@ public class InterestGroup extends AuditingFields {
         this.userId = userId;
     }
 
-    public static InterestGroup of(String schemaName, String userId) {
-        return new InterestGroup(schemaName, userId);
+    public static InterestGroup of(String groupName, String userId) {
+        return new InterestGroup(groupName, userId);
     }
 
     public void addInterestStocks(Collection<InterestStock> interestStocks) {
