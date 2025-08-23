@@ -95,7 +95,7 @@
                                    class="change-value-id change-value-name mt-1 block w-1/3 border-gray-300 rounded-md shadow-sm"
                                    readonly>
                             <input type="text"
-                                   th:value="${item.changeRate}"
+                                   th:value="${item.changeRateString}"
                                    class="change-rate-id change-rate-name mt-1 block w-1/3 border-gray-300 rounded-md shadow-sm"
                                    readonly>
                             <i class="delete-row fas fa-trash ml-2 cursor-pointer"></i>
@@ -201,8 +201,8 @@
                 'current-price-name': `interestStocks[${index}].nowValue`,
                 'change-value-id': `interestStocks${index}.changeValue`,
                 'change-value-name': `interestStocks[${index}].changeValue`,
-                'change-rate-id': `interestStocks${index}.changeRate`,
-                'change-rate-name': `interestStocks[${index}].changeRate`,
+                'change-rate-id': `interestStocks${index}.changeRateString`,
+                'change-rate-name': `interestStocks[${index}].changeRateString`,
                 'field-order-id': `interestStocks${index}.fieldOrder`,
                 'field-order-name': `interestStocks[${index}].fieldOrder`,
                 'field-order-value': index + 1,
@@ -266,23 +266,26 @@
     }
 
     function colorChangeRates() {
-        document.querySelectorAll('.change-rate-name').forEach(el => {
-            let val = parseFloat(el.value.replace(/,/g, ''));
-            if (isNaN(val)) {
-                el.classList.remove('text-red-600', 'text-blue-600', 'text-gray-500');
-                el.value = '';
-                return;
-            }
-            el.classList.remove('text-red-600', 'text-blue-600', 'text-gray-500');
+    document.querySelectorAll('#stock-list li').forEach(row => {
+        const changeRateEl = row.querySelector('.change-rate-name');
+        const changeValueEl = row.querySelector('.change-value-name');
 
-            const formatted = `(${val.toFixed(2)}%)`;
-            el.value = formatted;
+        if (!changeRateEl || !changeValueEl) return;
 
-            if (val > 0) el.classList.add('text-red-600');
-            else if (val < 0) el.classList.add('text-blue-600');
-            else el.classList.add('text-gray-500');
-        });
-    }
+        let val = parseFloat(changeValueEl.value.replace(/,/g, ''));
+
+        // 먼저 색상 초기화
+        changeRateEl.classList.remove('text-red-600', 'text-blue-600', 'text-gray-500');
+
+        if (isNaN(val) || val === 0) {
+            changeRateEl.classList.add('text-gray-500');
+        } else if (val > 0) {
+            changeRateEl.classList.add('text-red-600');
+        } else {
+            changeRateEl.classList.add('text-blue-600');
+        }
+    });
+}
 
     document.addEventListener('DOMContentLoaded', () => {
         attachNumberFormatting();

@@ -47,6 +47,7 @@ public class CurrentStockInfoService {
         Double changeRate = response.result().areas().getFirst().datas().getFirst().cr();
         changeValue = (Objects.equals(riseOrFall, "1") || Objects.equals(riseOrFall, "2")) ? changeValue : -changeValue;
         changeRate = (Objects.equals(riseOrFall, "1") || Objects.equals(riseOrFall, "2")) ? changeRate : -changeRate;
+        String changeRateString = String.format("(%.2f%%)", changeRate);
 
         return InterestStockWithCurrentInfoDto.of(
                 dto.id(),
@@ -58,7 +59,7 @@ public class CurrentStockInfoService {
                 dto.fieldOrder(),
                 response.result().areas().getFirst().datas().getFirst().nv(),
                 changeValue,
-                changeRate,
+                changeRateString,
                 dto.createdAt(),
                 dto.createdBy(),
                 dto.createdAt(),

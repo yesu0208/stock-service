@@ -11,7 +11,7 @@ public record InterestStockWithCurrentInfoResponse(
         Integer fieldOrder,
         Integer nowValue,
         Integer changeValue,
-        Double changeRate
+        String changeRateString
 ) {
     // Dto -> response
     public static InterestStockWithCurrentInfoResponse fromDto(InterestStockWithCurrentInfoDto dto) {
@@ -24,7 +24,7 @@ public record InterestStockWithCurrentInfoResponse(
                 dto.fieldOrder(),
                 dto.nowValue(),
                 dto.changeValue(),
-                dto.changeRate()
+                dto.changeRateString()
         );
     }
 }
