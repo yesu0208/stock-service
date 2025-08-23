@@ -29,11 +29,11 @@ public record InterestStockRequest(
     // request -> Dto
     public InterestStockDto toDto() {
         return InterestStockDto.of(
-                this.stockName,
-                this.buyingPrice,
-                this.numOfStocks,
-                this.breakEvenPrice,
-                this.fieldOrder
+                this.stockName(),
+                this.buyingPrice(),
+                this.numOfStocks(),
+                this.breakEvenPrice(),
+                this.fieldOrder()
         );
     }
 
