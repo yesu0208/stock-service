@@ -1,10 +1,9 @@
 package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.domain.StockInfo;
+import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
 import arile.toy.stock_service.dto.request.InterestGroupRequest;
-import arile.toy.stock_service.dto.response.InterestGroupResponse;
-import arile.toy.stock_service.dto.response.InterestStockResponse;
-import arile.toy.stock_service.dto.response.SimpleInterestGroupResponse;
+import arile.toy.stock_service.dto.response.*;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.InterestGroupService;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +35,8 @@ public class InterestGroupController {
             Model model) { // redirect를 위해 parameter 후가
 
         // 비로그인 or 로그인 + groupName x : sample group, 로그인 : 해당 groupName의 interest group 조회
-        InterestGroupResponse interestGroup = (githubUser != null && groupName != null) ?
-                InterestGroupResponse.fromDto(interestGroupService.loadMyGroup(githubUser.id(), groupName)) :
+        InterestGroupWithCurrentInfoResponse interestGroup = (githubUser != null && groupName != null) ?
+                InterestGroupWithCurrentInfoResponse.fromDto(interestGroupService.loadMyGroup(githubUser.id(), groupName)) :
                 defaultInterestGroup(groupName);
 
         List<StockInfo> stockInfo = stockInfoRepository.findAll();
@@ -98,12 +97,12 @@ public class InterestGroupController {
 
 
     // 기본 interest group
-    private InterestGroupResponse defaultInterestGroup(String groupName) {
-        return new InterestGroupResponse(
+    private InterestGroupWithCurrentInfoResponse defaultInterestGroup(String groupName) {
+        return new InterestGroupWithCurrentInfoResponse(
                 groupName != null ? groupName : "group_name", // groupName 받았으면 그대로 쓰고, 안받았으면 기본값
                 "Arile",
                 List.of(
-                        new InterestStockResponse("삼성전자보통주", null, null, null, null, 1)
+                        new InterestStockWithCurrentInfoResponse("삼성전자보통주", null, null, null, null, 1, null, null, null)
                 )
         );
     }
