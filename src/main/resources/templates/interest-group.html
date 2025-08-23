@@ -31,6 +31,11 @@
         <section class="bg-white shadow rounded-lg p-6 mb-6" th:object="${interestGroup}">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">관심종목 그룹 만들기</h2>
 
+            <!-- 🔹 경고메시지 영역 -->
+            <div id="form-error" class="hidden mb-4 text-red-600 text-sm font-medium">
+                ❗ 최소 1개 이상의 종목을 추가해야 합니다.
+            </div>
+
             <div class="flex items-center space-x-4 mb-4">
                 <label for="groupName" class="block text-sm font-medium text-gray-500 w-24">그룹이름</label>
                 <input type="text" id="groupName" th:field="*{groupName}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -162,6 +167,9 @@
         enrollDeleteRowEvent(lastRow.querySelector('.delete-row'), interestStockList);
         attachNumberFormatting();
         colorChangeValues();
+
+        // 종목 추가 시 에러 메시지 숨기기
+        document.getElementById('form-error').classList.add('hidden');
     });
 
     function enrollDeleteRowEvent(btn, list) {
@@ -258,7 +266,17 @@
         attachNumberFormatting();
         const form = document.querySelector('form[name="interest-group-form"]');
         if (form) {
-            form.addEventListener('submit', () => {
+            form.addEventListener('submit', (e) => {
+                const stockRows = document.querySelectorAll('#stock-list li');
+                const errorBox = document.getElementById('form-error');
+                if (stockRows.length === 0) {
+                    e.preventDefault(); // 제출 막기
+                    errorBox.classList.remove('hidden');
+                    return;
+                } else {
+                    errorBox.classList.add('hidden');
+                }
+
                 const numberFields = document.querySelectorAll(
                     '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name'
                 );
