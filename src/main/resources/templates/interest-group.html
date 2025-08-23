@@ -38,16 +38,17 @@
 
             <hr class="mb-4">
 
-            <div class="grid grid-cols-4 gap-4 mb-4">
+            <div class="grid grid-cols-5 gap-4 mb-4">
                 <div class="block text-sm font-medium text-gray-400">종목명</div>
                 <div class="block text-sm font-medium text-gray-400">매입가</div>
                 <div class="block text-sm font-medium text-gray-400">보유수량</div>
+                <div class="block text-sm font-medium text-gray-400">매입금액</div>
                 <div class="block text-sm font-medium text-gray-400">손익분기매입가</div>
             </div>
 
             <div id="interest-stock-list">
                 <ul id="stock-list" class="list">
-                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-4 gap-4 mb-4" th:each="stock, iterStat : *{interestStocks}">
+                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-5 gap-4 mb-4" th:each="stock, iterStat : *{interestStocks}">
                         <div class="flex items-center">
                             <i class="handle fas fa-grip-lines mr-2 cursor-move"></i>
                             <label>
@@ -57,13 +58,22 @@
                             </label>
                         </div>
                         <div class="flex items-center">
-                            <input type="number" th:field="*{interestStocks[__${iterStat.index}__].buyingPrice}" class="buying-price-id buying-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <input type="text" th:field="*{interestStocks[__${iterStat.index}__].buyingPrice}" class="buying-price-id buying-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div class="flex items-center">
                             <input type="text" th:field="*{interestStocks[__${iterStat.index}__].numOfStocks}" class="num-of-stocks-id num-of-stocks-name mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div class="flex items-center">
-                            <input type="text" th:field="*{interestStocks[__${iterStat.index}__].breakEvenPrice}" class="break-even-price-id break-even-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <input type="text"
+                                   th:field="*{interestStocks[__${iterStat.index}__].totalBuyingPrice}"
+                                   class="total-buying-price-id total-buying-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                   readonly>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="text"
+                                   th:field="*{interestStocks[__${iterStat.index}__].breakEvenPrice}"
+                                   class="break-even-price-id break-even-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                   readonly>
                             <i class="delete-row fas fa-trash ml-2 cursor-pointer"></i>
                         </div>
                         <input type="hidden" th:field="*{interestStocks[__${iterStat.index}__].fieldOrder}" class="field-order-id field-order-name field-order-value">
@@ -71,7 +81,7 @@
                 </ul>
             </div>
 
-            <button type="button" id="add-row" class="mt-4 bg-sky-600 text-white py-2 px-4 rounded hover:bg-sky-700">열 추가</button>
+            <button type="button" id="add-row" class="mt-4 bg-sky-600 text-white py-2 px-4 rounded hover:bg-sky-700">종목 추가</button>
             <button type="submit" class="mt-4 bg-sky-600 text-white py-2 px-4 rounded hover:bg-sky-700">저장</button>
         </section>
     </form>
@@ -93,6 +103,8 @@
             { name: 'buying-price-name', attr: 'name' },
             { name: 'num-of-stocks-id', attr: 'id' },
             { name: 'num-of-stocks-name', attr: 'name' },
+            { name: 'total-buying-price-id', attr: 'id' },
+            { name: 'total-buying-price-name', attr: 'name' },
             { name: 'break-even-price-id', attr: 'id' },
             { name: 'break-even-price-name', attr: 'name' },
             { name: 'field-order-id', attr: 'id' },
@@ -117,7 +129,15 @@
     document.getElementById('add-row').addEventListener('click', () => {
         interestStockList.add({});
         const lastRow = interestStockList.items.at(-1).elm;
+
+        // 새 행 숫자/금액 입력 초기화
+        lastRow.querySelectorAll(
+            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name'
+        ).forEach(input => input.value = '');
+
         enrollDeleteRowEvent(lastRow.querySelector('.delete-row'), interestStockList);
+
+        attachNumberFormatting(); // 숫자 포맷 재적용
     });
 
     function enrollDeleteRowEvent(btn, list) {
@@ -127,6 +147,7 @@
             if (fieldOrderInput) {
                 list.remove('field-order-value', fieldOrderInput.value);
             }
+            parentList.remove();
         });
     }
 
@@ -141,6 +162,8 @@
                 'buying-price-name': `interestStocks[${index}].buyingPrice`,
                 'num-of-stocks-id': `interestStocks${index}.numOfStocks`,
                 'num-of-stocks-name': `interestStocks[${index}].numOfStocks`,
+                'total-buying-price-id': `interestStocks${index}.totalBuyingPrice`,
+                'total-buying-price-name': `interestStocks[${index}].totalBuyingPrice`,
                 'break-even-price-id': `interestStocks${index}.breakEvenPrice`,
                 'break-even-price-name': `interestStocks[${index}].breakEvenPrice`,
                 'field-order-id': `interestStocks${index}.fieldOrder`,
@@ -149,6 +172,44 @@
             });
         }
     }
+
+    function formatNumberInput(input) {
+        let value = input.value.replace(/,/g, '');
+        if (value === '' || isNaN(value)) {
+            input.value = '';
+            return;
+        }
+        value = Math.floor(Number(value));
+        input.value = value.toLocaleString('ko-KR');
+    }
+
+    function attachNumberFormatting() {
+        const numberFields = document.querySelectorAll(
+            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name'
+        );
+        numberFields.forEach(field => {
+            field.addEventListener('input', () => {
+                const start = field.selectionStart;
+                formatNumberInput(field);
+                field.setSelectionRange(start, start);
+            });
+            if (field.value) formatNumberInput(field);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', attachNumberFormatting);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form[name="interest-group-form"]');
+        if (form) {
+            form.addEventListener('submit', () => {
+                const numberFields = document.querySelectorAll(
+                    '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name'
+                );
+                numberFields.forEach(field => field.value = field.value.replace(/,/g, ''));
+            });
+        }
+    });
 </script>
 </body>
 </html>

@@ -103,7 +103,7 @@ public class InterestGroupController {
                 groupName != null ? groupName : "group_name", // groupName 받았으면 그대로 쓰고, 안받았으면 기본값
                 "Arile",
                 List.of(
-                        new InterestStockResponse("삼성전자보통주", null, null, null, 1)
+                        new InterestStockResponse("삼성전자보통주", null, null, null, null, 1)
                 )
         );
     }

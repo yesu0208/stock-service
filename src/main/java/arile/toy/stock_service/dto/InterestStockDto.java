@@ -12,6 +12,7 @@ public record InterestStockDto(
         Integer buyingPrice,
         Integer numOfStocks,
         Integer breakEvenPrice,
+        Integer totalBuyingPrice,
         Integer fieldOrder,
 
         LocalDateTime createdAt,
@@ -28,6 +29,7 @@ public record InterestStockDto(
                 entity.getBuyingPrice(),
                 entity.getNumOfStocks(),
                 entity.getBreakEvenPrice(),
+                entity.getTotalBuyingPrice(),
                 entity.getFieldOrder(),
                 entity.getCreatedAt(),
                 entity.getCreatedBy(),
@@ -43,13 +45,14 @@ public record InterestStockDto(
             Integer buyingPrice,
             Integer numOfStocks,
             Integer breakEvenPrice,
+            Integer totalBuyingPrice,
             Integer fieldOrder,
             LocalDateTime createdAt,
             String createdBy,
             LocalDateTime modifiedAt,
             String modifiedBy
     ) {
-        return new InterestStockDto(id, stockName, buyingPrice, numOfStocks,breakEvenPrice,fieldOrder, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new InterestStockDto(id, stockName, buyingPrice, numOfStocks,breakEvenPrice,totalBuyingPrice, fieldOrder, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     // static method (일부)
@@ -58,9 +61,10 @@ public record InterestStockDto(
             Integer buyingPrice,
             Integer numOfStocks,
             Integer breakEvenPrice,
+            Integer totalBuyingPrice,
             Integer fieldOrder
     ) {
-        return new InterestStockDto(null, stockName, buyingPrice, numOfStocks, breakEvenPrice, fieldOrder, null, null, null, null);
+        return new InterestStockDto(null, stockName, buyingPrice, numOfStocks, breakEvenPrice, totalBuyingPrice, fieldOrder, null, null, null, null);
     }
 
 
@@ -71,6 +75,7 @@ public record InterestStockDto(
                 this.buyingPrice,
                 this.numOfStocks,
                 this.breakEvenPrice,
+                this.totalBuyingPrice,
                 this.fieldOrder);
     }
 }

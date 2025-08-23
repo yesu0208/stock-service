@@ -8,6 +8,7 @@ public record InterestStockResponse(
         Integer buyingPrice,
         Integer numOfStocks,
         Integer breakEvenPrice,
+        Integer totalBuyingPrice,
         Integer fieldOrder
 ) {
     // Dto -> response
@@ -17,6 +18,7 @@ public record InterestStockResponse(
                 dto.buyingPrice(),
                 dto.numOfStocks(),
                 dto.breakEvenPrice(),
+                dto.totalBuyingPrice(),
                 dto.fieldOrder()
         );
     }
