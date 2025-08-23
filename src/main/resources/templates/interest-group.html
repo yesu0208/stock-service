@@ -38,21 +38,24 @@
 
             <hr class="mb-4">
 
-            <div class="grid grid-cols-5 gap-4 mb-4">
+            <!-- 컬럼 6개: 기존 5 + 현재주가+상승폭 -->
+            <div class="grid grid-cols-6 gap-4 mb-4">
                 <div class="block text-sm font-medium text-gray-400">종목명</div>
                 <div class="block text-sm font-medium text-gray-400">매입가</div>
                 <div class="block text-sm font-medium text-gray-400">보유수량</div>
                 <div class="block text-sm font-medium text-gray-400">매입금액</div>
                 <div class="block text-sm font-medium text-gray-400">손익분기매입가</div>
+                <div class="block text-sm font-medium text-gray-400">현재주가</div>
             </div>
 
             <div id="interest-stock-list">
                 <ul id="stock-list" class="list">
-                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-5 gap-4 mb-4" th:each="stock, iterStat : *{interestStocks}">
+                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-6 gap-4 mb-4" th:each="item, iterStat : *{interestStocks}">
                         <div class="flex items-center">
                             <i class="handle fas fa-grip-lines mr-2 cursor-move"></i>
                             <label>
                                 <select th:field="*{interestStocks[__${iterStat.index}__].stockName}" class="stock-name-id stock-name-name mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                                    <option value="" disabled selected>-- 종목선택 --</option>
                                     <option th:each="type : ${stockNames}" th:value="${type}" th:text="${type}">Type</option>
                                 </select>
                             </label>
@@ -73,6 +76,18 @@
                             <input type="text"
                                    th:field="*{interestStocks[__${iterStat.index}__].breakEvenPrice}"
                                    class="break-even-price-id break-even-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                   readonly>
+                        </div>
+                        <!-- 기존 현재주가/상승폭 컬럼 부분 수정 -->
+                        <div class="flex items-center space-x-2">
+                            <input type="text"
+                                   th:value="${item.nowValue}"
+                                   class="current-price-id current-price-name mt-1 block w-1/2 border-gray-300 rounded-md shadow-sm"
+                                   readonly>
+                            <span class="change-icon w-4 text-center"></span>
+                            <input type="text"
+                                   th:value="${item.changeValue}"
+                                   class="change-value-id change-value-name mt-1 block w-1/2 border-gray-300 rounded-md shadow-sm"
                                    readonly>
                             <i class="delete-row fas fa-trash ml-2 cursor-pointer"></i>
                         </div>
@@ -107,6 +122,10 @@
             { name: 'total-buying-price-name', attr: 'name' },
             { name: 'break-even-price-id', attr: 'id' },
             { name: 'break-even-price-name', attr: 'name' },
+            { name: 'current-price-id', attr: 'id' },
+            { name: 'current-price-name', attr: 'name' },
+            { name: 'change-value-id', attr: 'id' },
+            { name: 'change-value-name', attr: 'name' },
             { name: 'field-order-id', attr: 'id' },
             { name: 'field-order-name', attr: 'name' },
             { name: 'field-order-value', attr: 'value' },
@@ -130,14 +149,19 @@
         interestStockList.add({});
         const lastRow = interestStockList.items.at(-1).elm;
 
-        // 새 행 숫자/금액 입력 초기화
         lastRow.querySelectorAll(
-            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name'
+            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name, .current-price-name, .change-value-name'
         ).forEach(input => input.value = '');
 
-        enrollDeleteRowEvent(lastRow.querySelector('.delete-row'), interestStockList);
+        // 🔹 새로 추가된 행의 종목 선택 박스를 -- 종목선택 -- 으로 초기화
+        const selectBox = lastRow.querySelector('select');
+        if (selectBox) {
+            selectBox.selectedIndex = 0;
+        }
 
-        attachNumberFormatting(); // 숫자 포맷 재적용
+        enrollDeleteRowEvent(lastRow.querySelector('.delete-row'), interestStockList);
+        attachNumberFormatting();
+        colorChangeValues();
     });
 
     function enrollDeleteRowEvent(btn, list) {
@@ -166,11 +190,16 @@
                 'total-buying-price-name': `interestStocks[${index}].totalBuyingPrice`,
                 'break-even-price-id': `interestStocks${index}.breakEvenPrice`,
                 'break-even-price-name': `interestStocks[${index}].breakEvenPrice`,
+                'current-price-id': `interestStocks${index}.nowValue`,
+                'current-price-name': `interestStocks[${index}].nowValue`,
+                'change-value-id': `interestStocks${index}.changeValue`,
+                'change-value-name': `interestStocks[${index}].changeValue`,
                 'field-order-id': `interestStocks${index}.fieldOrder`,
                 'field-order-name': `interestStocks[${index}].fieldOrder`,
                 'field-order-value': index + 1,
             });
         }
+        colorChangeValues();
     }
 
     function formatNumberInput(input) {
@@ -185,7 +214,7 @@
 
     function attachNumberFormatting() {
         const numberFields = document.querySelectorAll(
-            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name'
+            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name, .current-price-name, .change-value-name'
         );
         numberFields.forEach(field => {
             field.addEventListener('input', () => {
@@ -195,11 +224,38 @@
             });
             if (field.value) formatNumberInput(field);
         });
+        colorChangeValues();
     }
 
-    document.addEventListener('DOMContentLoaded', attachNumberFormatting);
+    function colorChangeValues() {
+        document.querySelectorAll('.change-value-name').forEach(el => {
+            const val = parseFloat(el.value.replace(/,/g, ''));
+            const iconEl = el.closest('div').querySelector('.change-icon');
+            if (isNaN(val)) {
+                el.classList.remove('text-red-600', 'text-blue-600', 'text-gray-500');
+                if(iconEl) iconEl.textContent = '';
+                return;
+            }
+            el.classList.remove('text-red-600', 'text-blue-600', 'text-gray-500');
+            if(iconEl) iconEl.classList.remove('text-red-600', 'text-blue-600', 'text-gray-500');
+
+            if (val > 0) {
+                el.classList.add('text-red-600');
+                if (iconEl) { iconEl.textContent = '▲'; iconEl.classList.add('text-red-600'); }
+            }
+            else if (val < 0) {
+                el.classList.add('text-blue-600');
+                if (iconEl) { iconEl.textContent = '▼'; iconEl.classList.add('text-blue-600'); }
+            }
+            else {
+                el.classList.add('text-gray-500');
+                if (iconEl) { iconEl.textContent = '-'; iconEl.classList.add('text-gray-500'); }
+            }
+        });
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
+        attachNumberFormatting();
         const form = document.querySelector('form[name="interest-group-form"]');
         if (form) {
             form.addEventListener('submit', () => {
