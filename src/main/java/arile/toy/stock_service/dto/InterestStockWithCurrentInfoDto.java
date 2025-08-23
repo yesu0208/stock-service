@@ -13,6 +13,7 @@ public record InterestStockWithCurrentInfoDto(
 
         Integer nowValue,
         Integer changeValue,
+        Double changeRate,
 
         LocalDateTime createdAt,
         String createdBy,
@@ -31,13 +32,14 @@ public record InterestStockWithCurrentInfoDto(
 
             Integer nowValue,
             Integer changeValue,
+            Double changeRate,
 
             LocalDateTime createdAt,
             String createdBy,
             LocalDateTime modifiedAt,
             String modifiedBy
     ) {
-        return new InterestStockWithCurrentInfoDto(id, stockName, buyingPrice, numOfStocks,breakEvenPrice,totalBuyingPrice, fieldOrder, nowValue, changeValue, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new InterestStockWithCurrentInfoDto(id, stockName, buyingPrice, numOfStocks,breakEvenPrice,totalBuyingPrice, fieldOrder, nowValue, changeValue, changeRate, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     // static method (일부)
@@ -50,8 +52,9 @@ public record InterestStockWithCurrentInfoDto(
             Integer fieldOrder,
 
             Integer nowValue,
-            Integer changeValue
+            Integer changeValue,
+            Double changeRate
     ) {
-        return new InterestStockWithCurrentInfoDto(null, stockName, buyingPrice, numOfStocks, breakEvenPrice, totalBuyingPrice, fieldOrder, nowValue, changeValue, null, null, null, null);
+        return new InterestStockWithCurrentInfoDto(null, stockName, buyingPrice, numOfStocks, breakEvenPrice, totalBuyingPrice, fieldOrder, nowValue, changeValue, changeRate, null, null, null, null);
     }
 }

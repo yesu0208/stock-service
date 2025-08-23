@@ -43,8 +43,8 @@
 
             <hr class="mb-4">
 
-            <!-- 컬럼 6개: 기존 5 + 현재주가+상승폭 -->
-            <div class="grid grid-cols-6 gap-4 mb-4">
+            <!-- 컬럼 8개: 기존 5 + 현재주가/상승가격/상승률 -->
+            <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1.7fr] gap-4 mb-4">
                 <div class="block text-sm font-medium text-gray-400">종목명</div>
                 <div class="block text-sm font-medium text-gray-400">매입가</div>
                 <div class="block text-sm font-medium text-gray-400">보유수량</div>
@@ -55,7 +55,7 @@
 
             <div id="interest-stock-list">
                 <ul id="stock-list" class="list">
-                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-6 gap-4 mb-4" th:each="item, iterStat : *{interestStocks}">
+                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1.7fr] gap-4 mb-4" th:each="item, iterStat : *{interestStocks}">
                         <div class="flex items-center">
                             <i class="handle fas fa-grip-lines mr-2 cursor-move"></i>
                             <label>
@@ -83,16 +83,20 @@
                                    class="break-even-price-id break-even-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm"
                                    readonly>
                         </div>
-                        <!-- 기존 현재주가/상승폭 컬럼 부분 수정 -->
+                        <!-- 현재주가 / 상승가 / 상승률 -->
                         <div class="flex items-center space-x-2">
                             <input type="text"
                                    th:value="${item.nowValue}"
-                                   class="current-price-id current-price-name mt-1 block w-1/2 border-gray-300 rounded-md shadow-sm"
+                                   class="current-price-id current-price-name mt-1 block w-1/3 border-gray-300 rounded-md shadow-sm"
                                    readonly>
                             <span class="change-icon w-4 text-center"></span>
                             <input type="text"
                                    th:value="${item.changeValue}"
-                                   class="change-value-id change-value-name mt-1 block w-1/2 border-gray-300 rounded-md shadow-sm"
+                                   class="change-value-id change-value-name mt-1 block w-1/3 border-gray-300 rounded-md shadow-sm"
+                                   readonly>
+                            <input type="text"
+                                   th:value="${item.changeRate}"
+                                   class="change-rate-id change-rate-name mt-1 block w-1/3 border-gray-300 rounded-md shadow-sm"
                                    readonly>
                             <i class="delete-row fas fa-trash ml-2 cursor-pointer"></i>
                         </div>
@@ -131,6 +135,8 @@
             { name: 'current-price-name', attr: 'name' },
             { name: 'change-value-id', attr: 'id' },
             { name: 'change-value-name', attr: 'name' },
+            { name: 'change-rate-id', attr: 'id' },
+            { name: 'change-rate-name', attr: 'name' },
             { name: 'field-order-id', attr: 'id' },
             { name: 'field-order-name', attr: 'name' },
             { name: 'field-order-value', attr: 'value' },
@@ -155,20 +161,15 @@
         const lastRow = interestStockList.items.at(-1).elm;
 
         lastRow.querySelectorAll(
-            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name, .current-price-name, .change-value-name'
+            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name, .current-price-name, .change-value-name, .change-rate-name'
         ).forEach(input => input.value = '');
 
-        // 🔹 새로 추가된 행의 종목 선택 박스를 -- 종목선택 -- 으로 초기화
         const selectBox = lastRow.querySelector('select');
-        if (selectBox) {
-            selectBox.selectedIndex = 0;
-        }
+        if (selectBox) selectBox.selectedIndex = 0;
 
         enrollDeleteRowEvent(lastRow.querySelector('.delete-row'), interestStockList);
         attachNumberFormatting();
-        colorChangeValues();
 
-        // 종목 추가 시 에러 메시지 숨기기
         document.getElementById('form-error').classList.add('hidden');
     });
 
@@ -176,9 +177,7 @@
         btn.addEventListener('click', e => {
             const parentList = e.target.closest('li');
             const fieldOrderInput = parentList.querySelector('.field-order-value');
-            if (fieldOrderInput) {
-                list.remove('field-order-value', fieldOrderInput.value);
-            }
+            if (fieldOrderInput) list.remove('field-order-value', fieldOrderInput.value);
             parentList.remove();
         });
     }
@@ -202,12 +201,15 @@
                 'current-price-name': `interestStocks[${index}].nowValue`,
                 'change-value-id': `interestStocks${index}.changeValue`,
                 'change-value-name': `interestStocks[${index}].changeValue`,
+                'change-rate-id': `interestStocks${index}.changeRate`,
+                'change-rate-name': `interestStocks[${index}].changeRate`,
                 'field-order-id': `interestStocks${index}.fieldOrder`,
                 'field-order-name': `interestStocks[${index}].fieldOrder`,
                 'field-order-value': index + 1,
             });
         }
         colorChangeValues();
+        colorChangeRates();
     }
 
     function formatNumberInput(input) {
@@ -233,6 +235,7 @@
             if (field.value) formatNumberInput(field);
         });
         colorChangeValues();
+        colorChangeRates();
     }
 
     function colorChangeValues() {
@@ -262,6 +265,25 @@
         });
     }
 
+    function colorChangeRates() {
+        document.querySelectorAll('.change-rate-name').forEach(el => {
+            let val = parseFloat(el.value.replace(/,/g, ''));
+            if (isNaN(val)) {
+                el.classList.remove('text-red-600', 'text-blue-600', 'text-gray-500');
+                el.value = '';
+                return;
+            }
+            el.classList.remove('text-red-600', 'text-blue-600', 'text-gray-500');
+
+            const formatted = `(${val.toFixed(2)}%)`;
+            el.value = formatted;
+
+            if (val > 0) el.classList.add('text-red-600');
+            else if (val < 0) el.classList.add('text-blue-600');
+            else el.classList.add('text-gray-500');
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         attachNumberFormatting();
         const form = document.querySelector('form[name="interest-group-form"]');
@@ -270,7 +292,7 @@
                 const stockRows = document.querySelectorAll('#stock-list li');
                 const errorBox = document.getElementById('form-error');
                 if (stockRows.length === 0) {
-                    e.preventDefault(); // 제출 막기
+                    e.preventDefault();
                     errorBox.classList.remove('hidden');
                     return;
                 } else {
