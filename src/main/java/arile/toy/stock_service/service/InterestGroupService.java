@@ -2,19 +2,14 @@ package arile.toy.stock_service.service;
 
 import arile.toy.stock_service.dto.InterestGroupDto;
 import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
-import arile.toy.stock_service.dto.InterestStockWithCurrentInfoDto;
 import arile.toy.stock_service.repository.InterestGroupRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor

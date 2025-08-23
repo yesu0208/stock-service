@@ -1,10 +1,12 @@
 package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.domain.StockInfo;
-import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
 import arile.toy.stock_service.dto.request.InterestGroupRequest;
-import arile.toy.stock_service.dto.response.*;
+import arile.toy.stock_service.dto.response.InterestGroupWithCurrentInfoResponse;
+import arile.toy.stock_service.dto.response.InterestStockWithCurrentInfoResponse;
+import arile.toy.stock_service.dto.response.SimpleInterestGroupResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
+import arile.toy.stock_service.repository.StockInfoRepository;
 import arile.toy.stock_service.service.InterestGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import arile.toy.stock_service.repository.StockInfoRepository;
 
 import java.time.LocalDate;
 import java.util.List;
