@@ -90,7 +90,7 @@ public class InterestGroupController {
             @PathVariable String groupName
     ){
         interestGroupService.deleteInterestGroup(githubUser.id(), groupName);
-        return "redirect:/my-groups"; // redirection : PRG pattern (POST REDIRECT GET)
+        return "redirect:/interest-group/my-groups"; // redirection : PRG pattern (POST REDIRECT GET)
     }
 
 
