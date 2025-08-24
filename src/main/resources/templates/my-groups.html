@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>주식 관심종목 저장소 - 내 관심그룹 목록</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          darkMode: 'class'
+        }
+    </script>
+    <script>
+        (function() {
+          const theme = localStorage.getItem('theme');
+          if (theme === 'dark' ||
+              (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        })();
+    </script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
@@ -18,61 +34,94 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen dark:bg-gray-900 dark:text-gray-100">
 
-<header class="bg-white shadow">
+<header class="bg-white shadow dark:bg-gray-800 dark:text-gray-100">
     <div class="container mx-auto px-4 py-6 flex justify-between items-center">
         <a th:href="@{/}" class="text-2xl font-bold text-sky-600">주식 관심종목 저장소</a>
-        <nav>
-            <a th:href="@{/interest-group/my-groups}" class="text-gray-600 hover:text-sky-600 mx-2">내 관심종목</a>
-            <a th:href="@{/my-account}" class="text-gray-600 hover:text-sky-600 mx-2">내 정보</a>
 
-            <a th:href="@{/oauth2/authorization/github}" sec:authorize="!isAuthenticated()" class="text-gray-600 hover:text-sky-600 mx-2"><i class="fab fa-github"></i> 로그인</a>
-            <a th:href="@{/logout}" sec:authorize="isAuthenticated()" class="text-gray-600 hover:text-sky-600 mx-2">
-                <span sec:authentication="principal.name" class="text-gray-400 text-sm mx-1">username</span>
+        <nav class="ml-auto flex items-center space-x-4">
+            <a th:href="@{/interest-group/my-groups}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                내 관심그룹
+            </a>
+            <a th:href="@{/my-account}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                내 정보
+            </a>
+            <a th:href="@{/oauth2/authorization/github}" sec:authorize="!isAuthenticated()"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                <i class="fab fa-github"></i> 로그인
+            </a>
+            <a th:href="@{/logout}" sec:authorize="isAuthenticated()"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+        <span sec:authentication="principal.name"
+              class="text-gray-400 dark:text-gray-300 text-sm mx-1">username</span>
                 로그아웃
             </a>
+
+            <!-- 다크 모드 토글 버튼 -->
+            <button id="darkModeToggle"
+                    class="ml-4 text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                <i id="darkModeIcon" class="fas fa-moon"></i>
+            </button>
         </nav>
     </div>
 </header>
 
 <main class="container mx-auto px-4 py-8 flex-grow">
+    <!-- 내 관심그룹 섹션 -->
     <section class="mb-8">
-        <h1 class="text-4xl font-bold text-gray-600 mb-6 text-left">내 관심그룹</h1>
+        <h1 class="text-4xl font-bold text-gray-600 dark:text-gray-100 mb-6 text-left">내 관심그룹</h1>
         <div class="flex justify-start space-x-4">
-            <a th:href="@{/interest-group}" class="bg-sky-600 text-white py-2 px-4 rounded hover:bg-sky-700">관심그룹 만들기</a>
+            <a th:href="@{/interest-group}" class="bg-sky-600 text-white py-2 px-4 rounded hover:bg-sky-700">
+                관심그룹 만들기
+            </a>
         </div>
     </section>
 
-    <section id="my-groups" class="bg-white shadow rounded-lg p-6 mb-6">
+    <!-- 관심그룹 목록 테이블 -->
+    <section id="my-groups" class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-gray-700">관심그룹 목록</h2>
+            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-200">관심그룹 목록</h2>
             <div class="flex space-x-2">
-                <input type="search" placeholder="관심그룹 이름 검색.." class="search border-gray-300 rounded-md shadow-sm px-2 py-1">
-                <button data-sort="group-name" class="sort bg-sky-600 text-white py-1 px-4 rounded hover:bg-sky-700">이름순 정렬</button>
+                <input type="search" placeholder="관심그룹 이름 검색.."
+                       class="search border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-md shadow-sm px-2 py-1">
+                <button data-sort="group-name"
+                        class="sort bg-sky-600 text-white py-1 px-4 rounded hover:bg-sky-700">
+                    이름순 정렬
+                </button>
             </div>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-800">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-7/12">Group Name</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12">Last Modified</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-7/12">
+                        Group Name
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-2/12">
+                        Last Modified
+                    </th>
                     <th class="px-6 py-3 w-1/12 text-right">
-                        <i class="fas fa-trash-alt text-gray-500"></i>
+                        <i class="fas fa-trash-alt text-gray-500 dark:text-gray-400"></i>
                     </th>
                 </tr>
                 </thead>
-                <tbody class="list bg-white divide-y divide-gray-200">
+                <tbody class="list bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                 <tr th:each="interestGroup : ${interestGroups}">
                     <td class="group-name px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600 hover:underline">
-                        <a th:href="@{/interest-group(groupName=${interestGroup.groupName})}" th:text="${interestGroup.groupName}">sample_group</a>
+                        <a th:href="@{/interest-group(groupName=${interestGroup.groupName})}" th:text="${interestGroup.groupName}">
+                            sample_group
+                        </a>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${interestGroup.modifiedAt}">-</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300" th:text="${interestGroup.modifiedAt}">-</td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <form th:action="@{/interest-group/my-groups/{groupName}(groupName=${interestGroup.groupName})}" method="post" class="inline">
-                            <button type="submit" class="text-red-600"><i class="fas fa-trash-alt"></i></button>
+                            <button type="submit" class="text-red-600 dark:text-red-400">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </form>
                     </td>
                 </tr>
@@ -82,14 +131,33 @@
     </section>
 </main>
 
-<footer class="bg-white shadow w-full mt-auto">
-    <div class="container mx-auto px-4 py-6 text-center text-gray-600">
+
+<footer class="bg-white shadow w-full mt-auto dark:bg-gray-800 dark:text-gray-400">
+    <div class="container mx-auto px-4 py-6 text-center text-gray-600 dark:text-gray-300" >
         © 2025 Arile, Inc
     </div>
 </footer>
 
 <script>
     const myGroup = new List('my-groups', { valueNames: [ 'group-name' ]});
+</script>
+<script>
+    const toggleBtn = document.getElementById("darkModeToggle");
+    const icon = document.getElementById("darkModeIcon");
+    const root = document.documentElement;
+
+    // 저장된 모드 불러오기
+    if (localStorage.getItem("theme") === "dark") {
+      root.classList.add("dark");
+      icon.classList.replace("fa-moon","fa-sun");
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      const isDark = root.classList.toggle("dark");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+      icon.classList.toggle("fa-moon", !isDark);
+      icon.classList.toggle("fa-sun", isDark);
+    });
 </script>
 </body>
 </html>
