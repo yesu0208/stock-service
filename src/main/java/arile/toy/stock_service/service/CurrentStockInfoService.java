@@ -44,7 +44,28 @@ public class CurrentStockInfoService {
         // rf(rise or fall)에 따라서 cv(change value)의 부호 변환
         String riseOrFall = response.result().areas().getFirst().datas().getFirst().rf();
         Integer changeValue = response.result().areas().getFirst().datas().getFirst().cv();
+        Double changeRate = response.result().areas().getFirst().datas().getFirst().cr();
+        Integer nowValue = response.result().areas().getFirst().datas().getFirst().nv();
+
         changeValue = (Objects.equals(riseOrFall, "1") || Objects.equals(riseOrFall, "2")) ? changeValue : -changeValue;
+        changeRate = (Objects.equals(riseOrFall, "1") || Objects.equals(riseOrFall, "2")) ? changeRate : -changeRate;
+        String changeRateString = String.format("(%.2f%%)", changeRate);
+
+        Integer valuation = null;
+        if (dto.numOfStocks() != null) {
+            valuation = nowValue * dto.numOfStocks();
+        }
+
+        Integer unrealizedPL = null;
+        Integer realizedPL = null;
+        Double rateOfReturn = null;
+        String rateOfReturnString = null;
+        if (dto.buyingPrice() != null && dto.numOfStocks() != null) {
+            unrealizedPL = (nowValue - dto.buyingPrice()) * dto.numOfStocks();
+            realizedPL = unrealizedPL - (int) Math.round(dto.buyingPrice() * dto.numOfStocks() * 0.002);
+            rateOfReturn = ((double) realizedPL / ((double) dto.buyingPrice() * dto.numOfStocks())) * 100;
+            rateOfReturnString = String.format("(%.2f%%)", rateOfReturn);
+        }
 
         return InterestStockWithCurrentInfoDto.of(
                 dto.id(),
@@ -54,9 +75,13 @@ public class CurrentStockInfoService {
                 dto.breakEvenPrice(),
                 dto.totalBuyingPrice(),
                 dto.fieldOrder(),
-                response.result().areas().getFirst().datas().getFirst().nv(),
+                nowValue,
                 changeValue,
-                riseOrFall,
+                changeRateString,
+                valuation,
+                unrealizedPL,
+                realizedPL,
+                rateOfReturnString,
                 dto.createdAt(),
                 dto.createdBy(),
                 dto.createdAt(),
