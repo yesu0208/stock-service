@@ -11,7 +11,11 @@ public record InterestStockWithCurrentInfoResponse(
         Integer fieldOrder,
         Integer nowValue,
         Integer changeValue,
-        String changeRateString
+        String changeRateString,
+        Integer valuation, // 평가금액
+        Integer unrealizedPL, // 평가손익
+        Integer realizedPL, // 실현손익
+        String rateOfReturnString // 수익률(String)
 ) {
     // Dto -> response
     public static InterestStockWithCurrentInfoResponse fromDto(InterestStockWithCurrentInfoDto dto) {
@@ -24,7 +28,11 @@ public record InterestStockWithCurrentInfoResponse(
                 dto.fieldOrder(),
                 dto.nowValue(),
                 dto.changeValue(),
-                dto.changeRateString()
+                dto.changeRateString(),
+                dto.valuation(),
+                dto.unrealizedPL(),
+                dto.realizedPL(),
+                dto.rateOfReturnString()
         );
     }
 }

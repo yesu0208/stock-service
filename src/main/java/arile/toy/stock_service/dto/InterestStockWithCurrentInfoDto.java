@@ -14,6 +14,10 @@ public record InterestStockWithCurrentInfoDto(
         Integer nowValue,
         Integer changeValue,
         String changeRateString,
+        Integer valuation, // 평가금액
+        Integer unrealizedPL, // 평가손익
+        Integer realizedPL, // 실현손익
+        String rateOfReturnString, // 수익률(String)
 
         LocalDateTime createdAt,
         String createdBy,
@@ -33,13 +37,17 @@ public record InterestStockWithCurrentInfoDto(
             Integer nowValue,
             Integer changeValue,
             String changeRateString,
+            Integer valuation,
+            Integer unrealizedPL,
+            Integer realizedPL,
+            String rateOfReturnString,
 
             LocalDateTime createdAt,
             String createdBy,
             LocalDateTime modifiedAt,
             String modifiedBy
     ) {
-        return new InterestStockWithCurrentInfoDto(id, stockName, buyingPrice, numOfStocks,breakEvenPrice,totalBuyingPrice, fieldOrder, nowValue, changeValue, changeRateString, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new InterestStockWithCurrentInfoDto(id, stockName, buyingPrice, numOfStocks,breakEvenPrice,totalBuyingPrice, fieldOrder, nowValue, changeValue, changeRateString, valuation, unrealizedPL, realizedPL, rateOfReturnString, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     // static method (일부)
@@ -53,8 +61,12 @@ public record InterestStockWithCurrentInfoDto(
 
             Integer nowValue,
             Integer changeValue,
-            String changeRateString
+            String changeRateString,
+            Integer valuation,
+            Integer unrealizedPL,
+            Integer realizedPL,
+            String rateOfReturnString
     ) {
-        return new InterestStockWithCurrentInfoDto(null, stockName, buyingPrice, numOfStocks, breakEvenPrice, totalBuyingPrice, fieldOrder, nowValue, changeValue, changeRateString, null, null, null, null);
+        return new InterestStockWithCurrentInfoDto(null, stockName, buyingPrice, numOfStocks, breakEvenPrice, totalBuyingPrice, fieldOrder, nowValue, changeValue, changeRateString, null, null, null, null, null, null, null, null);
     }
 }

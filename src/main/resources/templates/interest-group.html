@@ -44,18 +44,22 @@
             <hr class="mb-4">
 
             <!-- 컬럼 8개: 기존 5 + 현재주가/상승가격/상승률 -->
-            <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1.7fr] gap-4 mb-4">
+            <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1.7fr] gap-4 mb-4">
                 <div class="block text-sm font-medium text-gray-400">종목명</div>
                 <div class="block text-sm font-medium text-gray-400">매입가</div>
                 <div class="block text-sm font-medium text-gray-400">보유수량</div>
                 <div class="block text-sm font-medium text-gray-400">매입금액</div>
+                <div class="block text-sm font-medium text-gray-400">평가금액</div>
+                <div class="block text-sm font-medium text-gray-400">평가손익</div>
+                <div class="block text-sm font-medium text-gray-400">실현손익</div>
+                <div class="block text-sm font-medium text-gray-400">수익률</div>
                 <div class="block text-sm font-medium text-gray-400">손익분기매입가</div>
                 <div class="block text-sm font-medium text-gray-400">현재주가</div>
             </div>
 
             <div id="interest-stock-list">
                 <ul id="stock-list" class="list">
-                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1.7fr] gap-4 mb-4" th:each="item, iterStat : *{interestStocks}">
+                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1.7fr] gap-4 mb-4" th:each="item, iterStat : *{interestStocks}">
                         <div class="flex items-center">
                             <i class="handle fas fa-grip-lines mr-2 cursor-move"></i>
                             <label>
@@ -75,6 +79,30 @@
                             <input type="text"
                                    th:field="*{interestStocks[__${iterStat.index}__].totalBuyingPrice}"
                                    class="total-buying-price-id total-buying-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                   readonly>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="text"
+                                   th:value="${item.valuation}"
+                                   class="valuation-id valuation-name mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                   readonly>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="text"
+                                   th:value="${item.unrealizedPL}"
+                                   class="unrealized-pl-id unrealized-pl-name mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                   readonly>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="text"
+                                   th:value="${item.realizedPL}"
+                                   class="realized-pl-id realized-pl-name mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                   readonly>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="text"
+                                   th:value="${item.rateOfReturnString}"
+                                   class="rate-of-return-id rate-of-return-name mt-1 block w-full border-gray-300 rounded-md shadow-sm"
                                    readonly>
                         </div>
                         <div class="flex items-center">
@@ -129,6 +157,14 @@
             { name: 'num-of-stocks-name', attr: 'name' },
             { name: 'total-buying-price-id', attr: 'id' },
             { name: 'total-buying-price-name', attr: 'name' },
+            { name: 'valuation-id', attr: 'id' },
+            { name: 'valuation-name', attr: 'name' },
+            { name: 'unrealized-pl-id', attr: 'id' },
+            { name: 'unrealized-pl-name', attr: 'name' },
+            { name: 'realized-pl-id', attr: 'id' },
+            { name: 'realized-pl-name', attr: 'name' },
+            { name: 'rate-of-return-id', attr: 'id' },
+            { name: 'rate-of-return-name', attr: 'name' },
             { name: 'break-even-price-id', attr: 'id' },
             { name: 'break-even-price-name', attr: 'name' },
             { name: 'current-price-id', attr: 'id' },
@@ -161,7 +197,7 @@
         const lastRow = interestStockList.items.at(-1).elm;
 
         lastRow.querySelectorAll(
-            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name, .current-price-name, .change-value-name, .change-rate-name'
+            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .valuation-name, .unrealized-pl-name, .realized-pl-name, .rate-of-return-name, .break-even-price-name, .current-price-name, .change-value-name, .change-rate-name'
         ).forEach(input => input.value = '');
 
         const selectBox = lastRow.querySelector('select');
@@ -195,6 +231,16 @@
                 'num-of-stocks-name': `interestStocks[${index}].numOfStocks`,
                 'total-buying-price-id': `interestStocks${index}.totalBuyingPrice`,
                 'total-buying-price-name': `interestStocks[${index}].totalBuyingPrice`,
+
+                'valuation-id': `interestStocks${index}.valuation`,
+                'valuation-name': `interestStocks[${index}].valuation`,
+                'unrealized-pl-id': `interestStocks${index}.unrealizedPL`,
+                'unrealized-pl-name': `interestStocks[${index}].unrealizedPL`,
+                'realized-pl-id': `interestStocks${index}.realizedPL`,
+                'realized-pl-name': `interestStocks[${index}].realizedPL`,
+                'rate-of-return-id': `interestStocks${index}.rateOfReturnString`,
+                'rate-of-return-name': `interestStocks[${index}].rateOfReturnString`,
+
                 'break-even-price-id': `interestStocks${index}.breakEvenPrice`,
                 'break-even-price-name': `interestStocks[${index}].breakEvenPrice`,
                 'current-price-id': `interestStocks${index}.nowValue`,
@@ -210,6 +256,8 @@
         }
         colorChangeValues();
         colorChangeRates();
+        colorRealizedPLValues();
+        colorRateOfReturn();
     }
 
     function formatNumberInput(input) {
@@ -224,7 +272,7 @@
 
     function attachNumberFormatting() {
         const numberFields = document.querySelectorAll(
-            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name, .current-price-name, .change-value-name'
+            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .valuation-name, .unrealized-pl-name, .realized-pl-name, .break-even-price-name, .current-price-name, .change-value-name'
         );
         numberFields.forEach(field => {
             field.addEventListener('input', () => {
@@ -236,6 +284,8 @@
         });
         colorChangeValues();
         colorChangeRates();
+        colorRealizedPLValues();
+        colorRateOfReturn();
     }
 
     function colorChangeValues() {
@@ -265,6 +315,29 @@
         });
     }
 
+
+    function colorRealizedPLValues() {
+        document.querySelectorAll('.realized-pl-name').forEach(el => {
+            const val = parseFloat(el.value.replace(/,/g, ''));
+            if (isNaN(val)) {
+                el.classList.remove('text-red-600', 'text-blue-600', 'text-gray-500');
+                return;
+            }
+            el.classList.remove('text-red-600', 'text-blue-600', 'text-gray-500');
+
+            if (val > 0) {
+                el.classList.add('text-red-600');
+            }
+            else if (val < 0) {
+                el.classList.add('text-blue-600');
+            }
+            else {
+                el.classList.add('text-gray-500');
+            }
+        });
+    }
+
+
     function colorChangeRates() {
     document.querySelectorAll('#stock-list li').forEach(row => {
         const changeRateEl = row.querySelector('.change-rate-name');
@@ -283,6 +356,29 @@
             changeRateEl.classList.add('text-red-600');
         } else {
             changeRateEl.classList.add('text-blue-600');
+        }
+    });
+}
+
+
+    function colorRateOfReturn() {
+    document.querySelectorAll('#stock-list li').forEach(row => {
+        const realizedPLEl = row.querySelector('.realized-pl-name');
+        const rateOfReturnEl = row.querySelector('.rate-of-return-name');
+
+        if (!realizedPLEl || !rateOfReturnEl) return;
+
+        let val = parseFloat(realizedPLEl.value.replace(/,/g, ''));
+
+        // 먼저 색상 초기화
+        rateOfReturnEl.classList.remove('text-red-600', 'text-blue-600', 'text-gray-500');
+
+        if (isNaN(val) || val === 0) {
+            rateOfReturnEl.classList.add('text-gray-500');
+        } else if (val > 0) {
+            rateOfReturnEl.classList.add('text-red-600');
+        } else {
+            rateOfReturnEl.classList.add('text-blue-600');
         }
     });
 }
