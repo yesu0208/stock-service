@@ -32,6 +32,16 @@
         .grid > div {
             text-align: center;
         }
+        #stockModal .bg-white {
+    width: 400px; /* 원하는 너비로 설정 */
+    height: 450px; /* 원하는 높이로 설정 */
+}
+        #closeStockModal {
+    position: absolute;
+    bottom: 170px; /* 아래쪽 여백을 설정 */
+    left: 50%;
+    transform: translateX(-50%); /* 가운데 정렬 */
+}
     </style>
 </head>
 <body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen dark:bg-gray-900 dark:text-gray-100">
@@ -224,6 +234,8 @@
 <div id="stockModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
     <div class="bg-white dark:bg-gray-800 rounded-lg w-96 p-6">
         <h2 class="text-lg font-bold mb-4 dark:text-gray-100">종목 선택</h2>
+        <!-- 검색 입력란 -->
+        <input type="text" id="stockSearch" placeholder="검색..." class="mb-4 w-full p-2 border rounded-md dark:bg-gray-700 dark:text-gray-100">
         <ul id="stockListModal" class="max-h-60 overflow-y-auto space-y-2">
             <li th:each="name : ${stockNames}"
                 class="cursor-pointer hover:bg-sky-100 dark:hover:bg-gray-700 p-2 rounded"
@@ -563,26 +575,45 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const modal = document.getElementById('stockModal');
-        const closeBtn = document.getElementById('closeStockModal');
-        const stockItems = document.querySelectorAll('#stockListModal li');
+    const modal = document.getElementById('stockModal');
+    const closeBtn = document.getElementById('closeStockModal');
+    const stockItems = document.querySelectorAll('#stockListModal li');
+    const searchInput = document.getElementById('stockSearch');  // 검색 입력 필드
 
-
-        stockItems.forEach(li => {
-            li.addEventListener('click', () => {
-                if (window.currentStockBtn) {
-                    window.currentStockBtn.querySelector('span').textContent = li.dataset.value;
-                    const hiddenInput = window.currentStockBtn.parentElement.querySelector('.stock-name-value');
-                    hiddenInput.value = li.dataset.value;
-                }
-                modal.classList.add('hidden');
-            });
+    // 종목 클릭 시 선택 처리
+    stockItems.forEach(li => {
+        li.addEventListener('click', () => {
+            if (window.currentStockBtn) {
+                window.currentStockBtn.querySelector('span').textContent = li.dataset.value;
+                const hiddenInput = window.currentStockBtn.parentElement.querySelector('.stock-name-value');
+                hiddenInput.value = li.dataset.value;
+            }
+            modal.classList.add('hidden');
         });
-
-        closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
-
-        document.querySelectorAll('.stock-name-btn').forEach(enrollStockBtnEvent);
     });
+
+    // 모달 닫기
+    closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+
+    // 검색 기능 추가
+    searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.toLowerCase();
+
+        stockItems.forEach(item => {
+            const stockName = item.textContent.toLowerCase();
+            if (stockName.includes(searchTerm)) {
+                item.style.display = 'block'; // 검색어와 일치하면 표시
+            } else {
+                item.style.display = 'none'; // 일치하지 않으면 숨김
+            }
+        });
+    });
+
+    // 종목 버튼 클릭 이벤트 등록
+    document.querySelectorAll('.stock-name-btn').forEach(enrollStockBtnEvent);
+});
+
+
 
 document.getElementById('add-row').addEventListener('click', () => {
     const stockList = document.getElementById('stock-list');
