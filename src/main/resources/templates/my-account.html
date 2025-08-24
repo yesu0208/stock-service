@@ -24,6 +24,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
 <body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen dark:bg-gray-900 dark:text-gray-100">
+<!-- 로딩 화면 -->
+<div id="loading-screen" class="fixed inset-0 bg-white dark:bg-gray-900 flex flex-col items-center justify-center z-50 space-y-4">
+    <!-- 회전하는 동그라미 -->
+    <div class="w-12 h-12 border-4 border-gray-300 border-t-sky-600 rounded-full animate-spin"></div>
+
+    <!-- 깜빡이는 텍스트 -->
+    <div class="text-gray-800 dark:text-gray-100 text-xl font-bold animate-pulse">
+        잠시만 기다려주세요...
+    </div>
+</div>
 
 <header class="bg-white shadow dark:bg-gray-800 dark:text-gray-100">
     <div class="container mx-auto px-4 py-6 flex justify-between items-center">
@@ -118,6 +128,16 @@
       localStorage.setItem("theme", isDark ? "dark" : "light");
       icon.classList.toggle("fa-moon", !isDark);
       icon.classList.toggle("fa-sun", isDark);
+    });
+</script>
+<script>
+    window.addEventListener('load', () => {
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.style.transition = "opacity 0.5s";
+        loadingScreen.style.opacity = 0;
+        setTimeout(() => loadingScreen.remove(), 500);
+      }
     });
 </script>
 </body>
