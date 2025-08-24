@@ -30,8 +30,8 @@
           text-align: center;
         }
         .grid > div {
-    text-align: center;
-  }
+            text-align: center;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen dark:bg-gray-900 dark:text-gray-100">
@@ -45,7 +45,6 @@
         잠시만 기다려주세요...
     </div>
 </div>
-
 <header class="bg-white shadow dark:bg-gray-800 dark:text-gray-100">
     <div class="container mx-auto px-4 py-6 flex justify-between items-center">
         <a th:href="@{/}" class="text-2xl font-bold text-sky-600">주식 관심종목 저장소</a>
@@ -120,18 +119,13 @@
                         class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1.5fr_50px] gap-4 mb-4 bg-white dark:bg-gray-900"
                         th:each="item, iterStat : *{interestStocks}">
 
-                        <!-- 종목명 -->
+                        <!-- 종목명 (버튼+모달 선택) -->
                         <div class="flex items-center">
                             <i class="handle fas fa-grip-lines mr-2 cursor-move"></i>
-                            <label>
-                                <select th:field="*{interestStocks[__${iterStat.index}__].stockName}"
-                                        class="stock-name-id stock-name-name mt-1 block w-full border-gray-300 rounded-md shadow-sm
-                                   dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
-                                        required>
-                                    <option value="" disabled selected>-- 종목선택 --</option>
-                                    <option th:each="type : ${stockNames}" th:value="${type}" th:text="${type}">Type</option>
-                                </select>
-                            </label>
+                            <button type="button" class="stock-name-btn mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100">
+                                <span th:text="${item.stockName} ?: '-- 종목 선택 --'">-- 종목 선택 --</span>
+                            </button>
+                            <input type="hidden" th:field="*{interestStocks[__${iterStat.index}__].stockName}" class="stock-name-value">
                         </div>
 
                         <!-- 매입가 -->
@@ -226,6 +220,21 @@
     </form>
 </main>
 
+<!-- 모달 HTML -->
+<div id="stockModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white dark:bg-gray-800 rounded-lg w-96 p-6">
+        <h2 class="text-lg font-bold mb-4 dark:text-gray-100">종목 선택</h2>
+        <ul id="stockListModal" class="max-h-60 overflow-y-auto space-y-2">
+            <li th:each="name : ${stockNames}"
+                class="cursor-pointer hover:bg-sky-100 dark:hover:bg-gray-700 p-2 rounded"
+                th:data-value="${name}"
+                th:text="${name}">
+            </li>
+        </ul>
+        <button id="closeStockModal" class="mt-4 bg-gray-300 dark:bg-gray-700 px-4 py-2 rounded">닫기</button>
+    </div>
+</div>
+
 <footer class="bg-white shadow w-full mt-auto dark:bg-gray-800 dark:text-gray-400">
     <div class="container mx-auto px-4 py-6 text-center text-gray-600 dark:text-gray-300" >
         © 2025 Arile, Inc
@@ -236,8 +245,7 @@
     const interestStockList = new List('interest-stock-list', {
         valueNames: [
             { data: ['id'] },
-            { name: 'stock-name-id', attr: 'id' },
-            { name: 'stock-name-name', attr: 'name' },
+            { name: 'stock-name-value', attr: 'value' },
             { name: 'buying-price-id', attr: 'id' },
             { name: 'buying-price-name', attr: 'name' },
             { name: 'num-of-stocks-id', attr: 'id' },
@@ -279,39 +287,52 @@
 
     interestStockList.on('updated', list => resetData(list));
 
-    document.getElementById('add-row').addEventListener('click', () => {
-        interestStockList.add({});
-        const lastRow = interestStockList.items.at(-1).elm;
+<!--    document.getElementById('add-row').addEventListener('click', () => {-->
+<!--        interestStockList.add({});-->
+<!--        const lastRow = interestStockList.items.at(-1).elm;-->
 
-        lastRow.querySelectorAll(
-            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .valuation-name, .unrealized-pl-name, .realized-pl-name, .rate-of-return-name, .break-even-price-name, .current-price-name, .change-value-name, .change-rate-name'
-        ).forEach(input => input.value = '');
+<!--        lastRow.querySelectorAll(-->
+<!--            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .valuation-name, .unrealized-pl-name, .realized-pl-name, .rate-of-return-name, .break-even-price-name, .current-price-name, .change-value-name, .change-rate-name'-->
+<!--        ).forEach(input => input.value = '');-->
 
-        const selectBox = lastRow.querySelector('select');
-        if (selectBox) selectBox.selectedIndex = 0;
+<!--        const selectBox = lastRow.querySelector('select');-->
+<!--        if (selectBox) selectBox.selectedIndex = 0;-->
 
-        enrollDeleteRowEvent(lastRow.querySelector('.delete-row'), interestStockList);
-        attachNumberFormatting();
+<!--        enrollDeleteRowEvent(lastRow.querySelector('.delete-row'), interestStockList);-->
+<!--        attachNumberFormatting();-->
 
-        document.getElementById('form-error').classList.add('hidden');
-    });
+<!--        document.getElementById('form-error').classList.add('hidden');-->
+<!--    });-->
 
     function enrollDeleteRowEvent(btn, list) {
-        btn.addEventListener('click', e => {
-            const parentList = e.target.closest('li');
-            const fieldOrderInput = parentList.querySelector('.field-order-value');
-            if (fieldOrderInput) list.remove('field-order-value', fieldOrderInput.value);
-            parentList.remove();
-        });
-    }
+    btn.addEventListener('click', e => {
+        const stockList = document.querySelectorAll('#stock-list li');
+
+        // 최소 1개 행은 유지해야 함
+        if (stockList.length <= 1) {
+            const formError = document.getElementById("form-error");
+            formError.classList.remove("hidden");
+            formError.innerText = "❗ 최소 1개 이상의 종목은 유지해야 합니다.";
+            return;
+        }
+
+        // 실제 삭제 처리
+        const parentList = e.target.closest('li');
+        const fieldOrderInput = parentList.querySelector('.field-order-value');
+        if (fieldOrderInput) list.remove('field-order-value', fieldOrderInput.value);
+        parentList.remove();
+
+        // 삭제 후 reIndex
+        resetData(list);
+    });
+}
 
     function resetData(list) {
         list.reIndex();
         for (const [index, item] of list.items.entries()) {
             item.values({
                 'id': index + 1,
-                'stock-name-id': `interestStocks${index}.stockName`,
-                'stock-name-name': `interestStocks[${index}].stockName`,
+                'stock-name-value': item.elm.querySelector('.stock-name-value').value,
                 'buying-price-id': `interestStocks${index}.buyingPrice`,
                 'buying-price-name': `interestStocks[${index}].buyingPrice`,
                 'num-of-stocks-id': `interestStocks${index}.numOfStocks`,
@@ -340,6 +361,11 @@
                 'field-order-name': `interestStocks[${index}].fieldOrder`,
                 'field-order-value': index + 1,
             });
+            const stockInput = item.elm.querySelector('.stock-name-value');
+            if (stockInput) {
+                stockInput.name = `interestStocks[${index}].stockName`;
+                stockInput.id   = `interestStocks${index}.stockName`;
+            }
         }
         colorChangeValues();
         colorChangeRates();
@@ -478,27 +504,32 @@
 }
 
     document.addEventListener('DOMContentLoaded', () => {
-        attachNumberFormatting();
-        const form = document.querySelector('form[name="interest-group-form"]');
-        if (form) {
-            form.addEventListener('submit', (e) => {
-                const stockRows = document.querySelectorAll('#stock-list li');
-                const errorBox = document.getElementById('form-error');
-                if (stockRows.length === 0) {
+    attachNumberFormatting();
+    const form = document.querySelector('form[name="interest-group-form"]');
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            const stockValues = document.querySelectorAll('#stock-list li .stock-name-value');
+            const errorBox = document.getElementById('form-error');
+
+            // 종목 선택 여부 체크
+            for (const input of stockValues) {
+                if (!input.value) {
                     e.preventDefault();
+                    errorBox.textContent = '❗ 종목을 선택해야 합니다.';
                     errorBox.classList.remove('hidden');
                     return;
-                } else {
-                    errorBox.classList.add('hidden');
                 }
+            }
+            errorBox.classList.add('hidden');
 
-                const numberFields = document.querySelectorAll(
-                    '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name'
-                );
-                numberFields.forEach(field => field.value = field.value.replace(/,/g, ''));
-            });
-        }
-    });
+            // 숫자 필드 콤마 제거
+            const numberFields = document.querySelectorAll(
+                '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .break-even-price-name'
+            );
+            numberFields.forEach(field => field.value = field.value.replace(/,/g, ''));
+        });
+    }
+});
 </script>
 
 <script>
@@ -518,6 +549,111 @@
       icon.classList.toggle("fa-moon", !isDark);
       icon.classList.toggle("fa-sun", isDark);
     });
+</script>
+
+<script>
+    // 모달 종목 선택 기능
+    function openStockModal(btn) {
+        window.currentStockBtn = btn;
+        document.getElementById('stockModal').classList.remove('hidden');
+    }
+
+    function enrollStockBtnEvent(btn) {
+        btn.addEventListener('click', () => openStockModal(btn));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('stockModal');
+        const closeBtn = document.getElementById('closeStockModal');
+        const stockItems = document.querySelectorAll('#stockListModal li');
+
+
+        stockItems.forEach(li => {
+            li.addEventListener('click', () => {
+                if (window.currentStockBtn) {
+                    window.currentStockBtn.querySelector('span').textContent = li.dataset.value;
+                    const hiddenInput = window.currentStockBtn.parentElement.querySelector('.stock-name-value');
+                    hiddenInput.value = li.dataset.value;
+                }
+                modal.classList.add('hidden');
+            });
+        });
+
+        closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+
+        document.querySelectorAll('.stock-name-btn').forEach(enrollStockBtnEvent);
+    });
+
+document.getElementById('add-row').addEventListener('click', () => {
+    const stockList = document.getElementById('stock-list');
+    const firstRow = stockList.querySelector('li');
+    const newRow = firstRow.cloneNode(true);
+
+    // 모든 input 초기화
+    newRow.querySelectorAll('input').forEach(input => input.value = '');
+
+    // 종목 버튼 초기화
+    const stockBtn = newRow.querySelector('.stock-name-btn');
+    stockBtn.querySelector('span').textContent = '-- 종목 선택 --';
+
+    // 새 index 계산
+    const index = stockList.children.length;
+
+    // 모든 input의 name/id/value 갱신
+    newRow.querySelectorAll('input').forEach(input => {
+        if (input.classList.contains('stock-name-value')) {
+            input.name = `interestStocks[${index}].stockName`;
+            input.id = `interestStocks${index}.stockName`;
+        } else if (input.classList.contains('buying-price-name')) {
+            input.name = `interestStocks[${index}].buyingPrice`;
+            input.id = `interestStocks${index}.buyingPrice`;
+        } else if (input.classList.contains('num-of-stocks-name')) {
+            input.name = `interestStocks[${index}].numOfStocks`;
+            input.id = `interestStocks${index}.numOfStocks`;
+        } else if (input.classList.contains('total-buying-price-name')) {
+            input.name = `interestStocks[${index}].totalBuyingPrice`;
+            input.id = `interestStocks${index}.totalBuyingPrice`;
+        } else if (input.classList.contains('valuation-name')) {
+            input.name = `interestStocks[${index}].valuation`;
+            input.id = `interestStocks${index}.valuation`;
+        } else if (input.classList.contains('unrealized-pl-name')) {
+            input.name = `interestStocks[${index}].unrealizedPL`;
+            input.id = `interestStocks${index}.unrealizedPL`;
+        } else if (input.classList.contains('realized-pl-name')) {
+            input.name = `interestStocks[${index}].realizedPL`;
+            input.id = `interestStocks${index}.realizedPL`;
+        } else if (input.classList.contains('rate-of-return-name')) {
+            input.name = `interestStocks[${index}].rateOfReturnString`;
+            input.id = `interestStocks${index}.rateOfReturnString`;
+        } else if (input.classList.contains('break-even-price-name')) {
+            input.name = `interestStocks[${index}].breakEvenPrice`;
+            input.id = `interestStocks${index}.breakEvenPrice`;
+        } else if (input.classList.contains('current-price-name')) {
+            input.name = `interestStocks[${index}].nowValue`;
+            input.id = `interestStocks${index}.nowValue`;
+        } else if (input.classList.contains('change-value-name')) {
+            input.name = `interestStocks[${index}].changeValue`;
+            input.id = `interestStocks${index}.changeValue`;
+        } else if (input.classList.contains('change-rate-name')) {
+            input.name = `interestStocks[${index}].changeRateString`;
+            input.id = `interestStocks${index}.changeRateString`;
+        } else if (input.classList.contains('field-order-value')) {
+            input.name = `interestStocks[${index}].fieldOrder`;
+            input.id = `interestStocks${index}.fieldOrder`;
+            input.value = index + 1;
+        }
+    });
+
+    // delete 버튼 & 모달 이벤트 등록
+    enrollStockBtnEvent(stockBtn);
+    enrollDeleteRowEvent(newRow.querySelector('.delete-row'), interestStockList);
+
+    stockList.appendChild(newRow);
+
+    // List.js 인덱스 재설정
+    resetData(interestStockList);
+    attachNumberFormatting();
+});
 </script>
 <script>
     window.addEventListener('load', () => {
