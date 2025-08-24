@@ -24,6 +24,15 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        #stock-list input,
+        #stock-list select {
+          text-align: center;
+        }
+        .grid > div {
+    text-align: center;
+  }
+    </style>
 </head>
 <body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen dark:bg-gray-900 dark:text-gray-100">
 
@@ -77,92 +86,126 @@
 
             <hr class="mb-4 border-gray-200 dark:border-gray-700">
 
-            <!-- 컬럼 8개: 기존 5 + 현재주가/상승가격/상승률 -->
-            <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1.7fr] gap-4 mb-4">
+            <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1.5fr_50px] gap-4 mb-4">
                 <div class="block text-sm font-medium text-gray-400 dark:text-gray-300">종목명</div>
                 <div class="block text-sm font-medium text-gray-400 dark:text-gray-300">매입가</div>
                 <div class="block text-sm font-medium text-gray-400 dark:text-gray-300">보유수량</div>
-                <div class="block text-sm font-medium text-gray-400 dark:text-gray-300">매입금액</div>
-                <div class="block text-sm font-medium text-gray-400 dark:text-gray-300">평가금액</div>
+                <div class="flex flex-col text-sm font-medium text-gray-400 dark:text-gray-300">
+                    <span>매입금액</span>
+                    <span>평가금액</span>
+                </div>
                 <div class="block text-sm font-medium text-gray-400 dark:text-gray-300">평가손익</div>
-                <div class="block text-sm font-medium text-gray-400 dark:text-gray-300">실현손익</div>
-                <div class="block text-sm font-medium text-gray-400 dark:text-gray-300">수익률</div>
+                <div class="flex flex-col text-sm font-medium text-gray-400 dark:text-gray-300">
+                    <span>실현손익</span>
+                    <span>수익률</span>
+                </div>
                 <div class="block text-sm font-medium text-gray-400 dark:text-gray-300">손익분기매입가</div>
                 <div class="block text-sm font-medium text-gray-400 dark:text-gray-300">현재주가</div>
+                <div class="block text-sm font-medium text-gray-400 dark:text-gray-300"></div>
             </div>
 
             <div id="interest-stock-list">
                 <ul id="stock-list" class="list bg-white dark:bg-gray-900">
-                    <li th:data-id="${iterStat.index + 1}" class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1.7fr] gap-4 mb-4 bg-white dark:bg-gray-900" th:each="item, iterStat : *{interestStocks}">
+                    <li th:data-id="${iterStat.index + 1}"
+                        class="grid grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_1.5fr_50px] gap-4 mb-4 bg-white dark:bg-gray-900"
+                        th:each="item, iterStat : *{interestStocks}">
+
+                        <!-- 종목명 -->
                         <div class="flex items-center">
                             <i class="handle fas fa-grip-lines mr-2 cursor-move"></i>
                             <label>
-                                <select th:field="*{interestStocks[__${iterStat.index}__].stockName}" class="stock-name-id stock-name-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" required>
+                                <select th:field="*{interestStocks[__${iterStat.index}__].stockName}"
+                                        class="stock-name-id stock-name-name mt-1 block w-full border-gray-300 rounded-md shadow-sm
+                                   dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
+                                        required>
                                     <option value="" disabled selected>-- 종목선택 --</option>
                                     <option th:each="type : ${stockNames}" th:value="${type}" th:text="${type}">Type</option>
                                 </select>
                             </label>
                         </div>
+
+                        <!-- 매입가 -->
                         <div class="flex items-center">
-                            <input type="text" th:field="*{interestStocks[__${iterStat.index}__].buyingPrice}" class="buying-price-id buying-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100">
+                            <input type="text" th:field="*{interestStocks[__${iterStat.index}__].buyingPrice}"
+                                   class="buying-price-id buying-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm
+                              dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100">
                         </div>
+
+                        <!-- 보유수량 -->
                         <div class="flex items-center">
-                            <input type="text" th:field="*{interestStocks[__${iterStat.index}__].numOfStocks}" class="num-of-stocks-id num-of-stocks-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100">
+                            <input type="text" th:field="*{interestStocks[__${iterStat.index}__].numOfStocks}"
+                                   class="num-of-stocks-id num-of-stocks-name mt-1 block w-full border-gray-300 rounded-md shadow-sm
+                              dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100">
                         </div>
+
+                        <!-- 매입금액 + 평가금액 -->
+                        <div class="flex flex-col space-y-1">
+                            <input type="text" th:field="*{interestStocks[__${iterStat.index}__].totalBuyingPrice}"
+                                   class="total-buying-price-id total-buying-price-name block w-full border-gray-300 rounded-md shadow-sm
+                              dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" readonly>
+                            <input type="text" th:value="${item.valuation}"
+                                   class="valuation-id valuation-name block w-full border-gray-300 rounded-md shadow-sm
+                              dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" readonly>
+                        </div>
+
+                        <!-- 평가손익 -->
                         <div class="flex items-center">
-                            <input type="text"
-                                   th:field="*{interestStocks[__${iterStat.index}__].totalBuyingPrice}"
-                                   class="total-buying-price-id total-buying-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
-                                   readonly>
+                            <input type="text" th:value="${item.unrealizedPL}"
+                                   class="unrealized-pl-id unrealized-pl-name mt-1 block w-full border-gray-300 rounded-md shadow-sm
+                              dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" readonly>
                         </div>
+
+                        <!-- 실현손익 + 수익률 -->
+                        <div class="flex flex-col space-y-1">
+                            <input type="text" th:value="${item.realizedPL}"
+                                   class="realized-pl-id realized-pl-name block w-full border-gray-300 rounded-md shadow-sm
+                              dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" readonly>
+                            <input type="text" th:value="${item.rateOfReturnString}"
+                                   class="rate-of-return-id rate-of-return-name block w-full border-gray-300 rounded-md shadow-sm
+                              dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" readonly>
+                        </div>
+
+                        <!-- 손익분기매입가 -->
                         <div class="flex items-center">
-                            <input type="text"
-                                   th:value="${item.valuation}"
-                                   class="valuation-id valuation-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
-                                   readonly>
+                            <input type="text" th:field="*{interestStocks[__${iterStat.index}__].breakEvenPrice}"
+                                   class="break-even-price-id break-even-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm
+                              dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" readonly>
                         </div>
-                        <div class="flex items-center">
-                            <input type="text"
-                                   th:value="${item.unrealizedPL}"
-                                   class="unrealized-pl-id unrealized-pl-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
-                                   readonly>
+
+                        <!-- 현재주가 / 상승가 / 상승률 세로 배치 -->
+                        <div class="flex flex-col space-y-1 relative">
+                            <!-- 위: 현재주가 -->
+                            <div class="flex items-center">
+                                <input type="text"
+                                       th:value="${item.nowValue}"
+                                       class="current-price-id current-price-name block w-full border-gray-300 rounded-md shadow-sm
+                      dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
+                                       readonly>
+                            </div>
+
+                            <!-- 아래: 상승가 + 상승률 -->
+                            <div class="flex items-center space-x-2">
+                                <span class="change-icon w-4 text-center"></span>
+                                <input type="text"
+                                       th:value="${item.changeValue}"
+                                       class="change-value-id change-value-name block w-1/2 border-gray-300 rounded-md shadow-sm
+                      dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
+                                       readonly>
+                                <input type="text"
+                                       th:value="${item.changeRateString}"
+                                       class="change-rate-id change-rate-name block w-1/2 border-gray-300 rounded-md shadow-sm
+                      dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
+                                       readonly>
+                            </div>
                         </div>
-                        <div class="flex items-center">
-                            <input type="text"
-                                   th:value="${item.realizedPL}"
-                                   class="realized-pl-id realized-pl-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
-                                   readonly>
-                        </div>
-                        <div class="flex items-center">
-                            <input type="text"
-                                   th:value="${item.rateOfReturnString}"
-                                   class="rate-of-return-id rate-of-return-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
-                                   readonly>
-                        </div>
-                        <div class="flex items-center">
-                            <input type="text"
-                                   th:field="*{interestStocks[__${iterStat.index}__].breakEvenPrice}"
-                                   class="break-even-price-id break-even-price-name mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
-                                   readonly>
-                        </div>
-                        <!-- 현재주가 / 상승가 / 상승률 -->
-                        <div class="flex items-center space-x-2">
-                            <input type="text"
-                                   th:value="${item.nowValue}"
-                                   class="current-price-id current-price-name mt-1 block w-1/3 border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
-                                   readonly>
-                            <span class="change-icon w-4 text-center"></span>
-                            <input type="text"
-                                   th:value="${item.changeValue}"
-                                   class="change-value-id change-value-name mt-1 block w-1/3 border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
-                                   readonly>
-                            <input type="text"
-                                   th:value="${item.changeRateString}"
-                                   class="change-rate-id change-rate-name mt-1 block w-1/3 border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100"
-                                   readonly>
+
+                        <!-- 삭제 버튼 전용 칸 -->
+                        <div class="flex items-center justify-center">
                             <i class="delete-row fas fa-trash ml-2 cursor-pointer"></i>
                         </div>
-                        <input type="hidden" th:field="*{interestStocks[__${iterStat.index}__].fieldOrder}" class="field-order-id field-order-name field-order-value">
+
+                        <input type="hidden" th:field="*{interestStocks[__${iterStat.index}__].fieldOrder}"
+                               class="field-order-id field-order-name field-order-value">
                     </li>
                 </ul>
             </div>
