@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class InterestGroupService {
 
     private final InterestGroupRepository interestGroupRepository;
-    private final CurrentStockInfoService currentStockInfoService;
+    private final InterestStockCurrentInfoService interestStockCurrentInfoService;
 
     @Transactional(readOnly = true)
     public List<InterestGroupDto> loadMyGroups(String userId) {
@@ -41,7 +41,7 @@ public class InterestGroupService {
 
         var interestStockWithCurrentInfoDtos = interestGroupDto.interestStocks()
                 .stream()
-                .map(currentStockInfoService::getCurrentStockInfo)
+                .map(interestStockCurrentInfoService::getInterestStockSimpleCurrentInfo)
                 .collect(Collectors.toUnmodifiableSet());
 
         InterestGroupWithCurrentInfoDto response = new InterestGroupWithCurrentInfoDto(

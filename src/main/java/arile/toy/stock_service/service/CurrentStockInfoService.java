@@ -1,8 +1,7 @@
 package arile.toy.stock_service.service;
 
 import arile.toy.stock_service.domain.naverstock.NaverStockResponse;
-import arile.toy.stock_service.dto.InterestStockDto;
-import arile.toy.stock_service.dto.InterestStockWithCurrentInfoDto;
+import arile.toy.stock_service.dto.CurrentStockInfoDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +9,9 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 
 @RequiredArgsConstructor
@@ -19,9 +21,9 @@ public class CurrentStockInfoService {
     private final RestClient restClient = RestClient.create();
     private final StockInfoService stockInfoService;
 
-    public InterestStockWithCurrentInfoDto getCurrentStockInfo(InterestStockDto dto) {
+    public CurrentStockInfoDto getCurrentStockInfo(String stockName) {
 
-        String shortCode = stockInfoService.loadShortCodeByStockName(dto.stockName());
+        String shortCode = stockInfoService.loadShortCodeByStockName(stockName);
 
         String stringResponse = restClient
                 .get()
@@ -41,51 +43,60 @@ public class CurrentStockInfoService {
             throw new RuntimeException(e); // 추후 예외 추가
         }
 
-        // rf(rise or fall)에 따라서 cv(change value)의 부호 변환
-        String riseOrFall = response.result().areas().getFirst().datas().getFirst().rf();
-        Integer changeValue = response.result().areas().getFirst().datas().getFirst().cv();
-        Double changeRate = response.result().areas().getFirst().datas().getFirst().cr();
-        Integer nowValue = response.result().areas().getFirst().datas().getFirst().nv();
 
+        // response로부터 data 추출
+        var stockData = response.result().areas().getFirst().datas().getFirst();
+
+        String marketState = stockData.ms();
+        String marketType = stockData.mt();
+        Integer nowValue = stockData.nv();
+        Integer changeValue = stockData.cv();
+        Double changeRate = stockData.cr();
+        String riseOrFall = stockData.rf();
+        Integer highestValue = stockData.hv();
+        Integer lowestValue = stockData.lv();
+        Integer upperLimit = stockData.ul();
+        Integer lowerLimit = stockData.ll();
+        Integer openValue = stockData.ov();
+        Integer standardValue = stockData.sv();
+        Long transactionVolume = stockData.aq();
+        Long transactionValue = stockData.aa();
+        Long unixTimeMs = response.result().time();
+        LocalDateTime time = unixTimeMsToLocalDateTime(unixTimeMs);
+
+
+
+        // rf(rise or fall)에 따라서 cv(change value)의 부호 변환
         changeValue = (Objects.equals(riseOrFall, "1") || Objects.equals(riseOrFall, "2")) ? changeValue : -changeValue;
         changeRate = (Objects.equals(riseOrFall, "1") || Objects.equals(riseOrFall, "2")) ? changeRate : -changeRate;
-        String changeRateString = String.format("(%.2f%%)", changeRate);
 
-        Integer valuation = null;
-        if (dto.numOfStocks() != null) {
-            valuation = nowValue * dto.numOfStocks();
-        }
 
-        Integer unrealizedPL = null;
-        Integer realizedPL = null;
-        Double rateOfReturn = null;
-        String rateOfReturnString = null;
-        if (dto.buyingPrice() != null && dto.numOfStocks() != null) {
-            unrealizedPL = (nowValue - dto.buyingPrice()) * dto.numOfStocks();
-            realizedPL = unrealizedPL - (int) Math.round(dto.buyingPrice() * dto.numOfStocks() * 0.002);
-            rateOfReturn = ((double) realizedPL / ((double) dto.buyingPrice() * dto.numOfStocks())) * 100;
-            rateOfReturnString = String.format("(%.2f%%)", rateOfReturn);
-        }
-
-        return InterestStockWithCurrentInfoDto.of(
-                dto.id(),
-                dto.stockName(),
-                dto.buyingPrice(),
-                dto.numOfStocks(),
-                dto.breakEvenPrice(),
-                dto.totalBuyingPrice(),
-                dto.fieldOrder(),
+        return CurrentStockInfoDto.of(
+                shortCode,
+                stockName,
+                marketState,
+                marketType,
                 nowValue,
                 changeValue,
-                changeRateString,
-                valuation,
-                unrealizedPL,
-                realizedPL,
-                rateOfReturnString,
-                dto.createdAt(),
-                dto.createdBy(),
-                dto.createdAt(),
-                dto.modifiedBy()
+                changeRate,
+                riseOrFall,
+                highestValue,
+                lowestValue,
+                upperLimit,
+                lowerLimit,
+                openValue,
+                standardValue,
+                transactionVolume,
+                transactionValue,
+                time
         );
     }
+
+    public LocalDateTime unixTimeMsToLocalDateTime(Long unixTimeMs) {
+
+        return Instant.ofEpochMilli(unixTimeMs)
+                .atZone(ZoneId.systemDefault()) // 현재 JVM 기본 타임존 (한국이면 Asia/Seoul)
+                .toLocalDateTime();
+    }
+
 }
