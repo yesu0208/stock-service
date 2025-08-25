@@ -14,12 +14,12 @@ import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
-public class CurrentStockInfoService {
+public class InterestStockCurrentInfoService {
 
     private final RestClient restClient = RestClient.create();
     private final StockInfoService stockInfoService;
 
-    public InterestStockWithCurrentInfoDto getCurrentStockInfo(InterestStockDto dto) {
+    public InterestStockWithCurrentInfoDto getInterestStockSimpleCurrentInfo(InterestStockDto dto) {
 
         String shortCode = stockInfoService.loadShortCodeByStockName(dto.stockName());
 
