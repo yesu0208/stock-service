@@ -25,7 +25,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/",
-                                "interest-group"
+                                "interest-group",
+                                "stocks/**"
                         ).permitAll() // 해당 정보는 허용
                         .anyRequest().authenticated() // 나머지는 인증 필요
                 )
