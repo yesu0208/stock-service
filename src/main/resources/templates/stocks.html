@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주식 관심종목 저장소 - 주식 정보</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          darkMode: 'class'
+        }
+    </script>
+    <script>
+        (function() {
+          const theme = localStorage.getItem('theme');
+          if (theme === 'dark' ||
+              (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        })();
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen dark:bg-gray-900 dark:text-gray-100">
+<!-- 로딩 화면 -->
+<div id="loading-screen" class="fixed inset-0 bg-white dark:bg-gray-900 flex flex-col items-center justify-center z-50 space-y-4">
+    <div class="w-12 h-12 border-4 border-gray-300 border-t-sky-600 rounded-full animate-spin"></div>
+    <div class="text-gray-800 dark:text-gray-100 text-xl font-bold animate-pulse">
+        잠시만 기다려주세요...
+    </div>
+</div>
+
+<header class="bg-white shadow dark:bg-gray-800 dark:text-gray-100">
+    <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+        <a th:href="@{/}" class="text-2xl font-bold text-sky-600">주식 관심종목 저장소</a>
+        <nav class="ml-auto flex items-center space-x-4">
+            <a th:href="@{/stocks}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                종목 정보
+            </a>
+            <a th:href="@{/interest-group/my-groups}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                내 관심그룹
+            </a>
+            <a th:href="@{/my-account}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                내 정보
+            </a>
+            <a th:href="@{/oauth2/authorization/github}" sec:authorize="!isAuthenticated()"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                <i class="fab fa-github"></i> 로그인
+            </a>
+            <a th:href="@{/logout}" sec:authorize="isAuthenticated()"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                <span sec:authentication="principal.name"
+                      class="text-gray-400 dark:text-gray-300 text-sm mx-1">username</span>
+                로그아웃
+            </a>
+            <button id="darkModeToggle"
+                    class="ml-4 text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                <i id="darkModeIcon" class="fas fa-moon"></i>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container mx-auto px-4 py-8 flex-grow">
+    <section class="mb-8 bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+        <h1 class="text-4xl font-bold text-gray-800 mb-6 text-left dark:text-gray-100">
+            종목 정보
+        </h1>
+    </section>
+
+    <!-- 주식 정보 선택 영역 -->
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-4xl mx-auto flex flex-col items-center space-y-4"> <!-- mx-auto 추가 -->
+        <!-- 종목 선택 텍스트 -->
+        <div class="w-full mb-2">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">실시간 종목 정보 (KRX)</h2>
+        </div>
+
+        <!-- 모달 트리거 및 버튼 -->
+        <button id="modalOpenBtn" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 mt-4">
+            종목 선택
+        </button>
+
+        <!-- 모달 팝업 -->
+        <div id="stockModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg w-[400px] h-[470px] overflow-y-auto">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">종목을 선택하세요</h3>
+
+                <!-- 검색 입력 필드 -->
+                <input type="text" id="searchInput"
+                       class="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2
+                      focus:outline-none focus:ring-2 focus:ring-blue-500
+                      dark:bg-gray-700 dark:text-gray-100 mb-4"
+                       placeholder="검색..." />
+
+                <!-- 종목 선택 목록 (스크롤 가능) -->
+                <ul id="modalStockList" class="max-h-60 overflow-y-auto space-y-2">
+                    <li th:each="name : ${stockNames}"
+                        th:data-value="${name}"
+                        th:text="${name}"
+                        class="cursor-pointer hover:bg-sky-100 dark:hover:bg-gray-700 p-2 rounded">
+                    </li>
+                </ul>
+
+                <!-- 닫기 버튼 (항상 하단 고정) -->
+                <div class="sticky bottom-0 bg-white dark:bg-gray-800 p-4 flex justify-center border-t border-gray-200 dark:border-gray-700">
+                    <button id="modalCloseBtn"
+                            class="bg-gray-300 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-400">
+                        닫기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 종목 정보 카드 (확인 버튼 아래에 위치) -->
+        <div id="stockInfo" class="mt-6 hidden w-full">
+            <!-- 카드 내용은 JavaScript에서 동적으로 채워집니다. -->
+        </div>
+
+    </div>
+
+</main>
+
+<footer class="bg-white shadow w-full mt-auto dark:bg-gray-800 dark:text-gray-400">
+    <div class="container mx-auto px-4 py-6 text-center text-gray-600 dark:text-gray-300">
+        © 2025 Arile, Inc
+    </div>
+</footer>
+
+<script>
+    const toggleBtn = document.getElementById("darkModeToggle");
+    const icon = document.getElementById("darkModeIcon");
+    const root = document.documentElement;
+
+    if (localStorage.getItem("theme") === "dark") {
+        root.classList.add("dark");
+        icon.classList.replace("fa-moon","fa-sun");
+    }
+
+    toggleBtn.addEventListener("click", () => {
+        const isDark = root.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+        icon.classList.toggle("fa-moon", !isDark);
+        icon.classList.toggle("fa-sun", isDark);
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const modalOpenBtn = document.getElementById("modalOpenBtn");
+        const modal = document.getElementById("stockModal");
+        const modalCloseBtn = document.getElementById("modalCloseBtn");
+        const infoDiv = document.getElementById("stockInfo");
+        const searchInput = document.getElementById("searchInput");
+        const stockListItems = document.querySelectorAll("#modalStockList li");
+
+        // 등락 기호 + 색상 결정
+        function getRiseSymbol(riseOrFall) {
+            switch(riseOrFall) {
+                case "1": return {symbol: "⬆", class: "text-red-600 dark:text-red-400 font-bold text-xl"};
+                case "2": return {symbol: "▲", class: "text-red-600 dark:text-red-400"};
+                case "3": return {symbol: "-", class: "text-black dark:text-white"};
+                case "4": return {symbol: "⬇", class: "text-blue-600 dark:text-blue-400"};
+                case "5": return {symbol: "▼", class: "text-blue-600 dark:text-blue-400"};
+                default: return {symbol: "-", class: "text-gray-800 dark:text-gray-100"};
+            }
+        }
+
+        // 시장구분 텍스트 결정
+        function getMarketText(marketType) {
+            switch(marketType) {
+                case "1": return "KOSPI";
+                case "2": return "KOSDAQ";
+                default: return "기타";
+            }
+        }
+
+        // 기준가 대비 색상 결정
+        function getPriceColor(price, standard) {
+            if (price === standard) {
+                return "text-black dark:text-white";
+            } else if (price > standard) {
+                return "text-red-600 dark:text-red-400";
+            } else {
+                return "text-blue-600 dark:text-blue-400";
+            }
+        }
+
+        // 숫자 천 단위 콤마
+        function formatNumber(val) {
+            return Number(val).toLocaleString();
+        }
+
+        // 거래대금만 1백만 단위
+        function formatTransactionValue(val) {
+            const num = Number(val);
+            if (num >= 1000000) {
+                const millions = Math.floor(num / 1000000);
+                        return millions.toLocaleString() + "백만 "
+            } else {
+                return num.toLocaleString();
+            }
+        }
+
+        function formatChangeRate(val) {
+            const num = Number(val);
+            return num === 0 ? "0" : num.toLocaleString();
+        }
+
+
+        // 모달 열기
+        modalOpenBtn.addEventListener("click", () => {
+            modal.classList.remove("hidden");
+        });
+
+        // 모달 닫기
+        modalCloseBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+        });
+
+        let currentStock = null;
+
+        // 종목 클릭 시 currentStock 저장
+        stockListItems.forEach(item => {
+            item.addEventListener("click", () => {
+                currentStock = item.dataset.value;
+                loadStockInfo(currentStock);
+            });
+        });
+
+        // 새로고침 버튼 클릭
+        document.addEventListener("click", function(e) {
+            // 버튼 또는 내부 아이콘 클릭 감지
+            const btn = e.target.closest("#refreshBtn");
+            if(btn && currentStock) {
+                loadStockInfo(currentStock);
+            }
+        });
+
+        function loadStockInfo(stockName) {
+    fetch(`/stocks/info?stockName=${encodeURIComponent(stockName)}`)
+        .then(res => res.json())
+        .then(data => {
+            const riseInfo = getRiseSymbol(data.riseOrFall);
+            const openColor = getPriceColor(data.openValue, data.standardValue);
+            const highColor = getPriceColor(data.highestValue, data.standardValue);
+            const lowColor = getPriceColor(data.lowestValue, data.standardValue);
+
+            infoDiv.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 border border-gray-200 dark:border-gray-700 w-full max-w-7xl relative">
+                    <!-- 새로고침 + 시간 + 시장상태 -->
+                    <div class="absolute top-4 right-4 flex items-center space-x-2 text-xs">
+                        <!-- 새로고침 버튼 -->
+                        <button id="refreshBtn" class="text-black dark:text-white text-2xl font-bold p-2 rounded-full hover:opacity-70">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <!-- 서버에서 받은 시간 표시 (연도-월-일 시:분:초) -->
+                            <div class="px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-mono">
+                                ${new Date(data.time).toLocaleString('ko-KR', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit'
+                                })}
+                            </div>
+                        <!-- 시장상태 아이콘 -->
+                        <div class="px-2 py-1 rounded text-white text-xs font-bold
+                            ${data.marketState === 'CLOSE' ? 'bg-red-500' : 'bg-green-500'}">
+                            ${data.marketState}
+                        </div>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100">
+                        ${data.stockName}
+                        <span class="text-sm text-gray-800 dark:text-gray-100">${data.shortCode}</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">(${getMarketText(data.marketType)})</span>
+                    </h2>
+                    <div>
+                        <span class="text-3xl font-bold ${riseInfo.class}">${formatNumber(data.nowValue)}</span>
+                        <span class="text-sm font-medium ${riseInfo.class} ml-2">
+                            ${riseInfo.symbol} ${formatNumber(data.changeValue)} (${formatChangeRate(data.changeRate)}%)
+                        </span>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 gap-4 text-gray-700 dark:text-gray-300">
+                        <div>기준가: <span class="font-semibold">${formatNumber(data.standardValue)}</span></div>
+                        <div>시가: <span class="font-semibold ${openColor}">${formatNumber(data.openValue)}</span></div>
+                        <div>저가: <span class="font-semibold ${lowColor}">${formatNumber(data.lowestValue)}</span>
+                             (하한가: <span class="font-semibold">${formatNumber(data.lowerLimit)}</span>)</div>
+                        <div>고가: <span class="font-semibold ${highColor}">${formatNumber(data.highestValue)}</span>
+                             (상한가: <span class="font-semibold">${formatNumber(data.upperLimit)}</span>)</div>
+                        <div>거래량: <span class="font-semibold">${formatNumber(data.transactionVolume)}</span></div>
+                        <div>거래대금: <span class="font-semibold">${formatTransactionValue(data.transactionValue)}</span></div>
+                    </div>
+                </div>
+            `;
+            infoDiv.classList.remove("hidden");
+        })
+        .catch(err => console.error(err));
+}
+
+
+        // 종목 클릭 시 API 호출
+        stockListItems.forEach(item => {
+            item.addEventListener("click", () => {
+                const stock = item.dataset.value;
+                fetch(`/stocks/info?stockName=${encodeURIComponent(stock)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const riseInfo = getRiseSymbol(data.riseOrFall);
+                        const openColor = getPriceColor(data.openValue, data.standardValue);
+                        const highColor = getPriceColor(data.highestValue, data.standardValue);
+                        const lowColor = getPriceColor(data.lowestValue, data.standardValue);
+
+                        infoDiv.innerHTML = `
+                            <div class="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 border border-gray-200 dark:border-gray-700 w-full max-w-7xl relative">
+                                <!-- 새로고침 + 시간 + 시장상태 -->
+                                <div class="absolute top-4 right-4 flex items-center space-x-2 text-xs">
+                                    <!-- 새로고침 버튼 -->
+                                    <button id="refreshBtn" class="text-black dark:text-white text-2xl font-bold p-2 rounded-full hover:opacity-70">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                    <!-- 서버에서 받은 시간 표시 (연도-월-일 시:분:초) -->
+                                    <div class="px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-mono">
+                                        ${new Date(data.time).toLocaleString('ko-KR', {
+                                            year: 'numeric',
+                                            month: '2-digit',
+                                            day: '2-digit',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            second: '2-digit'
+                                        })}
+                                    </div>
+                                    <!-- 시장상태 아이콘 -->
+                                    <div class="px-2 py-1 rounded text-white text-xs font-bold
+                                        ${data.marketState === 'CLOSE' ? 'bg-red-500' : 'bg-green-500'}">
+                                        ${data.marketState}
+                                    </div>
+                                </div>
+                                <h2 class="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100">
+                                    ${data.stockName}
+                                    <span class="text-sm text-gray-800 dark:text-gray-100">${data.shortCode}</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">(${getMarketText(data.marketType)})</span>
+                                </h2>
+                                <div>
+                                    <span class="text-3xl font-bold ${riseInfo.class}">${formatNumber(data.nowValue)}</span>
+                                    <span class="text-sm font-medium ${riseInfo.class} ml-2">
+                                    ${riseInfo.symbol} ${formatNumber(data.changeValue)} (${formatChangeRate(data.changeRate)}%)
+                                </span>
+                                </div>
+                                <div class="mt-4 grid grid-cols-2 gap-4 text-gray-700 dark:text-gray-300">
+                                    <div>기준가: <span class="font-semibold">${formatNumber(data.standardValue)}</span></div>
+                                    <div>시가: <span class="font-semibold ${openColor}">${formatNumber(data.openValue)}</span></div>
+                                    <div>저가: <span class="font-semibold ${lowColor}">${formatNumber(data.lowestValue)}</span>
+                                         (하한가: <span class="font-semibold">${formatNumber(data.lowerLimit)}</span>)</div>
+                                    <div>고가: <span class="font-semibold ${highColor}">${formatNumber(data.highestValue)}</span>
+                                         (상한가: <span class="font-semibold">${formatNumber(data.upperLimit)}</span>)</div>
+                                    <div>거래량: <span class="font-semibold">${formatNumber(data.transactionVolume)}</span></div>
+                                    <div>거래대금: <span class="font-semibold">${formatTransactionValue(data.transactionValue)}</span></div>
+                                </div>
+                            </div>
+                        `;
+                        infoDiv.classList.remove("hidden");
+                        modal.classList.add("hidden");
+                    })
+                    .catch(err => {
+                        infoDiv.innerHTML = `
+                            <div class="bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 p-4 rounded-lg border border-red-200 dark:border-red-600">
+                                종목 정보를 불러오는데 실패했습니다.
+                            </div>
+                        `;
+                        infoDiv.classList.remove("hidden");
+                        console.error(err);
+                    });
+            });
+        });
+
+        // 검색 기능
+        searchInput.addEventListener("input", function() {
+            const filter = searchInput.value.toLowerCase();
+            stockListItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(filter) ? "block" : "none";
+            });
+        });
+    });
+</script>
+
+
+<script>
+    window.addEventListener('load', () => {
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.style.transition = "opacity 0.5s";
+        loadingScreen.style.opacity = 0;
+        setTimeout(() => loadingScreen.remove(), 500);
+      }
+    });
+</script>
+
+</body>
+</html>
