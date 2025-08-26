@@ -26,7 +26,7 @@ public class JpaConfig {
             Object principal = authentication.getPrincipal();
 
             if (principal instanceof GithubUser githubUser) {
-                return Optional.of(githubUser.getName()); // github login ID
+                return Optional.of(githubUser.unchangeableId()); // github login ID
             }
 
             return Optional.of(authentication.getName()); // fallback

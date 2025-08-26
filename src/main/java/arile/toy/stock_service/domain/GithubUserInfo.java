@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class GithubUserInfo {
 
     @Id
-    private Long unchangeableId;
+    private String unchangeableId;
 
     @Column(nullable = false)
     private String id;

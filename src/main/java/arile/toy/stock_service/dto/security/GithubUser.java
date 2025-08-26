@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public record GithubUser(
-        Long unchangeableId,
+        String unchangeableId,
         String id,
         String name,
         String email
