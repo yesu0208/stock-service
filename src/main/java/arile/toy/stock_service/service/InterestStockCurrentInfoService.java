@@ -1,8 +1,10 @@
 package arile.toy.stock_service.service;
 
+import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.naverstock.NaverStockResponse;
 import arile.toy.stock_service.dto.InterestStockDto;
 import arile.toy.stock_service.dto.InterestStockWithCurrentInfoDto;
+import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +20,9 @@ public class InterestStockCurrentInfoService {
 
     private final RestClient restClient = RestClient.create();
     private final StockInfoService stockInfoService;
+    private final GithubUserInfoRepository githubUserInfoRepository;
 
-    public InterestStockWithCurrentInfoDto getInterestStockSimpleCurrentInfo(InterestStockDto dto) {
+    public InterestStockWithCurrentInfoDto getInterestStockSimpleCurrentInfo(InterestStockDto dto, String unchangeableId) {
 
         String shortCode = stockInfoService.loadShortCodeByStockName(dto.stockName());
 
@@ -60,9 +63,13 @@ public class InterestStockCurrentInfoService {
         Integer realizedPL = null;
         Double rateOfReturn = null;
         String rateOfReturnString = null;
+        Double fee = githubUserInfoRepository.findById(unchangeableId)
+                .map(GithubUserInfo::getFee)
+                .orElseThrow(() -> new IllegalArgumentException("유저 없음: " + unchangeableId));
+
         if (dto.buyingPrice() != null && dto.numOfStocks() != null) {
             unrealizedPL = (nowValue - dto.buyingPrice()) * dto.numOfStocks();
-            realizedPL = unrealizedPL - (int) Math.round(dto.buyingPrice() * dto.numOfStocks() * 0.002);
+            realizedPL = unrealizedPL - (int) Math.round(dto.buyingPrice() * dto.numOfStocks() * fee);
             rateOfReturn = ((double) realizedPL / ((double) dto.buyingPrice() * dto.numOfStocks())) * 100;
             rateOfReturnString = String.format("(%.2f%%)", rateOfReturn);
         }

@@ -41,7 +41,8 @@ public class InterestGroupService {
 
         var interestStockWithCurrentInfoDtos = interestGroupDto.interestStocks()
                 .stream()
-                .map(interestStockCurrentInfoService::getInterestStockSimpleCurrentInfo)
+                .map(interestStockDto
+                        -> interestStockCurrentInfoService.getInterestStockSimpleCurrentInfo(interestStockDto, unchangeableId))
                 .collect(Collectors.toUnmodifiableSet());
 
         InterestGroupWithCurrentInfoDto response = new InterestGroupWithCurrentInfoDto(
