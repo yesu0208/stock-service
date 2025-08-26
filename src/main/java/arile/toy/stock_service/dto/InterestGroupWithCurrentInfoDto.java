@@ -7,7 +7,7 @@ import java.util.Set;
 public record InterestGroupWithCurrentInfoDto(
         Long id,
         String groupName,
-        String userId,
+        String unchangeableId,
         Set<InterestStockWithCurrentInfoDto> interestStockWithCurrentInfoDtos,
 
         LocalDateTime createdAt,

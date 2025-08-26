@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InterestGroupRepository extends JpaRepository<InterestGroup, Long> {
-    List<InterestGroup> findByUserId(String userId);
-    Optional<InterestGroup> findByUserIdAndGroupName(String userId, String groupName);
-    void deleteByUserIdAndGroupName(String userId, String groupName);
+    List<InterestGroup> findByUnchangeableId(String unchangeableId);
+    Optional<InterestGroup> findByUnchangeableIdAndGroupName(String unchangeableId, String groupName);
+    void deleteByUnchangeableIdAndGroupName(String unchangeableId, String groupName);
 }

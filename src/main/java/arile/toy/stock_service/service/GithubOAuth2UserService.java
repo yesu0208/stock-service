@@ -25,7 +25,7 @@ public class GithubOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        String unchangeableId = (String) attributes.get("id");
+        String unchangeableId = String.valueOf(attributes.get("id"));
         String id = (String) attributes.get("login");
         String name = (String) attributes.get("name"); // nullable
         String email = (String) attributes.get("email"); // nullable
@@ -41,6 +41,7 @@ public class GithubOAuth2UserService extends DefaultOAuth2UserService {
         githubUserInfo.setName(name);
         githubUserInfo.setEmail(email);
         githubUserInfo.setLastLoginAt(java.time.LocalDateTime.now());
+        githubUserInfo.setFee(0.0); // 수수료+세금 입력 안하면 기본으로 0 (초기 생성할 떄)
 
         githubUserInfoRepository.save(githubUserInfo);
 

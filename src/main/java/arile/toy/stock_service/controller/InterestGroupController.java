@@ -37,7 +37,7 @@ public class InterestGroupController {
 
         // 비로그인 or 로그인 + groupName x : sample group, 로그인 : 해당 groupName의 interest group 조회
         InterestGroupWithCurrentInfoResponse interestGroup = (githubUser != null && groupName != null) ?
-                InterestGroupWithCurrentInfoResponse.fromDto(interestGroupService.loadMyGroup(githubUser.id(), groupName)) :
+                InterestGroupWithCurrentInfoResponse.fromDto(interestGroupService.loadMyGroup(githubUser.unchangeableId(), groupName)) :
                 defaultInterestGroup(groupName);
 
         List<StockInfo> stockInfo = stockInfoRepository.findAll();
@@ -64,7 +64,7 @@ public class InterestGroupController {
         // redirection하면서 열릴 페이지에 내가 만들었던 것 유지하고 싶다. -> 이를 위해 RedirectAttributes가 필요
         redirectAttrs.addAttribute("groupName", interestGroupRequest.groupName());
 
-        interestGroupService.upsertInterestGroup(interestGroupRequest.toDto(githubUser.id()));
+        interestGroupService.upsertInterestGroup(interestGroupRequest.toDto(githubUser.unchangeableId()));
 
         return "redirect:/interest-group"; // redirection : PRG pattern (POST REDIRECT GET)
     }
@@ -73,7 +73,7 @@ public class InterestGroupController {
     @GetMapping("/interest-group/my-groups")
     public String myGroups(@AuthenticationPrincipal GithubUser githubUser,
                            Model model) {
-        List<SimpleInterestGroupResponse> interestGroups = interestGroupService.loadMyGroups(githubUser.id())
+        List<SimpleInterestGroupResponse> interestGroups = interestGroupService.loadMyGroups(githubUser.unchangeableId())
                 .stream()
                 .map(SimpleInterestGroupResponse::fromDto)
                 .toList();
@@ -89,7 +89,7 @@ public class InterestGroupController {
             @AuthenticationPrincipal GithubUser githubUser,
             @PathVariable String groupName
     ){
-        interestGroupService.deleteInterestGroup(githubUser.id(), groupName);
+        interestGroupService.deleteInterestGroup(githubUser.unchangeableId(), groupName);
         return "redirect:/interest-group/my-groups"; // redirection : PRG pattern (POST REDIRECT GET)
     }
 

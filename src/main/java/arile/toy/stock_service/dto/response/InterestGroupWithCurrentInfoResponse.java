@@ -6,14 +6,14 @@ import java.util.List;
 
 public record InterestGroupWithCurrentInfoResponse(
         String groupName,
-        String userId,
+        String unchangeableId,
         List<InterestStockWithCurrentInfoResponse> interestStocks
 ) {
     // Dto -> response
     public static InterestGroupWithCurrentInfoResponse fromDto(InterestGroupWithCurrentInfoDto dto) {
         return new InterestGroupWithCurrentInfoResponse(
                 dto.groupName(),
-                dto.userId(),
+                dto.unchangeableId(),
                 dto.interestStockWithCurrentInfoDtos().stream().map(InterestStockWithCurrentInfoResponse::fromDto).toList()
         );
     }

@@ -25,7 +25,7 @@ public class InterestGroup extends AuditingFields {
 
     @Setter
     @Column(nullable = false)
-    private String userId;
+    private String unchangeableId;
 
     // final은 합당 : 여기에 새로운 LinkedHashSet을 넣는 것이 아닌 단순 add, delete만 하므로
     @ToString.Exclude
@@ -36,13 +36,13 @@ public class InterestGroup extends AuditingFields {
     protected InterestGroup() {
     }
 
-    public InterestGroup(String groupName, String userId) {
+    public InterestGroup(String groupName, String unchangeableId) {
         this.groupName = groupName;
-        this.userId = userId;
+        this.unchangeableId = unchangeableId;
     }
 
-    public static InterestGroup of(String groupName, String userId) {
-        return new InterestGroup(groupName, userId);
+    public static InterestGroup of(String groupName, String unchangeableId) {
+        return new InterestGroup(groupName, unchangeableId);
     }
 
     public void addInterestStocks(Collection<InterestStock> interestStocks) {
