@@ -8,18 +8,20 @@ import java.util.List;
 import java.util.Map;
 
 public record GithubUser(
+        Long unchangeableId,
         String id,
         String name,
         String email
 ) implements OAuth2User {
 
-    public static GithubUser from(Map<String, Object> attributes) {
-        return new GithubUser( // 필요한 값만 추출
-                String.valueOf(attributes.get("login")),
-                String.valueOf(attributes.get("name")), // nullable
-                String.valueOf(attributes.get("email")) // nullable
-        );
-    }
+//    public static GithubUser from(Map<String, Object> attributes) {
+//        return new GithubUser( // 필요한 값만 추출
+//                ((Number) attributes.get("id")).longValue(), // (github에서 변경 불가)
+//                String.valueOf(attributes.get("login")), // (github에서 변경 가능)
+//                String.valueOf(attributes.get("name")), // nullable
+//                String.valueOf(attributes.get("email")) // nullable
+//        );
+//    }
 
     // 뽑을 정보는 위에 있으니, 따로 구현 x (나머지 정보는 버림)
     @Override public Map<String, Object> getAttributes() {return Map.of();}
