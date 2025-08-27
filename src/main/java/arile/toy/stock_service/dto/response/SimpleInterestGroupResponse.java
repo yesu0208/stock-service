@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 
 public record SimpleInterestGroupResponse(
         String groupName,
-        String userId,
+        String unchangeableId,
         LocalDateTime modifiedAt
 ) {
     // Dto -> response
     public static SimpleInterestGroupResponse fromDto(InterestGroupDto dto) {
-        return new SimpleInterestGroupResponse(dto.groupName(), dto.userId(), dto.modifiedAt());
+        return new SimpleInterestGroupResponse(dto.groupName(), dto.unchangeableId(), dto.modifiedAt());
     }
 }

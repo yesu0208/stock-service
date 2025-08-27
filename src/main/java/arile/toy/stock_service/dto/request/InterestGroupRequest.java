@@ -18,10 +18,10 @@ public record InterestGroupRequest(
     }
 
     // request -> Dto
-    public InterestGroupDto toDto(String userId) {
+    public InterestGroupDto toDto(String unchangeableId) {
         return InterestGroupDto.of(
                 groupName(),
-                userId,
+                unchangeableId,
                 interestStocks.stream()
                         .map(InterestStockRequest::toDto)
                         .collect(Collectors.toUnmodifiableSet())

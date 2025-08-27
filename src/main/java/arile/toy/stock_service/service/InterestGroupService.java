@@ -21,8 +21,8 @@ public class InterestGroupService {
     private final InterestStockCurrentInfoService interestStockCurrentInfoService;
 
     @Transactional(readOnly = true)
-    public List<InterestGroupDto> loadMyGroups(String userId) {
-        return interestGroupRepository.findByUserId(userId)
+    public List<InterestGroupDto> loadMyGroups(String unchangeableId) {
+        return interestGroupRepository.findByUnchangeableId(unchangeableId)
                 .stream()
                 .map(InterestGroupDto::fromEntity)
                 .toList();
@@ -30,24 +30,25 @@ public class InterestGroupService {
 
 
     @Transactional(readOnly = true)
-    public InterestGroupWithCurrentInfoDto loadMyGroup(String userId, String groupName) {
-        var interestGroupDto = interestGroupRepository.findByUserIdAndGroupName(userId, groupName)
+    public InterestGroupWithCurrentInfoDto loadMyGroup(String unchangeableId, String groupName) {
+        var interestGroupDto = interestGroupRepository.findByUnchangeableIdAndGroupName(unchangeableId, groupName)
                 .map(InterestGroupDto::fromEntity)
                 // Optional
-                .orElseThrow(() -> new EntityNotFoundException("관심 그룹이 없습니다 - userId: "
-                        + userId
+                .orElseThrow(() -> new EntityNotFoundException("관심 그룹이 없습니다 - unchangeableId: "
+                        + unchangeableId
                         + ", groupName: "
                         +groupName)); // optional이므로
 
         var interestStockWithCurrentInfoDtos = interestGroupDto.interestStocks()
                 .stream()
-                .map(interestStockCurrentInfoService::getInterestStockSimpleCurrentInfo)
+                .map(interestStockDto
+                        -> interestStockCurrentInfoService.getInterestStockSimpleCurrentInfo(interestStockDto, unchangeableId))
                 .collect(Collectors.toUnmodifiableSet());
 
         InterestGroupWithCurrentInfoDto response = new InterestGroupWithCurrentInfoDto(
                 interestGroupDto.id(),
                 interestGroupDto.groupName(),
-                interestGroupDto.userId(),
+                interestGroupDto.unchangeableId(),
                 new HashSet<>(),
                 interestGroupDto.createdAt(),
                 interestGroupDto.createdBy(),
@@ -61,7 +62,7 @@ public class InterestGroupService {
     }
 
     public void upsertInterestGroup(InterestGroupDto dto){
-        interestGroupRepository.findByUserIdAndGroupName(dto.userId(), dto.groupName())
+        interestGroupRepository.findByUnchangeableIdAndGroupName(dto.unchangeableId(), dto.groupName())
                 .ifPresentOrElse( // Optional
                         entity -> interestGroupRepository.save(dto.updateEntity(entity)),
                         () -> interestGroupRepository.save(dto.createEntity())
@@ -69,7 +70,7 @@ public class InterestGroupService {
 
     }
 
-    public void deleteInterestGroup(String userId, String schemaName) {
-        interestGroupRepository.deleteByUserIdAndGroupName(userId, schemaName);
+    public void deleteInterestGroup(String unchangeableId, String schemaName) {
+        interestGroupRepository.deleteByUnchangeableIdAndGroupName(unchangeableId, schemaName);
     }
 }
