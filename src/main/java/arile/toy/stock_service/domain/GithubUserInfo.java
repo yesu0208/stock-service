@@ -23,7 +23,7 @@ public class GithubUserInfo {
     @Column(nullable = false)
     private String id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
     @Column
