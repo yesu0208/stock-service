@@ -86,20 +86,61 @@
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-800">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        닉네임
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-1/4 text-center">
+                        닉네임(고유ID)
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-1/4 text-center">
                         이메일
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-1/4 text-center">
+                        수수료 + 세금
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-1/4 text-center">
+                        최근 로그인 시각
                     </th>
                 </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700 dark:text-gray-200" th:text="${nickname}">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700 dark:text-gray-200 text-center"
+                        th:text="${nickname + ' (' + unchangeableId + ')'}">
                         -
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200" th:text="${email}">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 text-center" th:text="${email}">
+                        -
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 text-center">
+                        <!-- 현재 수수료 표시 -->
+                        <span th:text="${#numbers.formatDecimal(fee * 100, 1, 4)}"></span>%
+
+                        <!-- 수정 버튼 -->
+                        <button type="button"
+                                onclick="document.getElementById('feeForm').classList.remove('hidden')"
+                                class="ml-2 px-2 py-1 bg-sky-600 text-white text-xs rounded hover:bg-sky-500">
+                            수정
+                        </button>
+
+                        <!-- 숨겨진 입력 폼 -->
+                        <form id="feeForm" th:action="@{/my-account}" method="post"
+                              class="mt-2 hidden flex items-center space-x-2 justify-center">
+
+                            <!-- 입력창 + % -->
+                            <div class="relative flex items-center">
+                                <input type="number" step="0.0001" name="fee" min="0"
+                                       class="w-24 px-2 py-1 pr-6 border border-gray-300 rounded text-sm
+                      dark:bg-gray-800 dark:text-gray-200"
+                                       placeholder="%" th:value="${fee * 100}"
+                                       onkeydown="if(event.key==='-'){event.preventDefault()}">
+                                <span class="absolute right-2 text-gray-500 dark:text-gray-400 text-sm">%</span>
+                            </div>
+
+                            <button type="submit"
+                                    class="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-500">
+                                저장
+                            </button>
+                        </form>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 text-center" th:text="${#temporals.format(lastLoginAt, 'yyyy-MM-dd HH:mm')}">
                         -
                     </td>
                 </tr>
