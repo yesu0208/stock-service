@@ -11,16 +11,17 @@ import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.repository.StockInfoRepository;
 import arile.toy.stock_service.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Controller
@@ -42,7 +43,7 @@ public class PostController {
 
         // postId x : sample post, postId : 해당 postId의 post 조회
         PostResponse post = (postId != null) ?
-                PostResponse.fromDto(postService.loadPost(postId)) : defaultPost(githubUser);
+                postService.loadPost(githubUser.unchangeableId(), postId) : defaultPost(githubUser);
 
         model.addAttribute("stockNames", stockNames);
         model.addAttribute("post", post); // 여기에 게시물의 unchangeableId가 포함되어 있음.
@@ -101,6 +102,35 @@ public class PostController {
         return "redirect:/my-posts"; // redirection : PRG pattern (POST REDIRECT GET)
     }
 
+    @PostMapping("/post/likes/{postId}")
+    @ResponseBody
+    public Map<String, Object> toggleLike(
+            @AuthenticationPrincipal GithubUser githubUser,
+            @PathVariable Long postId
+    ) {
+        var postResponse = postService.toggleLike(postId, githubUser.unchangeableId());
+        Map<String, Object> result = new HashMap<>();
+        result.put("isLiking", postResponse.isLiking());
+        result.put("likesCount", postResponse.likesCount());
+        result.put("isDisliking", postResponse.isDisliking());
+        result.put("dislikesCount", postResponse.dislikesCount());
+        return result;
+    }
+
+    @PostMapping("/post/dislikes/{postId}")
+    @ResponseBody
+    public Map<String, Object> toggleDislike(
+            @AuthenticationPrincipal GithubUser githubUser,
+            @PathVariable Long postId
+    ) {
+        var postResponse = postService.toggleDislike(postId, githubUser.unchangeableId());
+        Map<String, Object> result = new HashMap<>();
+        result.put("isLiking", postResponse.isLiking());
+        result.put("likesCount", postResponse.likesCount());
+        result.put("isDisliking", postResponse.isDisliking());
+        result.put("dislikesCount", postResponse.dislikesCount());
+        return result;
+    }
 
 
 
@@ -110,11 +140,11 @@ public class PostController {
         if (githubUser != null) {
             return new PostResponse(null, null, null, null,
                     0L, 0L, 0L, null, null,
-                    githubUser.getName(), githubUser.unchangeableId());
+                    githubUser.getName(), githubUser.unchangeableId(),null, null);
         } else { // 로그인 인한 상태
             return new PostResponse(null, null, null, null,
                     0L, 0L, 0L, null, null,
-                    null, null);
+                    null, null, null, null);
         }
 
     }

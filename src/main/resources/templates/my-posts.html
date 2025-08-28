@@ -161,11 +161,11 @@
                         <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
                         (<span th:text="${#temporals.format(post.modifiedAt, 'yyyy-MM-dd HH:mm')}">수정일</span>)
                     </td>
-                    <!-- 좋아요 / 싫어요 -->
+                    <!-- 좋아요 | 싫어오-->
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-700 dark:text-gray-200">
-                        👍 <span th:text="${post.likesCount}">0</span>
-                        &nbsp;|&nbsp;
-                        👎 <span th:text="${post.dislikesCount}">0</span>
+                        <i class="fa-solid fa-heart text-red-500 mr-1"></i> <span th:text="${post.likesCount}">0</span>
+                        <span class="mx-2"></span> <!-- 아이콘/숫자 사이 공백 -->
+                        <i class="fa-solid fa-heart-crack text-red-600 mr-1"></i> <span th:text="${post.dislikesCount}">0</span>
                     </td>
                     <!-- 관리 버튼 -->
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm space-x-2">
