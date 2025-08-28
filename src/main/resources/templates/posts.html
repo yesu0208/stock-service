@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주식 관심종목 저장소 - 게시물 목록</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+    <script>
+        tailwind.config = {
+          darkMode: 'class'
+        }
+    </script>
+    <script>
+        (function() {
+          const theme = localStorage.getItem('theme');
+          if (theme === 'dark' ||
+              (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        })();
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+    /* 페이지네이션 전체 */
+    ul.pagination {
+    display: flex;
+    gap: 0.5rem; /* 번호 사이 간격 */
+    list-style: none;
+    padding: 0;
+    }
+
+    /* 각 페이지 번호 */
+    ul.pagination li {
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    }
+
+    /* 링크 스타일 */
+    ul.pagination li a {
+    display: block;
+    padding: 0.25rem 0.5rem;
+    color: #1e3a8a; /* 기본 텍스트 색상 */
+    text-decoration: none;
+    }
+
+    /* 현재 페이지 */
+    ul.pagination li.active a {
+    background-color: #1e3a8a; /* 현재 페이지 배경색 */
+    color: white;
+    font-weight: bold;
+    }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
+<!-- 로딩 화면 -->
+<div id="loading-screen" class="fixed inset-0 bg-white dark:bg-gray-900 flex flex-col items-center justify-center z-50 space-y-4">
+    <!-- 회전하는 동그라미 -->
+    <div class="w-12 h-12 border-4 border-gray-300 border-t-sky-600 rounded-full animate-spin"></div>
+
+    <!-- 깜빡이는 텍스트 -->
+    <div class="text-gray-800 dark:text-gray-100 text-xl font-bold animate-pulse">
+        잠시만 기다려주세요...
+    </div>
+</div>
+
+<header class="bg-white shadow dark:bg-gray-800 dark:text-gray-100">
+    <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+        <a th:href="@{/}" class="text-2xl font-bold text-sky-600">주식 관심종목 저장소</a>
+
+        <nav class="ml-auto flex items-center space-x-4">
+            <a th:href="@{/stocks}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                종목 정보
+            </a>
+            <a th:href="@{/posts}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                종목 토론방
+            </a>
+            <a th:href="@{/interest-group/my-groups}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                내 관심그룹
+            </a>
+            <a th:href="@{/my-account}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                내 정보
+            </a>
+            <a th:href="@{/oauth2/authorization/github}" sec:authorize="!isAuthenticated()"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                <i class="fab fa-github"></i> 로그인
+            </a>
+            <a th:href="@{/logout}" sec:authorize="isAuthenticated()"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+        <span sec:authentication="principal.name"
+              class="text-gray-400 dark:text-gray-300 text-sm mx-1">username</span>
+                로그아웃
+            </a>
+
+            <!-- 다크 모드 토글 버튼 -->
+            <button id="darkModeToggle"
+                    class="ml-4 text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                <i id="darkModeIcon" class="fas fa-moon"></i>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container mx-auto px-4 py-8 flex-grow">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold dark:text-gray-100">종목 토론방</h1>
+        <a th:href="@{/post}"
+           class="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-500 dark:hover:bg-sky-500">
+            새 게시물 작성
+        </a>
+    </div>
+
+    <section id="my-posts" class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <!-- 검색창 (종목 + 제목) -->
+        <div class="flex justify-end mb-4 space-x-2">
+            <!-- 종목 검색 -->
+            <div class="relative w-64">
+                <input type="search" placeholder="종목 검색.." class="search-stock w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-md shadow-sm px-10 py-1 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-300"></i>
+            </div>
+            <!-- 제목 검색 -->
+            <div class="relative w-64">
+                <input type="search" placeholder="제목 검색.." class="search-title w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-md shadow-sm px-10 py-1 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-300"></i>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase w-1/12">종목</th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase w-6/12">제목</th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase w-2/12">작성자</th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase w-2/12">작성일</th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase w-1/12"></th>
+                </tr>
+                </thead>
+                <tbody class="list bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                <tr th:each="post : ${posts}">
+                    <td class="stock-name px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 text-center">
+                        <span th:text="${post.stockName}">종목</span>
+                    </td>
+                    <td class="title px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700 dark:text-gray-200 text-center">
+                        <a th:href="@{/post(postId=${post.postId})}"
+                           class="post-title hover:text-sky-600 dark:hover:text-sky-400"
+                           th:text="${post.title}">게시물 제목</a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 text-center">
+                        <span th:text="${post.name}">작성자</span> (<span th:text="${post.unchangeableId}">unchangeableId</span>)
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 text-center"
+                        th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-700 dark:text-gray-200">
+                        👍 <span th:text="${post.likesCount}">0</span> &nbsp;|&nbsp; 👎 <span th:text="${post.dislikesCount}">0</span>
+                    </td>
+                </tr>
+                <tr th:if="${posts.size() == 0}">
+                    <td colspan="6" class="text-center py-4 text-gray-500 dark:text-gray-400">게시물이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div class="mt-4 flex justify-center">
+            <ul class="pagination flex space-x-1"></ul>
+        </div>
+    </section>
+</main>
+
+<footer class="bg-white shadow w-full mt-auto dark:bg-gray-800 dark:text-gray-400">
+    <div class="container mx-auto px-4 py-6 text-center">© 2025 Arile, Inc</div>
+</footer>
+
+<!-- List.js 초기화 -->
+<script>
+    const postList = new List('my-posts', {
+        valueNames: ['post-title', 'stock-name'],
+        page: 20,
+        pagination: {
+            innerWindow: 2,  // 현재 페이지 기준 왼/오 2개 표시
+            outerWindow: 1   // 시작과 끝 번호 표시
+        }
+    });
+
+    function applyFilters() {
+        const stockValue = document.querySelector('.search-stock').value.toLowerCase();
+        const titleValue = document.querySelector('.search-title').value.toLowerCase();
+
+        postList.filter(item => {
+            const stockName = item.values()['stock-name'].toLowerCase();
+            const title = item.values()['post-title'].toLowerCase();
+            return stockName.includes(stockValue) && title.includes(titleValue);
+        });
+
+        if(stockValue === '' && titleValue === '') postList.filter();
+        postList.update();
+    }
+
+    document.querySelector('.search-stock').addEventListener('input', applyFilters);
+    document.querySelector('.search-title').addEventListener('input', applyFilters);
+</script>
+<script>
+    const toggleBtn = document.getElementById("darkModeToggle");
+    const icon = document.getElementById("darkModeIcon");
+    const root = document.documentElement;
+
+    // 저장된 모드 불러오기
+    if (localStorage.getItem("theme") === "dark") {
+      root.classList.add("dark");
+      icon.classList.replace("fa-moon","fa-sun");
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      const isDark = root.classList.toggle("dark");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+      icon.classList.toggle("fa-moon", !isDark);
+      icon.classList.toggle("fa-sun", isDark);
+    });
+</script>
+<script>
+    window.addEventListener('load', () => {
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.style.transition = "opacity 0.5s";
+        loadingScreen.style.opacity = 0;
+        setTimeout(() => loadingScreen.remove(), 500);
+      }
+    });
+</script>
+
+</body>
+</html>

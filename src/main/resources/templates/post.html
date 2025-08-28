@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주식 관심종목 저장소 - 게시물</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          darkMode: 'class'
+        }
+    </script>
+    <script>
+        (function() {
+          const theme = localStorage.getItem('theme');
+          if (theme === 'dark' ||
+              (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        })();
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
+<!-- 로딩 화면 -->
+<div id="loading-screen" class="fixed inset-0 bg-white dark:bg-gray-900 flex flex-col items-center justify-center z-50 space-y-4">
+    <!-- 회전하는 동그라미 -->
+    <div class="w-12 h-12 border-4 border-gray-300 border-t-sky-600 rounded-full animate-spin"></div>
+
+    <!-- 깜빡이는 텍스트 -->
+    <div class="text-gray-800 dark:text-gray-100 text-xl font-bold animate-pulse">
+        잠시만 기다려주세요...
+    </div>
+</div>
+
+<header class="bg-white shadow dark:bg-gray-800 dark:text-gray-100">
+    <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+        <a th:href="@{/}" class="text-2xl font-bold text-sky-600">주식 관심종목 저장소</a>
+
+        <nav class="ml-auto flex items-center space-x-4">
+            <a th:href="@{/stocks}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                종목 정보
+            </a>
+            <a th:href="@{/posts}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                종목 토론방
+            </a>
+            <a th:href="@{/interest-group/my-groups}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                내 관심그룹
+            </a>
+            <a th:href="@{/my-account}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                내 정보
+            </a>
+            <a th:href="@{/oauth2/authorization/github}" sec:authorize="!isAuthenticated()"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                <i class="fab fa-github"></i> 로그인
+            </a>
+            <a th:href="@{/logout}" sec:authorize="isAuthenticated()"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+        <span sec:authentication="principal.name"
+              class="text-gray-400 dark:text-gray-300 text-sm mx-1">username</span>
+                로그아웃
+            </a>
+
+            <!-- 다크 모드 토글 버튼 -->
+            <button id="darkModeToggle"
+                    class="ml-4 text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                <i id="darkModeIcon" class="fas fa-moon"></i>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container mx-auto px-4 py-8 flex-grow">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold dark:text-gray-100"
+            th:text="${post.title != null} ? ${post.title} : '새 게시물 작성'">
+            게시물 제목
+        </h1>
+        <a href="/posts"
+           class="px-4 py-2 bg-sky-600 text-white text-sm font-medium rounded hover:bg-sky-500">
+            목록
+        </a>
+    </div>
+
+    <!-- 게시물 내용 -->
+    <section class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6" th:if="${post.title != null}">
+        <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            작성자: <span th:text="${post.name}">작성자</span>(<span th:text="${post.unchangeableId}">unchangeableId</span>) | 작성일: <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span> | 수정일: <span th:text="${#temporals.format(post.modifiedAt, 'yyyy-MM-dd HH:mm')}">수정일</span>
+        </div>
+
+        <!-- 내용 네모박스 -->
+        <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+            <p th:text="${post.body}">게시물 내용</p>
+        </div>
+    </section>
+
+    <!-- 게시물 생성/수정 폼 -->
+    <section class="bg-white dark:bg-gray-800 shadow rounded-lg p-6"
+                    th:if="${post.unchangeableId == currentUserId}">
+        <form th:action="@{/post}" method="post" class="space-y-4" onsubmit="return validateForm()">
+            <div id="stockWarning" class="hidden text-red-600 dark:text-red-400 text-sm mb-2">
+                ❗ 종목명을 선택해주세요.
+            </div>
+            <input type="hidden" name="postId" th:value="${post.postId}" />
+
+            <!-- 제목 -->
+            <div>
+                <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">제목</label>
+                <input type="text" name="title" th:value="${post.title}" required
+                       class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"/>
+            </div>
+
+            <!-- 종목 선택 -->
+            <div>
+                <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">종목</label>
+                <div class="flex space-x-2">
+                    <input type="text" id="selectedStock" name="stockName" th:value="${post.stockName}"
+                           readonly
+                           class="flex-grow border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"/>
+                    <button type="button" id="modalOpenBtn"
+                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
+                        종목 선택
+                    </button>
+                </div>
+            </div>
+
+            <!-- 내용 -->
+            <div>
+                <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">내용</label>
+                <textarea name="body" rows="6" required
+                          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                          th:text="${post.body}"></textarea>
+            </div>
+
+            <div>
+                <button type="submit"
+                        class="px-6 py-2 bg-sky-600 text-white rounded hover:bg-sky-500 dark:hover:bg-sky-500">
+                    저장
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+
+<!-- 종목 선택 모달 -->
+<div id="stockModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg w-[400px] h-[470px] overflow-y-auto">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">종목을 선택하세요</h3>
+
+        <!-- 검색 입력 필드 -->
+        <input type="text" id="searchInput"
+               class="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              dark:bg-gray-700 dark:text-gray-100 mb-4"
+               placeholder="검색..." />
+
+        <!-- 종목 선택 목록 -->
+        <ul id="modalStockList" class="max-h-60 overflow-y-auto space-y-2">
+            <li th:each="name : ${stockNames}"
+                th:data-value="${name}"
+                th:text="${name}"
+                class="cursor-pointer hover:bg-sky-100 dark:hover:bg-gray-700 p-2 rounded">
+            </li>
+        </ul>
+
+        <!-- 닫기 버튼 -->
+        <div class="sticky bottom-0 bg-white dark:bg-gray-800 p-4 flex justify-center border-t border-gray-200 dark:border-gray-700">
+            <button id="modalCloseBtn"
+                    class="bg-gray-300 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-400">
+                닫기
+            </button>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-white shadow w-full mt-auto dark:bg-gray-800 dark:text-gray-400">
+    <div class="container mx-auto px-4 py-6 text-center">
+        © 2025 Arile, Inc
+    </div>
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const modal = document.getElementById("stockModal");
+        const modalOpenBtn = document.getElementById("modalOpenBtn");
+        const modalCloseBtn = document.getElementById("modalCloseBtn");
+        const searchInput = document.getElementById("searchInput");
+        const stockListItems = document.querySelectorAll("#modalStockList li");
+        const selectedStockInput = document.getElementById("selectedStock");
+
+        modalOpenBtn.addEventListener("click", () => {
+            modal.classList.remove("hidden");
+        });
+
+        modalCloseBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+        });
+
+        stockListItems.forEach(item => {
+            item.addEventListener("click", () => {
+                const stock = item.dataset.value;
+                selectedStockInput.value = stock; // 선택한 종목 hidden input에 저장
+                modal.classList.add("hidden");
+            });
+        });
+
+        // 검색 필터링
+        searchInput.addEventListener("input", function() {
+            const filter = searchInput.value.toLowerCase();
+            stockListItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(filter) ? "block" : "none";
+            });
+        });
+    });
+</script>
+
+<script>
+    // 종목 선택 여부 확인
+    function validateForm() {
+        const stockInput = document.getElementById("selectedStock").value.trim();
+        const warning = document.getElementById("stockWarning");
+
+        if (!stockInput) {
+            warning.classList.remove("hidden");   // 메시지 보이기
+            return false;                         // form 제출 막기
+        } else {
+            warning.classList.add("hidden");      // 메시지 숨기기
+        }
+        return true;                              // 제출 허용
+    }
+</script>
+<script>
+    const toggleBtn = document.getElementById("darkModeToggle");
+    const icon = document.getElementById("darkModeIcon");
+    const root = document.documentElement;
+
+    // 저장된 모드 불러오기
+    if (localStorage.getItem("theme") === "dark") {
+      root.classList.add("dark");
+      icon.classList.replace("fa-moon","fa-sun");
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      const isDark = root.classList.toggle("dark");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+      icon.classList.toggle("fa-moon", !isDark);
+      icon.classList.toggle("fa-sun", isDark);
+    });
+</script>
+<script>
+    window.addEventListener('load', () => {
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.style.transition = "opacity 0.5s";
+        loadingScreen.style.opacity = 0;
+        setTimeout(() => loadingScreen.remove(), 500);
+      }
+    });
+</script>
+
+</body>
+</html>
