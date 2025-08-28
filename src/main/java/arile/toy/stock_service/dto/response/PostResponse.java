@@ -16,10 +16,12 @@ public record PostResponse(
         LocalDateTime createdAt,
         LocalDateTime modifiedAt,
         String name,
-        String unchangeableId
+        String unchangeableId,
+        Boolean isLiking,
+        Boolean isDisliking
 ) {
     // Dto -> response
-    public static PostResponse fromDto(PostDto dto) {
+    public static PostResponse fromDto(PostDto dto, Boolean isLiking, Boolean isDisliking) {
         return new PostResponse(
                 dto.postId(),
                 dto.title(),
@@ -31,24 +33,9 @@ public record PostResponse(
                 dto.createdAt(),
                 dto.modifiedAt(),
                 dto.name(),
-                dto.unchangeableId()
-        );
-    }
-
-    // Dto(Simple) -> response
-    public static PostResponse fromDto(SimplePostDto dto) {
-        return new PostResponse(
-                dto.postId(),
-                dto.title(),
-                dto.stockName(),
-                null,
-                dto.repliesCount(),
-                dto.likesCount(),
-                dto.dislikesCount(),
-                dto.createdAt(),
-                dto.modifiedAt(),
-                dto.name(),
-                dto.unchangeableId()
+                dto.unchangeableId(),
+                isLiking,
+                isDisliking
         );
     }
 }
