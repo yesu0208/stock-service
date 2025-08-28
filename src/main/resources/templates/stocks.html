@@ -35,10 +35,15 @@
 <header class="bg-white shadow dark:bg-gray-800 dark:text-gray-100">
     <div class="container mx-auto px-4 py-6 flex justify-between items-center">
         <a th:href="@{/}" class="text-2xl font-bold text-sky-600">주식 관심종목 저장소</a>
+
         <nav class="ml-auto flex items-center space-x-4">
             <a th:href="@{/stocks}"
                class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
                 종목 정보
+            </a>
+            <a th:href="@{/posts}"
+               class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                종목 토론방
             </a>
             <a th:href="@{/interest-group/my-groups}"
                class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
@@ -54,10 +59,12 @@
             </a>
             <a th:href="@{/logout}" sec:authorize="isAuthenticated()"
                class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
-                <span sec:authentication="principal.name"
-                      class="text-gray-400 dark:text-gray-300 text-sm mx-1">username</span>
+        <span sec:authentication="principal.name"
+              class="text-gray-400 dark:text-gray-300 text-sm mx-1">username</span>
                 로그아웃
             </a>
+
+            <!-- 다크 모드 토글 버튼 -->
             <button id="darkModeToggle"
                     class="ml-4 text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
                 <i id="darkModeIcon" class="fas fa-moon"></i>
