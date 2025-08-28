@@ -70,7 +70,7 @@ public class InterestGroupService {
 
     }
 
-    public void deleteInterestGroup(String unchangeableId, String schemaName) {
-        interestGroupRepository.deleteByUnchangeableIdAndGroupName(unchangeableId, schemaName);
+    public void deleteInterestGroup(String unchangeableId, String groupName) {
+        interestGroupRepository.deleteByUnchangeableIdAndGroupName(unchangeableId, groupName);
     }
 }
