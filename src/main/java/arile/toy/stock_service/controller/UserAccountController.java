@@ -35,4 +35,15 @@ public class UserAccountController {
         model.addAttribute("fee", response.fee());
         return "my-account";
     }
+
+    // 내 fee 수정
+    @PostMapping("/my-account")
+    public String updateMyFee(
+            @AuthenticationPrincipal GithubUser githubUser,
+            GithubUserInfoRequest githubUserInfoRequest // 폼 data로 받음
+    ) {
+        githubUserInfoService.updateGithubUserFee(githubUser.unchangeableId(), githubUserInfoRequest.toDto());
+
+        return "redirect:/my-account"; // redirection : PRG pattern (POST REDIRECT GET)
+    }
 }
