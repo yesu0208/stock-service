@@ -1,7 +1,6 @@
 package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.domain.StockInfo;
-import arile.toy.stock_service.dto.GithubUserInfoDto;
 import arile.toy.stock_service.dto.request.InterestGroupRequest;
 import arile.toy.stock_service.dto.response.GithubUserInfoResponse;
 import arile.toy.stock_service.dto.response.InterestGroupWithCurrentInfoResponse;

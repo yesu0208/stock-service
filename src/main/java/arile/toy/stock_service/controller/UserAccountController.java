@@ -1,7 +1,6 @@
 package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.dto.request.GithubUserInfoRequest;
-import arile.toy.stock_service.dto.request.InterestGroupRequest;
 import arile.toy.stock_service.dto.response.GithubUserInfoResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.GithubUserInfoService;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequiredArgsConstructor
 @Controller

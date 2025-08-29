@@ -8,7 +8,6 @@ import arile.toy.stock_service.dto.response.ReplyResponse;
 import arile.toy.stock_service.dto.response.SimplePostResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.repository.StockInfoRepository;
-import arile.toy.stock_service.service.GithubUserInfoService;
 import arile.toy.stock_service.service.PostService;
 import arile.toy.stock_service.service.ReplyService;
 import lombok.RequiredArgsConstructor;

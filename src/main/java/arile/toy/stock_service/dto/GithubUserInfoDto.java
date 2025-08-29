@@ -1,10 +1,8 @@
 package arile.toy.stock_service.dto;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
-import arile.toy.stock_service.domain.InterestGroup;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 public record GithubUserInfoDto(
         String unchangeableId,

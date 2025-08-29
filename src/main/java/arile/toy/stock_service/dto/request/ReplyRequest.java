@@ -1,6 +1,5 @@
 package arile.toy.stock_service.dto.request;
 
-import arile.toy.stock_service.dto.PostDto;
 import arile.toy.stock_service.dto.ReplyDto;
 
 public record ReplyRequest(

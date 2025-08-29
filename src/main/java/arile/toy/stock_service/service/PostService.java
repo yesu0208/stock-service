@@ -4,7 +4,6 @@ import arile.toy.stock_service.domain.Dislike;
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.Like;
 import arile.toy.stock_service.domain.post.Post;
-import arile.toy.stock_service.dto.InterestGroupDto;
 import arile.toy.stock_service.dto.PostDto;
 import arile.toy.stock_service.dto.SimplePostDto;
 import arile.toy.stock_service.dto.response.PostResponse;

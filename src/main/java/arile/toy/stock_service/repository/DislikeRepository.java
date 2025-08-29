@@ -2,7 +2,6 @@ package arile.toy.stock_service.repository;
 
 import arile.toy.stock_service.domain.Dislike;
 import arile.toy.stock_service.domain.GithubUserInfo;
-import arile.toy.stock_service.domain.Like;
 import arile.toy.stock_service.domain.post.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,9 +1,6 @@
 package arile.toy.stock_service.dto.request;
 
-import arile.toy.stock_service.dto.InterestStockDto;
 import arile.toy.stock_service.dto.PostDto;
-
-import java.time.LocalDateTime;
 
 public record PostRequest(
         String title,

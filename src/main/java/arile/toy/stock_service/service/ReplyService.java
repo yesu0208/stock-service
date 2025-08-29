@@ -1,16 +1,11 @@
 package arile.toy.stock_service.service;
 
-import arile.toy.stock_service.domain.Dislike;
 import arile.toy.stock_service.domain.GithubUserInfo;
-import arile.toy.stock_service.domain.Like;
 import arile.toy.stock_service.domain.Reply;
-import arile.toy.stock_service.domain.post.Post;
-import arile.toy.stock_service.dto.PostDto;
 import arile.toy.stock_service.dto.ReplyDto;
-import arile.toy.stock_service.dto.SimplePostDto;
-import arile.toy.stock_service.dto.response.PostResponse;
-import arile.toy.stock_service.dto.security.GithubUser;
-import arile.toy.stock_service.repository.*;
+import arile.toy.stock_service.repository.GithubUserInfoRepository;
+import arile.toy.stock_service.repository.PostRepository;
+import arile.toy.stock_service.repository.ReplyRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
