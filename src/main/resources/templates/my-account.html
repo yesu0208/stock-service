@@ -157,6 +157,49 @@
             </table>
         </div>
     </section>
+    <!-- 재무 요약 섹션 -->
+    <section class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
+        <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-4 text-left">
+            재무 요약 (관심 그룹)
+        </h2>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase text-center">총 매입금액</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase text-center">총 평가금액</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase text-center">총 평가손익</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase text-center">총 실현손익</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase text-center">총 수익률</th>
+                </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                <tr>
+                    <td class="px-6 py-4 text-sm text-center" th:text="${totalBuyingPriceStr}">-</td>
+                    <td class="px-6 py-4 text-sm text-center" th:text="${totalValuationStr}">-</td>
+                    <td class="px-6 py-4 text-sm text-center" th:text="${totalUnrealizedPLStr}">-</td>
+
+                    <!-- 총 실현손익: 양수 빨강, 0 회색, 음수 파랑 -->
+                    <td class="px-6 py-4 text-sm text-center"
+                        th:text="${totalRealizedPLStr}"
+                        th:classappend="${totalRealizedPL > 0 ? 'text-red-600 dark:text-red-400' :
+                                     (totalRealizedPL < 0 ? 'text-blue-600 dark:text-blue-400' :
+                                     'text-gray-500 dark:text-gray-400')}">-</td>
+
+                    <!-- 총 수익률: 양수 빨강, 0 회색, 음수 파랑 -->
+                    <td class="px-6 py-4 text-sm text-center"
+                        th:text="${rateOfReturn}"
+                        th:classappend="${totalRealizedPL > 0 ? 'text-red-600 dark:text-red-400' :
+                                     (totalRealizedPL < 0 ? 'text-blue-600 dark:text-blue-400' :
+                                     'text-gray-500 dark:text-gray-400')}">-</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+
 </main>
 
 
