@@ -116,7 +116,7 @@
                 새 게시물 작성
             </a>
             <a href="/my-posts"
-               class="px-4 py-2 bg-sky-600 text-white text-sm font-medium rounded hover:bg-sky-500">
+               class="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-500 dark:hover:bg-sky-500">
                 내 게시물
             </a>
         </div>
@@ -157,6 +157,7 @@
                         <a th:href="@{/post(postId=${post.postId})}"
                            class="post-title hover:text-sky-600 dark:hover:text-sky-400"
                            th:text="${post.title}">게시물 제목</a>
+                        <span th:if="${post.repliesCount > 0}" th:text="'[' + ${post.repliesCount} + ']'"></span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 text-center">
                         <span th:text="${post.name}">작성자</span> (<span th:text="${post.unchangeableId}">unchangeableId</span>)

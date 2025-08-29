@@ -155,6 +155,7 @@
                         <a th:href="@{/post(postId=${post.postId})}"
                            class="post-title hover:text-sky-600 dark:hover:text-sky-400"
                            th:text="${post.title}">게시물 제목</a>
+                        <span th:if="${post.repliesCount > 0}" th:text="'[' + ${post.repliesCount} + ']'"></span>
                     </td>
                     <!-- 작성일 -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 text-center">
@@ -168,18 +169,22 @@
                         <i class="fa-solid fa-heart-crack text-red-600 mr-1"></i> <span th:text="${post.dislikesCount}">0</span>
                     </td>
                     <!-- 관리 버튼 -->
-                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm space-x-2">
+                    <!-- 관리 버튼 -->
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm space-x-4">
+                        <!-- 수정: 스패너 아이콘 -->
                         <a th:href="@{/post(postId=${post.postId})}"
-                           class="px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500 dark:hover:bg-yellow-500">
-                            수정
+                           title="수정"
+                           class="text-gray-900 dark:text-white text-xl hover:text-gray-500 dark:hover:text-gray-300 transition">
+                            <i class="fas fa-pen"></i>
                         </a>
-                        <form th:action="@{/my-posts/{postId}(postId=${post.postId})}" method="post" class="inline">
-                            <button type="submit"
-                                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 dark:hover:bg-red-600"
-                                    onclick="return confirm('정말 삭제하시겠습니까?');">
-                                삭제
-                            </button>
-                        </form>
+
+                        <!-- 삭제: 휴지통 아이콘 -->
+                        <a th:href="@{/my-posts/{postId}(postId=${post.postId})}"
+                           onclick="return confirm('정말 삭제하시겠습니까?');"
+                           title="삭제"
+                           class="text-gray-900 dark:text-white text-xl hover:text-gray-500 dark:hover:text-gray-300 transition">
+                            <i class="fas fa-trash"></i>
+                        </a>
                     </td>
                 </tr>
 

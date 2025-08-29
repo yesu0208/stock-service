@@ -18,12 +18,12 @@ public record InterestGroupRequest(
     }
 
     // request -> Dto
-    public InterestGroupDto toDto(String unchangeableId) {
+    public InterestGroupDto toDto(String unchangeableId, Double fee) {
         return InterestGroupDto.of(
                 groupName(),
                 unchangeableId,
                 interestStocks.stream()
-                        .map(InterestStockRequest::toDto)
+                        .map(each -> each.toDto(fee))
                         .collect(Collectors.toUnmodifiableSet())
         );
     }

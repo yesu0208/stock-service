@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    Optional<Post> findByUserUnchangeableIdAndTitleAndStockName(String unchangeableId, String title, String stockName);
+    Optional<Post> findByUserUnchangeableIdAndPostId(String unchangeableId, Long postId);
     List<Post> findAllByUserUnchangeableId(String unchangeableId);
     void deleteByUserUnchangeableIdAndPostId(String unchangeableId, Long postId);
 }
