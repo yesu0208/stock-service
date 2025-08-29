@@ -561,17 +561,29 @@
     if (form) {
         form.addEventListener('submit', (e) => {
             const stockValues = document.querySelectorAll('#stock-list li .stock-name-value');
+            const groupNameInput = document.getElementById('groupName'); // 그룹명 입력
             const errorBox = document.getElementById('form-error');
+
+            // 그룹명 체크
+            if (!groupNameInput.value.trim()) {
+                e.preventDefault();
+                errorBox.textContent = '❗ 그룹명을 반드시 입력해야 합니다.';
+                errorBox.classList.remove('hidden');
+                groupNameInput.focus();
+                return;
+            }
 
             // 종목 선택 여부 체크
             for (const input of stockValues) {
                 if (!input.value) {
                     e.preventDefault();
-                    errorBox.textContent = '❗ 종목을 선택해야 합니다.';
+                    errorBox.textContent = '❗ 최소 1개 이상의 종목을 선택해야 합니다.';
                     errorBox.classList.remove('hidden');
                     return;
                 }
             }
+
+            // 오류 메시지 숨김
             errorBox.classList.add('hidden');
 
             // 숫자 필드 콤마 제거
@@ -582,6 +594,7 @@
         });
     }
 });
+
 </script>
 
 <script>
