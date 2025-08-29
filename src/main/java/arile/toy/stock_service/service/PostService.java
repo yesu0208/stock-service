@@ -65,20 +65,18 @@ public class PostService {
     }
 
 
-    public Long upsertPost(PostDto dto){
+    public Long upsertPost(PostDto dto, Long postId){
 
         GithubUserInfo user = githubUserInfoRepository.findById(dto.unchangeableId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 유저가 없습니다 - unchangeableId: " + dto.unchangeableId()));
 
-        postRepository.findByUserUnchangeableIdAndTitleAndStockName(dto.unchangeableId(), dto.title(), dto.stockName())
-                .ifPresentOrElse( // Optional
-                        entity -> postRepository.save(dto.updateEntity(entity)),
-                        () -> postRepository.save(dto.createEntity(user))
-                );
+        Post savedPost = postRepository.findByUserUnchangeableIdAndPostId(dto.unchangeableId(), postId)
+                .map(entity -> postRepository.save(dto.updateEntity(entity)))  // 기존 글이면 update
+                .orElseGet(() -> postRepository.save(dto.createEntity(user))); // 새 글이면 create
+
         // upsertPostId
-        return  postRepository.findByUserUnchangeableIdAndTitleAndStockName(dto.unchangeableId(), dto.title(), dto.stockName())
-                .map(Post::getPostId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 게시물이 없습니다 "));
+        return savedPost.getPostId();  // PK 값 가져오기
+
     }
 
     public void deletePost(String unchangeableId, Long postId) {
