@@ -79,7 +79,7 @@
 <main class="container mx-auto px-4 py-8 flex-grow">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold dark:text-gray-100"
-            th:text="${post.title != null} ? ${post.title} : '새 게시물 작성'">
+            th:text="${post.title != null} ? '[' + ${post.stockName} + '] ' + ${post.title} : '새 게시물 작성'">
             게시물 제목
         </h1>
         <a href="/posts"
@@ -87,6 +87,7 @@
             목록
         </a>
     </div>
+
 
     <!-- 게시물 내용 -->
     <section class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6" th:if="${post.title != null}">
@@ -107,6 +108,7 @@
                    th:classappend="${post.isLiking} ? 'fa-solid text-red-500' : 'fa-regular text-gray-500'"></i>
             </button>
             <span id="likesCount" class="text-gray-700 dark:text-gray-200 text-sm" th:text="${post.likesCount}">0</span>
+            <span class="text-gray-500 dark:text-gray-400 text-sm"> (좋아요)</span>
 
             <!-- 싫어요 버튼 -->
             <button id="dislikeBtn" class="text-2xl focus:outline-none">
@@ -114,6 +116,7 @@
                    th:class="${post.isDisliking} ? 'fa-solid fa-heart-crack text-red-600' : 'fa-regular fa-heart text-gray-500'"></i>
             </button>
             <span id="dislikesCount" class="text-gray-700 dark:text-gray-200 text-sm" th:text="${post.dislikesCount}">0</span>
+            <span class="text-gray-500 dark:text-gray-400 text-sm"> (싫어요)</span>
         </div>
 
         <script th:inline="javascript">
@@ -197,12 +200,32 @@
 
     </section>
 
+    <!-- 수정/삭제 버튼: 기존 게시물이고, 본인 작성인 경우만 표시 -->
+    <div th:if="${post.postId != null and post.unchangeableId == currentUserId}" class="mb-4 flex justify-center space-x-6">
+        <!-- 게시물 수정 버튼 -->
+        <button id="editPostBtn" title="게시물 수정" class="focus:outline-none">
+            <i class="fas fa-pencil-alt text-gray-900 dark:text-white hover:text-gray-500 dark:hover:text-gray-300 text-2xl"></i>
+        </button>
+
+        <!-- 삭제 버튼 -->
+        <form th:action="@{/my-posts/{postId}(postId=${post.postId})}" method="post" class="inline">
+            <button type="submit"
+                    class="focus:outline-none bg-transparent p-0 border-0 cursor-pointer"
+                    title="게시물 삭제"
+                    onclick="return confirm('정말 삭제하시겠습니까?');">
+                <i class="fas fa-trash-alt text-gray-900 dark:text-white hover:text-gray-500 dark:hover:text-gray-300 text-2xl"></i>
+            </button>
+        </form>
+    </div>
+
     <!-- 게시물 생성/수정 폼 -->
-    <section class="bg-white dark:bg-gray-800 shadow rounded-lg p-6"
-                    th:if="${post.unchangeableId == currentUserId}">
+    <section id="editPostSection"
+             th:classappend="${post.postId != null} ? 'hidden' : ''"
+             class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
         <form th:action="@{/post}" method="post" class="space-y-4" onsubmit="return validateForm()">
             <div id="stockWarning" class="hidden text-red-600 dark:text-red-400 text-sm mb-2">
                 ❗ 종목명을 선택해주세요.
+            </div>
             </div>
             <input type="hidden" name="postId" th:value="${post.postId}" />
 
@@ -243,6 +266,115 @@
             </div>
         </form>
     </section>
+    <!-- 댓글 섹션 -->
+    <!-- 댓글 섹션 -->
+    <section th:if="${post.postId != null}" class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mt-6" id="repliesSection">
+        <h2 class="text-xl font-bold dark:text-gray-100 mb-4">댓글</h2>
+
+        <!-- 댓글 목록 -->
+        <div class="space-y-4">
+            <div th:each="reply : ${replies}"
+                 class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-700"
+                 th:data-reply-id="${reply.replyId}">
+                <div class="flex justify-between items-center mb-2 space-x-2">
+                    <div class="text-sm text-gray-500 dark:text-gray-400 leading-none flex items-center space-x-1">
+                        <span th:text="${reply.name}">작성자</span>
+                        (<span th:text="${reply.unchangeableId}">작성자</span>) |
+                        <span>작성일: <span th:text="${#temporals.format(reply.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span></span>
+                        <span th:if="${reply.modifiedAt != null}">| 수정일: <span th:text="${#temporals.format(reply.modifiedAt, 'yyyy-MM-dd HH:mm')}"></span></span>
+                    </div>
+
+                    <!-- 자신이 작성한 댓글만 수정/삭제 버튼 표시 -->
+                    <div th:if="${reply.unchangeableId == currentUserId}" class="flex items-center space-x-2">
+                        <button type="button"
+                                class="editReplyBtn text-gray-900 dark:text-white hover:text-gray-500 dark:hover:text-gray-300 text-sm font-medium px-2 py-1 rounded-md transition"
+                                title="댓글 수정">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <form th:action="@{/reply/delete/{postId}(postId=${post.postId})}" method="post" class="inline"
+                              onsubmit="return confirm('정말 이 댓글을 삭제하시겠습니까?');">
+                            <input type="hidden" name="replyId" th:value="${reply.replyId}">
+                            <button type="submit"
+                                    class="text-gray-900 dark:text-white hover:text-gray-500 dark:hover:text-gray-300 text-sm font-medium px-2 py-1 rounded-md transition"
+                                    title="댓글 삭제">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <p class="replyBody text-gray-900 dark:text-gray-100 mt-1" th:text="${reply.body}">댓글 내용</p>
+            </div>
+        </div>
+
+        <!-- 댓글 작성/수정 폼 -->
+        <div class="mt-6">
+            <h3 id="replyFormTitle" class="text-lg font-semibold dark:text-gray-100 mb-2">댓글 작성</h3>
+            <form th:action="@{/reply/upsert/{postId}(postId=${post.postId})}" method="post" class="space-y-3" id="replyForm">
+                <input type="hidden" name="replyId" id="replyId">
+                <input type="hidden" name="name" th:value="${currentUserName}">
+                <input type="hidden" name="unchangeableId" th:value="${currentUserId}">
+
+                <textarea name="body" id="replyBody" rows="3" required
+                          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                          placeholder="댓글을 작성하세요..."></textarea>
+                <div class="flex justify-end space-x-2">
+                    <button type="submit" id="replySubmitBtn"
+                            class="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-500 dark:hover:bg-sky-500">
+                        작성
+                    </button>
+                    <button type="button" id="cancelEditBtn"
+                            class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 hidden">
+                        취소
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+
+    <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const replyForm = document.getElementById("replyForm");
+                const replyBodyInput = document.getElementById("replyBody");
+                const replyIdInput = document.getElementById("replyId");
+                const cancelEditBtn = document.getElementById("cancelEditBtn");
+                const replyFormTitle = document.getElementById("replyFormTitle");
+                const replySubmitBtn = document.getElementById("replySubmitBtn");
+
+                // 수정 버튼 클릭 시 폼에 데이터 채우기
+                document.querySelectorAll(".editReplyBtn").forEach(btn => {
+                    btn.addEventListener("click", function() {
+                        const replyDiv = btn.closest("div[data-reply-id]");
+                        const replyId = replyDiv.dataset.replyId;
+                        const body = replyDiv.querySelector(".replyBody").textContent.trim();
+
+                        replyIdInput.value = replyId;
+                        replyBodyInput.value = body;
+                        cancelEditBtn.classList.remove("hidden");
+
+                        // 제목과 버튼 텍스트 변경
+                        replyFormTitle.textContent = "댓글 수정";
+                        replySubmitBtn.textContent = "수정";
+
+                        replyBodyInput.focus();
+                    });
+                });
+
+                // 취소 버튼
+                cancelEditBtn.addEventListener("click", function() {
+                    replyIdInput.value = "";
+                    replyBodyInput.value = "";
+                    cancelEditBtn.classList.add("hidden");
+
+                    // 제목과 버튼 텍스트 원래대로
+                    replyFormTitle.textContent = "댓글 작성";
+                    replySubmitBtn.textContent = "작성";
+                });
+            });
+        </script>
+
+
 </main>
 
 <!-- 종목 선택 모달 -->
@@ -361,6 +493,39 @@
       }
     });
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const editBtn = document.getElementById("editPostBtn");
+        const editSection = document.getElementById("editPostSection");
+
+        if (editBtn && editSection) {
+            // 버튼 스타일 제거
+            editBtn.className = "focus:outline-none"; // 테두리/배경 없애고 클릭 가능하게
+            editBtn.style.background = "none";
+            editBtn.style.padding = "0";
+            editBtn.style.border = "none";
+            editBtn.style.cursor = "pointer";
+
+            editBtn.addEventListener("click", () => {
+                editSection.classList.toggle("hidden");
+
+                // 숨김 여부에 따라 아이콘 교체
+                if (editSection.classList.contains("hidden")) {
+                    // 편집 닫힘 → 연필 아이콘
+                    editBtn.innerHTML = `<i class="fas fa-pencil-alt text-black dark:text-white text-2xl"></i>`;
+                    editBtn.title = "게시물 수정";
+                } else {
+                    // 편집 열림 → 닫기 아이콘
+                    editBtn.innerHTML = `<i class="fas fa-times text-black dark:text-white text-2xl"></i>`;
+                    editBtn.title = "게시물 수정 취소";
+                }
+            });
+        }
+    });
+</script>
+
+
+
 
 </body>
 </html>
