@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -29,11 +30,13 @@ public abstract class AuditingFields {
     @Column(nullable = false, updatable = false)
     protected String createdBy;
 
+    @Setter
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @LastModifiedDate
     @Column(nullable = false)
     protected LocalDateTime modifiedAt;
 
+    @Setter
     @LastModifiedBy
     @Column(nullable = false)
     protected String modifiedBy;

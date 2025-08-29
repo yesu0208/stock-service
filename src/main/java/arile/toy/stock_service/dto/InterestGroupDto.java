@@ -69,6 +69,7 @@ public record InterestGroupDto(
         if (groupName != null) entity.setGroupName(groupName); // null로 요청이 들어오면 무시
         if (unchangeableId != null) entity.setUnchangeableId(unchangeableId);
         if (interestStocks != null) { // 아무것도 없으면 무시
+            entity.setModifiedAt(null); // AuditingFields의 @LastModifiedDate, @LastModifiedBy 정상작동 위해서 추가
             entity.clearInterestStocks();
             entity.addInterestStocks(interestStocks.stream().map(InterestStockDto::createEntity).toList());
         }

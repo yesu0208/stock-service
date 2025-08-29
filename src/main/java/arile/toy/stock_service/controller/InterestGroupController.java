@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -105,20 +104,11 @@ public class InterestGroupController {
     // 기본 interest group
     private InterestGroupWithCurrentInfoResponse defaultInterestGroup(String groupName) {
         return new InterestGroupWithCurrentInfoResponse(
-                groupName != null ? groupName : "group_name", // groupName 받았으면 그대로 쓰고, 안받았으면 기본값
+                groupName != null ? groupName : null, // groupName 받았으면 그대로 쓰고, 안받았으면 null
                 "Arile",
                 List.of(
                         new InterestStockWithCurrentInfoResponse("삼성전자", null, null, null, null, 1, null, null, null, null, null, null, null)
                 )
-        );
-    }
-
-    // sample group 목록
-    private static List<SimpleInterestGroupResponse> mySampleGroups() {
-        return List.of(
-                new SimpleInterestGroupResponse("group_name1", "Arile", LocalDate.of(2025, 1, 1).atStartOfDay()),
-                new SimpleInterestGroupResponse("group_name2", "Arile", LocalDate.of(2025, 2, 2).atStartOfDay()),
-                new SimpleInterestGroupResponse("group_name3", "Arile", LocalDate.of(2025, 3, 3).atStartOfDay())
         );
     }
 
