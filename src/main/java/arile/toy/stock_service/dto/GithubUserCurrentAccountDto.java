@@ -1,7 +1,5 @@
 package arile.toy.stock_service.dto;
 
-import java.time.LocalDateTime;
-
 public record GithubUserCurrentAccountDto(
         String unchangeableId,
         Integer totalBuyingPrice,
