@@ -26,8 +26,8 @@ public record InterestStockRequest(
     }
 
     // request -> Dto
-    public InterestStockDto toDto() {
-        var breakEvenPrice = this.buyingPrice() == null ? null : (int) Math.round(this.buyingPrice() * 1.002);
+    public InterestStockDto toDto(Double fee) {
+        var breakEvenPrice = this.buyingPrice() == null ? null : (int) Math.round(this.buyingPrice() * (1 + fee));
         var totalBuyingPrice = this.buyingPrice() == null || this.numOfStocks() == null ?
                 null : this.buyingPrice() * this.numOfStocks();
         return InterestStockDto.of(

@@ -1,12 +1,15 @@
 package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.domain.StockInfo;
+import arile.toy.stock_service.dto.GithubUserInfoDto;
 import arile.toy.stock_service.dto.request.InterestGroupRequest;
+import arile.toy.stock_service.dto.response.GithubUserInfoResponse;
 import arile.toy.stock_service.dto.response.InterestGroupWithCurrentInfoResponse;
 import arile.toy.stock_service.dto.response.InterestStockWithCurrentInfoResponse;
 import arile.toy.stock_service.dto.response.SimpleInterestGroupResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.repository.StockInfoRepository;
+import arile.toy.stock_service.service.GithubUserInfoService;
 import arile.toy.stock_service.service.InterestGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,6 +30,7 @@ public class InterestGroupController {
 
     private final StockInfoRepository stockInfoRepository;
     private final InterestGroupService interestGroupService;
+    private final GithubUserInfoService githubUserInfoService;
 
     // 단일 interest group 조회
     @GetMapping("/interest-group")
@@ -64,7 +68,9 @@ public class InterestGroupController {
         // redirection하면서 열릴 페이지에 내가 만들었던 것 유지하고 싶다. -> 이를 위해 RedirectAttributes가 필요
         redirectAttrs.addAttribute("groupName", interestGroupRequest.groupName());
 
-        interestGroupService.upsertInterestGroup(interestGroupRequest.toDto(githubUser.unchangeableId()));
+        var response = GithubUserInfoResponse.fromDto(githubUserInfoService.loadGithubUserInfo((githubUser.unchangeableId())));
+        Double fee = response.fee();
+        interestGroupService.upsertInterestGroup(interestGroupRequest.toDto(githubUser.unchangeableId(), fee));
 
         return "redirect:/interest-group"; // redirection : PRG pattern (POST REDIRECT GET)
     }
