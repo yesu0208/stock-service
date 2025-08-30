@@ -73,7 +73,7 @@ public class PostReplyController {
     @GetMapping("/my-posts")
     public String allMySimplePosts(@AuthenticationPrincipal GithubUser githubUser,
                                     Model model) {
-        List<SimplePostResponse> posts = postService.loadAllMySimplePosts(githubUser)
+        List<SimplePostResponse> posts = postService.loadAllMySimplePosts(githubUser.unchangeableId())
                 .stream()
                 .map(SimplePostResponse::fromDto)
                 .toList();
@@ -174,6 +174,7 @@ public class PostReplyController {
 
         return "redirect:/post"; // redirection : PRG pattern (POST REDIRECT GET)
     }
+
 
 
 
