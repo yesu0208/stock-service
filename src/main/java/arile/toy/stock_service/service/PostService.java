@@ -69,12 +69,12 @@ public class PostService {
         GithubUserInfo user = githubUserInfoRepository.findById(dto.unchangeableId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 유저가 없습니다 - unchangeableId: " + dto.unchangeableId()));
 
-        Post savedPost = postRepository.findByUserUnchangeableIdAndPostId(dto.unchangeableId(), postId)
+        PostDto savedPostDto = PostDto.fromEntity(postRepository.findByUserUnchangeableIdAndPostId(dto.unchangeableId(), postId)
                 .map(entity -> postRepository.save(dto.updateEntity(entity)))  // 기존 글이면 update
-                .orElseGet(() -> postRepository.save(dto.createEntity(user))); // 새 글이면 create
+                .orElseGet(() -> postRepository.save(dto.createEntity(user)))); // 새 글이면 create
 
         // upsertPostId
-        return savedPost.getPostId();  // PK 값 가져오기
+        return savedPostDto.postId();  // PK 값 가져오기
 
     }
 
