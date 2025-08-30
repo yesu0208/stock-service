@@ -22,4 +22,19 @@ public record InterestGroupWithCurrentInfoDto(
     public void addInterestStockWithCurrentInfoDto(InterestStockWithCurrentInfoDto interestStockWithCurrentInfoDto) {
         interestStockWithCurrentInfoDtos.add(interestStockWithCurrentInfoDto);
     }
+
+    // static method (전체)
+    public static InterestGroupWithCurrentInfoDto of(
+            Long id,
+            String groupName,
+            String unchangeableId,
+            Set<InterestStockWithCurrentInfoDto> interestStockWithCurrentInfoDtos,
+
+            LocalDateTime createdAt,
+            String createdBy,
+            LocalDateTime modifiedAt,
+            String modifiedBy
+    ) {
+        return new InterestGroupWithCurrentInfoDto(id, groupName, unchangeableId, interestStockWithCurrentInfoDtos,createdAt,createdBy, modifiedAt, modifiedBy);
+    }
 }

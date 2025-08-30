@@ -13,4 +13,21 @@ public record PostRequest(
     public PostDto toDto(String name, String unchangeableId) {
         return PostDto.of(title, stockName, body, name, unchangeableId);
     }
+
+    // static method
+    public static PostRequest of(
+            String title,
+            String stockName,
+            String body,
+            String name,
+            String unchangeableId
+    ) {
+        return new PostRequest(
+                title,
+                stockName,
+                body,
+                name,
+                unchangeableId
+        );
+    }
 }
