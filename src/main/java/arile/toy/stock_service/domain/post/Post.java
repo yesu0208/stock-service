@@ -88,4 +88,25 @@ public class Post {
     }
 
 
+
+
+    // Test용
+
+    public Post(Long postId, String title, String stockName, String body, Long repliesCount,
+                Long likesCount, Long dislikesCount, GithubUserInfo user) {
+        this.postId = postId;
+        this.title = title;
+        this.stockName = stockName;
+        this.body = body;
+        this.repliesCount = repliesCount;
+        this.likesCount = likesCount;
+        this.dislikesCount = dislikesCount;
+        this.user = user;
+    }
+
+    public static Post of(Long postId, String title, String stockName, String body, Long repliesCount,
+                          Long likesCount, Long dislikesCount, GithubUserInfo user) {
+        return new Post(postId, title, stockName, body, repliesCount, likesCount, dislikesCount, user);
+    }
+
 }
