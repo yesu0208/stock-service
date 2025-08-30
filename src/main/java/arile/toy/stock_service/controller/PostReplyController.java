@@ -10,6 +10,7 @@ import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.repository.StockInfoRepository;
 import arile.toy.stock_service.service.PostService;
 import arile.toy.stock_service.service.ReplyService;
+import arile.toy.stock_service.service.StockInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -25,9 +26,9 @@ import java.util.Map;
 @Controller
 public class PostReplyController {
 
-    private final StockInfoRepository stockInfoRepository;
     private final PostService postService;
     private final ReplyService replyService;
+    private final StockInfoService stockInfoService;
 
     // 단일 post 조회
     @GetMapping("/post")
@@ -35,10 +36,7 @@ public class PostReplyController {
                         @RequestParam(required = false) Long postId, // postId 들어가면 해당 내용, 아니면 빈 내용 보여주기
                        Model model) {
 
-        List<StockInfo> stockInfo = stockInfoRepository.findAll();
-        List<String> stockNames = stockInfo.stream()
-                .map(StockInfo::getStockName)
-                .toList();
+        List<String> stockNames = stockInfoService.loadStockNameList();
 
         // postId x : sample post, postId : 해당 postId의 post 조회
         PostResponse post = (postId != null) ?
@@ -75,7 +73,7 @@ public class PostReplyController {
     @GetMapping("/my-posts")
     public String allMySimplePosts(@AuthenticationPrincipal GithubUser githubUser,
                                     Model model) {
-        List<SimplePostResponse> posts = postService.loadAllMySimplePosts(githubUser)
+        List<SimplePostResponse> posts = postService.loadAllMySimplePosts(githubUser.unchangeableId())
                 .stream()
                 .map(SimplePostResponse::fromDto)
                 .toList();
@@ -176,6 +174,7 @@ public class PostReplyController {
 
         return "redirect:/post"; // redirection : PRG pattern (POST REDIRECT GET)
     }
+
 
 
 

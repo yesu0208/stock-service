@@ -56,8 +56,8 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<SimplePostDto> loadAllMySimplePosts(GithubUser githubUser) {
-        return postRepository.findAllByUserUnchangeableId(githubUser.unchangeableId())
+    public List<SimplePostDto> loadAllMySimplePosts(String unchangeableId) {
+        return postRepository.findAllByUserUnchangeableId(unchangeableId)
                 .stream()
                 .map(SimplePostDto::fromEntity)
                 .toList();
