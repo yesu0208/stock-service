@@ -8,6 +8,8 @@ import arile.toy.stock_service.dto.PostDto;
 import arile.toy.stock_service.dto.SimplePostDto;
 import arile.toy.stock_service.dto.response.PostResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
+import arile.toy.stock_service.exception.post.PostNotFoundException;
+import arile.toy.stock_service.exception.user.UserNotFoundException;
 import arile.toy.stock_service.repository.DislikeRepository;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import arile.toy.stock_service.repository.LikeRepository;
@@ -33,11 +35,11 @@ public class PostService {
     public PostResponse loadPost(String unchangeableId, Long postId) {
         var post = postRepository.findById(postId)
                 // Optional
-                .orElseThrow(() -> new EntityNotFoundException("해당 게시물이 없습니다 - postId: " + postId));
+                .orElseThrow(() -> new PostNotFoundException(postId));
 
         var githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
                 // Optional
-                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 없습니다 - postId: " + unchangeableId));
+                .orElseThrow(() -> new UserNotFoundException(unchangeableId));
 
         Boolean isLiking = likeRepository.findByGithubUserInfoAndPost(githubUserInfo, post).isPresent();
 
@@ -67,7 +69,7 @@ public class PostService {
     public Long upsertPost(PostDto dto, Long postId){
 
         GithubUserInfo user = githubUserInfoRepository.findById(dto.unchangeableId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 없습니다 - unchangeableId: " + dto.unchangeableId()));
+                .orElseThrow(() -> new UserNotFoundException(dto.unchangeableId()));
 
         PostDto savedPostDto = PostDto.fromEntity(postRepository.findByUserUnchangeableIdAndPostId(dto.unchangeableId(), postId)
                 .map(entity -> postRepository.save(dto.updateEntity(entity)))  // 기존 글이면 update
@@ -85,10 +87,10 @@ public class PostService {
 
     public PostResponse toggleLike(Long postId, String unchangeableId) {
         var post = postRepository.findById(postId) // Optional<PostEntity>
-                .orElseThrow(() -> new EntityNotFoundException("해당 게시물이 없습니다 "));
+                .orElseThrow(() -> new PostNotFoundException(postId));
 
         var githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 없습니다 "));
+                .orElseThrow(() -> new UserNotFoundException(unchangeableId));
 
         var like = likeRepository.findByGithubUserInfoAndPost(githubUserInfo, post); // 좋아요를 눌렀거나, 안눌렀거나(Optional)
 
@@ -112,10 +114,10 @@ public class PostService {
 
     public PostResponse toggleDislike(Long postId, String unchangeableId) {
         var post = postRepository.findById(postId) // Optional<PostEntity>
-                .orElseThrow(() -> new EntityNotFoundException("해당 게시물이 없습니다 "));
+                .orElseThrow(() -> new PostNotFoundException(postId));
 
         var githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 없습니다 "));
+                .orElseThrow(() -> new UserNotFoundException(unchangeableId));
 
         var like = likeRepository.findByGithubUserInfoAndPost(githubUserInfo, post); // 좋아요를 눌렀거나, 안눌렀거나(Optional)
 

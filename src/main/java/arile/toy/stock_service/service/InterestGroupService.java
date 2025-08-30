@@ -2,6 +2,7 @@ package arile.toy.stock_service.service;
 
 import arile.toy.stock_service.dto.InterestGroupDto;
 import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
+import arile.toy.stock_service.exception.group.GroupNotFoundException;
 import arile.toy.stock_service.repository.InterestGroupRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +35,7 @@ public class InterestGroupService {
         var interestGroupDto = interestGroupRepository.findByUnchangeableIdAndGroupName(unchangeableId, groupName)
                 .map(InterestGroupDto::fromEntity)
                 // Optional
-                .orElseThrow(() -> new EntityNotFoundException("관심 그룹이 없습니다 - unchangeableId: "
-                        + unchangeableId
-                        + ", groupName: "
-                        +groupName)); // optional이므로
+                .orElseThrow(() -> new GroupNotFoundException(unchangeableId, groupName)); // optional이므로
 
         var interestStockWithCurrentInfoDtos = interestGroupDto.interestStocks()
                 .stream()
