@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @ToString
@@ -64,4 +65,27 @@ public class Reply {
         this.modifiedAt = LocalDateTime.now();
     }
 
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof Reply that)) return false;
+
+        if (getReplyId() == null) {
+            return Objects.equals(this.getBody(), that.getBody()) &&
+                    Objects.equals(this.getCreatedAt(), that.getCreatedAt()) &&
+                    Objects.equals(this.getModifiedAt(), that.getModifiedAt()) &&
+                    Objects.equals(this.getUser(), that.getUser()) &&
+                    Objects.equals(this.getPost(), that.getPost());
+        }
+        return Objects.equals(this.getReplyId(), that.getReplyId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (getReplyId() == null) {
+            return Objects.hash(getBody(), getCreatedAt(), getModifiedAt(), getUser(), getPost());
+        }
+        return Objects.hash(getReplyId());
+    }
 }

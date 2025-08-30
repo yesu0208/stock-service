@@ -3,6 +3,9 @@ package arile.toy.stock_service.service;
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.Reply;
 import arile.toy.stock_service.dto.ReplyDto;
+import arile.toy.stock_service.exception.post.PostNotFoundException;
+import arile.toy.stock_service.exception.reply.ReplyNotFoundException;
+import arile.toy.stock_service.exception.user.UserNotFoundException;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import arile.toy.stock_service.repository.PostRepository;
 import arile.toy.stock_service.repository.ReplyRepository;
@@ -33,10 +36,10 @@ public class ReplyService {
     public void upsertReply(ReplyDto dto, Long postId, Long replyId){
 
         GithubUserInfo user = githubUserInfoRepository.findById(dto.unchangeableId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 없습니다 - unchangeableId: " + dto.unchangeableId()));
+                .orElseThrow(() -> new UserNotFoundException(dto.unchangeableId()));
 
         var post = postRepository.findById(postId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 게시물이 없습니다 - postId: " + postId));
+                .orElseThrow(() -> new PostNotFoundException(postId));
 
         replyRepository.findByReplyIdAndUserUnchangeableIdAndPostPostId(replyId, dto.unchangeableId(), postId)
                 .ifPresentOrElse( // Optional
@@ -47,7 +50,7 @@ public class ReplyService {
 
     public void deleteReply(String unchangeableId, Long postId, Long replyId) {
         Reply reply = replyRepository.findById(replyId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 entity 없습니다."));
+                .orElseThrow(() -> new ReplyNotFoundException(replyId));
         var post = reply.getPost();
         post.setRepliesCount(post.getRepliesCount() -1 );
         replyRepository.deleteByUserUnchangeableIdAndPostPostIdAndReplyId(unchangeableId, postId, replyId);

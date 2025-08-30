@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Objects;
+
 @Getter
 @ToString(callSuper = true)
 @Table(name = "interest_stocks")
@@ -42,5 +44,30 @@ public class InterestStock extends AuditingFields{
         return new InterestStock(stockName, buyingPrice, numOfStocks, breakEvenPrice, totalBuyingPrice, fieldOrder);
     }
 
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof InterestStock that)) return false;
+
+        if (getId() == null) {
+            return Objects.equals(this.getInterestGroup(), that.getInterestGroup()) &&
+                    Objects.equals(this.getStockName(), that.getStockName()) &&
+                    Objects.equals(this.getBuyingPrice(), that.getBuyingPrice()) &&
+                    Objects.equals(this.getNumOfStocks(), that.getNumOfStocks()) &&
+                    Objects.equals(this.getBreakEvenPrice(), that.getBreakEvenPrice()) &&
+                    Objects.equals(this.getTotalBuyingPrice(), that.getTotalBuyingPrice()) &&
+                    Objects.equals(this.getFieldOrder(), that.getFieldOrder());
+        }
+        return Objects.equals(this.getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (getId() == null) {
+            return Objects.hash(getInterestGroup(), getStockName(), getBuyingPrice(), getNumOfStocks(), getBreakEvenPrice(), getTotalBuyingPrice(), getFieldOrder());
+        }
+        return Objects.hash(getId());
+    }
 }
 
