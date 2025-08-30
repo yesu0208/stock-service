@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -56,6 +57,28 @@ public class InterestGroup extends AuditingFields {
 
     public void clearInterestStocks() {
         interestStocks.clear();
+    }
+
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof InterestGroup that)) return false;
+
+        if (getId() == null) {
+            return Objects.equals(this.getGroupName(), that.getGroupName()) &&
+                    Objects.equals(this.getUnchangeableId(), that.getUnchangeableId()) &&
+                    Objects.equals(this.getInterestStocks(), that.getInterestStocks());
+        }
+        return Objects.equals(this.getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (getId() == null) {
+            return Objects.hash(getGroupName(), getUnchangeableId(), getInterestStocks());
+        }
+        return Objects.hash(getId());
     }
 }
 

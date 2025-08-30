@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Objects;
+
 @Getter
 @ToString
 @Table(name = "dislikes")
@@ -33,5 +35,27 @@ public class Dislike {
 
     public static Dislike of(GithubUserInfo githubUserInfo, Post post) {
         return new Dislike(githubUserInfo, post);
+    }
+
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof Dislike that)) return false;
+
+        if (getDislikeId() == null) {
+            return Objects.equals(this.getGithubUserInfo(), that.getGithubUserInfo()) &&
+                    Objects.equals(this.getPost(), that.getPost());
+        }
+
+        return Objects.equals(this.getDislikeId(), that.getDislikeId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (getDislikeId() == null) {
+            return Objects.hash(getGithubUserInfo(), getPost());
+        }
+        return Objects.hash(getDislikeId());
     }
 }

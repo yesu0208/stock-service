@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -35,4 +36,43 @@ public class GithubUserInfo {
     @Column
     private Double fee;
 
+    public GithubUserInfo() {
+    }
+
+    public GithubUserInfo(String unchangeableId, String id, String name, String email, Double fee) {
+        this.unchangeableId = unchangeableId;
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.fee = fee;
+    }
+
+    public static GithubUserInfo of(String unchangeableId, String id, String name, String email, Double fee) {
+        return new GithubUserInfo(unchangeableId, id, name, email, fee);
+    }
+
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof GithubUserInfo that)) return false;
+
+        if (getUnchangeableId() == null) {
+            return Objects.equals(this.getId(), that.getId()) &&
+                    Objects.equals(this.getName(), that.getName()) &&
+                    Objects.equals(this.getEmail(), that.getEmail()) &&
+                    Objects.equals(this.getLastLoginAt(), that.getLastLoginAt()) &&
+                    Objects.equals(this.getFee(), that.getFee());
+        }
+
+        return Objects.equals(this.getUnchangeableId(), that.getUnchangeableId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (getUnchangeableId() == null) {
+            return Objects.hash(getId(), getName(), getEmail(), getLastLoginAt(), getFee());
+        }
+        return Objects.hash(getUnchangeableId());
+    }
 }

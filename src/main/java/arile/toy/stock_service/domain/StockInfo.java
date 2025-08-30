@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Objects;
+
 @Getter
 @ToString
 @Table(name = "stock_information")
@@ -39,4 +41,25 @@ public class StockInfo {
         this.stockName = stockName;
     }
 
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof StockInfo that)) return false;
+
+        if (getId() == null) {
+            return Objects.equals(this.getStockName(), that.getStockName()) &&
+                    Objects.equals(this.getShortCode(), that.getShortCode()) &&
+                    Objects.equals(this.getMarketClass(), that.getMarketClass());
+        }
+        return Objects.equals(this.getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (getId() == null) {
+            return Objects.hash(getStockName(), getShortCode(), getMarketClass());
+        }
+        return Objects.hash(getId());
+    }
 }

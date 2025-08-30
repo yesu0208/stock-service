@@ -3,6 +3,7 @@ package arile.toy.stock_service.dto;
 import arile.toy.stock_service.domain.InterestStock;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public record InterestStockDto(
         Long id,
@@ -76,5 +77,16 @@ public record InterestStockDto(
                 this.breakEvenPrice,
                 this.totalBuyingPrice,
                 this.fieldOrder);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof InterestStockDto that)) return false;
+        return Objects.equals(id(), that.id());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id());
     }
 }

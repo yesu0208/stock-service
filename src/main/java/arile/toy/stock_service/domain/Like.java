@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Objects;
+
 @Getter
 @ToString
 @Table(name = "likes")
@@ -33,5 +35,26 @@ public class Like {
 
     public static Like of(GithubUserInfo githubUserInfo, Post post) {
         return new Like(githubUserInfo, post);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof Like that)) return false;
+
+        if (getLikeId() == null) {
+            return Objects.equals(this.getGithubUserInfo(), that.getGithubUserInfo()) &&
+                    Objects.equals(this.getPost(), that.getPost());
+        }
+
+        return Objects.equals(this.getLikeId(), that.getLikeId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (getLikeId() == null) {
+            return Objects.hash(getGithubUserInfo(), getPost());
+        }
+        return Objects.hash(getLikeId());
     }
 }
