@@ -10,6 +10,7 @@ import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.repository.StockInfoRepository;
 import arile.toy.stock_service.service.GithubUserInfoService;
 import arile.toy.stock_service.service.InterestGroupService;
+import arile.toy.stock_service.service.StockInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,7 @@ import java.util.List;
 @Controller
 public class InterestGroupController {
 
-    private final StockInfoRepository stockInfoRepository;
+    private final StockInfoService stockInfoService;
     private final InterestGroupService interestGroupService;
     private final GithubUserInfoService githubUserInfoService;
 
@@ -42,10 +43,7 @@ public class InterestGroupController {
                 InterestGroupWithCurrentInfoResponse.fromDto(interestGroupService.loadMyGroup(githubUser.unchangeableId(), groupName)) :
                 defaultInterestGroup(groupName);
 
-        List<StockInfo> stockInfo = stockInfoRepository.findAll();
-        List<String> stockNames = stockInfo.stream()
-                .map(StockInfo::getStockName)
-                .toList();
+        List<String> stockNames = stockInfoService.loadStockNameList();
 
         model.addAttribute("interestGroup", interestGroup);
         model.addAttribute("stockNames", stockNames);
