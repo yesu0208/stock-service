@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'arile.toy'
-version = '0.0.1-SNAPSHOT'
+version = 'v1.0'
 description = 'Stock Service'
 
 java {
@@ -43,4 +43,11 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
     jvmArgs('-Xshare:off', '-XX:+EnableDynamicAgentLoading') // 테스트 도중 class data sharing 경고, Dynamic loading of agents 경고를 제거하기 위한 jvm 옵션
+}
+
+// Heroku 설정
+jar {
+    manifest {
+        attributes('Main-Class': 'arile.toy.stock_service.StockserviceApplication')
+    }
 }
