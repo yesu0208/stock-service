@@ -179,12 +179,15 @@
                         </a>
 
                         <!-- 삭제: 휴지통 아이콘 -->
-                        <a th:href="@{/my-posts/{postId}(postId=${post.postId})}"
-                           onclick="return confirm('정말 삭제하시겠습니까?');"
-                           title="삭제"
-                           class="text-gray-900 dark:text-white text-xl hover:text-gray-500 dark:hover:text-gray-300 transition">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                        <form th:action="@{/my-posts/{postId}(postId=${post.postId})}" method="post"
+                              onsubmit="return confirm('정말 삭제하시겠습니까?');"
+                              style="display:inline">
+                            <button type="submit"
+                                    title="삭제"
+                                    class="text-gray-900 dark:text-white text-xl hover:text-gray-500 dark:hover:text-gray-300 transition">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
 
