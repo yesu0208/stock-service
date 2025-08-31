@@ -31,6 +31,7 @@ public class ApplicationConfig {
             }
         };
     }
+    
 
     public void getCurrentStockInfo(String stockName) throws JsonProcessingException {
 
