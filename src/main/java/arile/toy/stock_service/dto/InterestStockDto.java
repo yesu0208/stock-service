@@ -1,5 +1,6 @@
 package arile.toy.stock_service.dto;
 
+import arile.toy.stock_service.domain.InterestGroup;
 import arile.toy.stock_service.domain.InterestStock;
 
 import java.time.LocalDateTime;
@@ -81,12 +82,30 @@ public record InterestStockDto(
 
     @Override
     public boolean equals(Object object) {
+        if (this == object) return true;
         if (!(object instanceof InterestStockDto that)) return false;
-        return Objects.equals(id(), that.id());
+
+        if (id() == null) {
+            return Objects.equals(this.stockName(), that.stockName()) &&
+                    Objects.equals(this.buyingPrice(), that.buyingPrice()) &&
+                    Objects.equals(this.numOfStocks(), that.numOfStocks()) &&
+                    Objects.equals(this.breakEvenPrice(), that.breakEvenPrice()) &&
+                    Objects.equals(this.totalBuyingPrice(), that.totalBuyingPrice()) &&
+                    Objects.equals(this.fieldOrder(), that.fieldOrder()) &&
+                    Objects.equals(this.createdAt(), that.createdAt()) &&
+                    Objects.equals(this.createdBy(), that.createdBy()) &&
+                    Objects.equals(this.modifiedAt(), that.modifiedBy()) &&
+                    Objects.equals(this.modifiedBy(), that.modifiedBy());
+        }
+        return Objects.equals(this.id(), that.id());
     }
 
     @Override
     public int hashCode() {
+        if (id() == null) {
+            return Objects.hash(stockName(), buyingPrice(), numOfStocks(), breakEvenPrice(),
+                    totalBuyingPrice(), fieldOrder(), createdAt(), createdBy(), modifiedAt(), modifiedBy());
+        }
         return Objects.hash(id());
     }
 }
