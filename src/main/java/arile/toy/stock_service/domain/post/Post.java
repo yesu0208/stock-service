@@ -48,11 +48,11 @@ public class Post {
     private Long dislikesCount = 0L;
 
     @Setter
-    @Column
+    @Column(columnDefinition = "DATETIME")
     private ZonedDateTime createdAt;
 
     @Setter
-    @Column
+    @Column(columnDefinition = "DATETIME")
     private ZonedDateTime modifiedAt;
 
     @Setter

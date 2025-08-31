@@ -25,11 +25,11 @@ public class Reply {
     private String body;
 
     @Setter
-    @Column
+    @Column(columnDefinition = "DATETIME")
     private ZonedDateTime createdAt;
 
     @Setter
-    @Column
+    @Column(columnDefinition = "DATETIME")
     private ZonedDateTime modifiedAt;
 
     @Setter

@@ -23,7 +23,7 @@ public abstract class AuditingFields {
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) // 표준 date로 변경 (ISO)
     @CreatedDate // 자동으로 setting
-    @Column(nullable = false, updatable = false) // 생성과 관련된 정보는 update 되어서는 안된다.
+    @Column(nullable = false, updatable = false, columnDefinition = "DATETIME") // 생성과 관련된 정보는 update 되어서는 안된다.
     protected ZonedDateTime createdAt; // protected : 자식 class가 참조할 수 있도록 private(x)
 
     @CreatedBy
@@ -33,7 +33,7 @@ public abstract class AuditingFields {
     @Setter
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @LastModifiedDate
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "DATETIME")
     protected ZonedDateTime modifiedAt;
 
     @Setter
