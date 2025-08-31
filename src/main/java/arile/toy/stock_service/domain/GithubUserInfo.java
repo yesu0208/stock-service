@@ -30,7 +30,7 @@ public class GithubUserInfo {
     @Column
     private String email;
 
-    @Column
+    @Column(columnDefinition = "DATETIME")
     private ZonedDateTime lastLoginAt;
 
     @Column
