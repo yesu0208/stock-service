@@ -13,7 +13,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 @ToString
@@ -24,7 +24,7 @@ public abstract class AuditingFields {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) // 표준 date로 변경 (ISO)
     @CreatedDate // 자동으로 setting
     @Column(nullable = false, updatable = false, columnDefinition = "DATETIME") // 생성과 관련된 정보는 update 되어서는 안된다.
-    protected ZonedDateTime createdAt; // protected : 자식 class가 참조할 수 있도록 private(x)
+    protected LocalDateTime createdAt; // protected : 자식 class가 참조할 수 있도록 private(x)
 
     @CreatedBy
     @Column(nullable = false, updatable = false)
@@ -34,7 +34,7 @@ public abstract class AuditingFields {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @LastModifiedDate
     @Column(nullable = false, columnDefinition = "DATETIME")
-    protected ZonedDateTime modifiedAt;
+    protected LocalDateTime modifiedAt;
 
     @Setter
     @LastModifiedBy

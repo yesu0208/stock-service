@@ -2,13 +2,13 @@ package arile.toy.stock_service.dto.response;
 
 import arile.toy.stock_service.dto.InterestGroupDto;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 public record SimpleInterestGroupResponse(
         String groupName,
         String unchangeableId,
-        ZonedDateTime createdAt,
-        ZonedDateTime modifiedAt
+        LocalDateTime createdAt,
+        LocalDateTime modifiedAt
 ) {
     // Dto -> response
     public static SimpleInterestGroupResponse fromDto(InterestGroupDto dto) {

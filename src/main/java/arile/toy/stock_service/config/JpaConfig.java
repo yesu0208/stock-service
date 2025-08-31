@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @EnableJpaAuditing(dateTimeProviderRef = "seoulDateTimeProvider")
@@ -39,6 +39,6 @@ public class JpaConfig {
 
     @Bean
     public DateTimeProvider seoulDateTimeProvider() {
-        return () -> Optional.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
+        return () -> Optional.of(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
     }
 }

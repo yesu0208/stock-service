@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -26,11 +26,11 @@ public class Reply {
 
     @Setter
     @Column(columnDefinition = "DATETIME")
-    private ZonedDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @Setter
     @Column(columnDefinition = "DATETIME")
-    private ZonedDateTime modifiedAt;
+    private LocalDateTime modifiedAt;
 
     @Setter
     @ManyToOne
@@ -57,13 +57,13 @@ public class Reply {
 
     @PrePersist
     private void perPersist() {
-        this.createdAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        this.modifiedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.modifiedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
     @PreUpdate
     private void preUpdate() {
-        this.modifiedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.modifiedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
 

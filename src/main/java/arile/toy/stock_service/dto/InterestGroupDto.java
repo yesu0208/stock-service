@@ -2,7 +2,7 @@ package arile.toy.stock_service.dto;
 
 import arile.toy.stock_service.domain.InterestGroup;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,9 +12,9 @@ public record InterestGroupDto(
         String unchangeableId,
         Set<InterestStockDto> interestStocks,
 
-        ZonedDateTime createdAt,
+        LocalDateTime createdAt,
         String createdBy,
-        ZonedDateTime modifiedAt,
+        LocalDateTime modifiedAt,
         String modifiedBy
 ) {
     // Entity -> Dto
@@ -39,9 +39,9 @@ public record InterestGroupDto(
             String groupName,
             String unchangeableId,
             Set<InterestStockDto> interestStocks,
-            ZonedDateTime createdAt,
+            LocalDateTime createdAt,
             String createdBy,
-            ZonedDateTime modifiedAt,
+            LocalDateTime modifiedAt,
             String modifiedBy
     ) {
         return new InterestGroupDto(id, groupName, unchangeableId, interestStocks, createdAt, createdBy, modifiedAt, modifiedBy);

@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import static org.mockito.BDDMockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -45,7 +45,7 @@ class UserAccountControllerTest {
         var githubUser = new GithubUser("12345", "test-id", "test-name", "test@eamil.com");
         given(githubUserInfoService.loadGithubUserInfo(githubUser.unchangeableId()))
                 .willReturn(GithubUserInfoDto.of(
-                        githubUser.unchangeableId(), githubUser.id(), githubUser.name(), githubUser.email(), ZonedDateTime.now(), 0.01));
+                        githubUser.unchangeableId(), githubUser.id(), githubUser.name(), githubUser.email(), LocalDateTime.now(), 0.01));
         given(githubUserInfoService.loadGithubUserCurrentAccount(githubUser.unchangeableId()))
                 .willReturn(GithubUserCurrentAccountDto.of(
                         githubUser.unchangeableId(), 1000, 1000, 1000, 1000, "10.0%"));

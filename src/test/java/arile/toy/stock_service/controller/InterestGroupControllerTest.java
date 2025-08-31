@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -71,7 +71,7 @@ class InterestGroupControllerTest {
         given(stockInfoService.loadStockNameList()).willReturn(List.of());
         given(interestGroupService.loadMyGroup(githubUser.unchangeableId(), groupName)).willReturn(
                 InterestGroupWithCurrentInfoDto.of(1L, groupName, githubUser.unchangeableId(), Set.of(),
-                        ZonedDateTime.now(), "me", ZonedDateTime.now(), "me")
+                        LocalDateTime.now(), "me", LocalDateTime.now(), "me")
         );
 
         // When & Then
@@ -105,7 +105,7 @@ class InterestGroupControllerTest {
                 )
         );
         given(githubUserInfoService.loadGithubUserInfo(githubUser.unchangeableId())).willReturn(
-                GithubUserInfoDto.of(githubUser.unchangeableId(), "test-id", "test-name", "test@email.com", ZonedDateTime.now(), fee));
+                GithubUserInfoDto.of(githubUser.unchangeableId(), "test-id", "test-name", "test@email.com", LocalDateTime.now(), fee));
         willDoNothing().given(interestGroupService).upsertInterestGroup(request.toDto(githubUser.unchangeableId(), fee));
 
 

@@ -41,7 +41,7 @@ public class GithubOAuth2UserService extends DefaultOAuth2UserService {
         githubUserInfo.setId(id);
         githubUserInfo.setName(name);
         githubUserInfo.setEmail(email);
-        githubUserInfo.setLastLoginAt(java.time.ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
+        githubUserInfo.setLastLoginAt(java.time.LocalDateTime.now(ZoneId.of("Asia/Seoul")));
         githubUserInfo.setFee(0.0); // 수수료+세금 입력 안하면 기본으로 0 (초기 생성할 떄)
 
         githubUserInfoRepository.save(githubUserInfo);
