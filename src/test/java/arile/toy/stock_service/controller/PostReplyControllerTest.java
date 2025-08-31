@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.BDDMockito.*;
@@ -80,7 +80,7 @@ class PostReplyControllerTest {
         given(stockInfoService.loadStockNameList()).willReturn(List.of());
         given(postService.loadPost(githubUser.unchangeableId(), postId)).willReturn(
                 PostResponse.fromDto(PostDto.of(1L, "post", "삼성전자", "삼성전자", 0L,
-                        1L, 1L, ZonedDateTime.now(), ZonedDateTime.now(), "test-name", "12345"),
+                        1L, 1L, LocalDateTime.now(), LocalDateTime.now(), "test-name", "12345"),
                         true, false)
         );
         given(replyService.loadAllRepliesByPostId(postId)).willReturn(List.of());
@@ -223,7 +223,7 @@ class PostReplyControllerTest {
         Long postId = 1L;
         given(postService.toggleLike(postId, githubUser.unchangeableId())).willReturn(
                 PostResponse.fromDto(PostDto.of(1L, "post", "삼성전자", "삼성전자", 0L,
-                                1L, 1L, ZonedDateTime.now(), ZonedDateTime.now(), "test-name", "12345"),
+                                1L, 1L, LocalDateTime.now(), LocalDateTime.now(), "test-name", "12345"),
                         true, false)
         );
 
@@ -250,7 +250,7 @@ class PostReplyControllerTest {
         Long postId = 1L;
         given(postService.toggleDislike(postId, githubUser.unchangeableId())).willReturn(
                 PostResponse.fromDto(PostDto.of(1L, "post", "삼성전자", "삼성전자", 0L,
-                                1L, 1L, ZonedDateTime.now(), ZonedDateTime.now(), "test-name", "12345"),
+                                1L, 1L, LocalDateTime.now(), LocalDateTime.now(), "test-name", "12345"),
                         true, false)
         );
 

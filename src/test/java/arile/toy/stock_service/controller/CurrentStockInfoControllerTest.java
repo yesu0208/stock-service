@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
@@ -59,7 +59,7 @@ class CurrentStockInfoControllerTest {
                 CurrentStockInfoDto.of("123456", "삼성전자", "OPEN", "KOSPI",
                         70000, 500, 0.1, "2", 70100, 60900,
                         90000, 50000, 5, 69500,
-                        123546L, 123456L, ZonedDateTime.now())
+                        123546L, 123456L, LocalDateTime.now())
         );
 
         // When & Then

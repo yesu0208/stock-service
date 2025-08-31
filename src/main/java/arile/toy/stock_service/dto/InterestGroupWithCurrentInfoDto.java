@@ -1,6 +1,6 @@
 package arile.toy.stock_service.dto;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
 
@@ -10,9 +10,9 @@ public record InterestGroupWithCurrentInfoDto(
         String unchangeableId,
         Set<InterestStockWithCurrentInfoDto> interestStockWithCurrentInfoDtos,
 
-        ZonedDateTime createdAt,
+        LocalDateTime createdAt,
         String createdBy,
-        ZonedDateTime modifiedAt,
+        LocalDateTime modifiedAt,
         String modifiedBy
 ) {
     public void addInterestStockWithCurrentInfoDtos(Collection<InterestStockWithCurrentInfoDto> interestStockWithCurrentInfoDtos) {
@@ -30,9 +30,9 @@ public record InterestGroupWithCurrentInfoDto(
             String unchangeableId,
             Set<InterestStockWithCurrentInfoDto> interestStockWithCurrentInfoDtos,
 
-            ZonedDateTime createdAt,
+            LocalDateTime createdAt,
             String createdBy,
-            ZonedDateTime modifiedAt,
+            LocalDateTime modifiedAt,
             String modifiedBy
     ) {
         return new InterestGroupWithCurrentInfoDto(id, groupName, unchangeableId, interestStockWithCurrentInfoDtos,createdAt,createdBy, modifiedAt, modifiedBy);

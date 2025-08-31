@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Objects;
 
@@ -62,7 +62,7 @@ public class CurrentStockInfoService {
         Long transactionVolume = stockData.aq();
         Long transactionValue = stockData.aa();
         Long unixTimeMs = response.result().time();
-        ZonedDateTime time = unixTimeMsToZonedDateTime(unixTimeMs);
+        LocalDateTime time = unixTimeMsToLocalDateTime(unixTimeMs);
 
 
 
@@ -92,9 +92,10 @@ public class CurrentStockInfoService {
         );
     }
 
-    public ZonedDateTime unixTimeMsToZonedDateTime(Long unixTimeMs) {
+    public LocalDateTime unixTimeMsToLocalDateTime(Long unixTimeMs) {
         return Instant.ofEpochMilli(unixTimeMs)
-                .atZone(ZoneId.of("Asia/Seoul"));
+                .atZone(ZoneId.of("Asia/Seoul"))
+                .toLocalDateTime();
     }
 
 }

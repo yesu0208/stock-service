@@ -3,7 +3,7 @@ package arile.toy.stock_service.dto;
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.post.Post;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 public record PostDto(
         Long postId,
@@ -13,8 +13,8 @@ public record PostDto(
         Long repliesCount,
         Long likesCount,
         Long dislikesCount,
-        ZonedDateTime createdAt,
-        ZonedDateTime modifiedAt,
+        LocalDateTime createdAt,
+        LocalDateTime modifiedAt,
         String name,
         String unchangeableId
 ) {
@@ -44,8 +44,8 @@ public record PostDto(
             Long repliesCount,
             Long likesCount,
             Long dislikesCount,
-            ZonedDateTime createdAt,
-            ZonedDateTime modifiedAt,
+            LocalDateTime createdAt,
+            LocalDateTime modifiedAt,
             String name,
             String unchangeableId
     ) {
