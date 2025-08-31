@@ -22,6 +22,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Git checkout 시 실행 권한 보존
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
@@ -35,11 +37,18 @@ jobs:
 
     - name: Grant execute permission and build
       run: |
+        echo "Project root files:"
+        ls -l
+        if [ ! -f ./gradlew ]; then
+          echo "Error: gradlew not found!"
+          exit 1
+        fi
         echo "Before chmod:"
         ls -l ./gradlew
         chmod +x ./gradlew
         echo "After chmod:"
         ls -l ./gradlew
+        echo "Building project..."
         ./gradlew build
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
@@ -61,6 +70,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
