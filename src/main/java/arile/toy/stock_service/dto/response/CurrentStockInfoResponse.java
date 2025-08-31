@@ -2,7 +2,7 @@ package arile.toy.stock_service.dto.response;
 
 import arile.toy.stock_service.dto.CurrentStockInfoDto;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record CurrentStockInfoResponse(
         String shortCode,
@@ -22,7 +22,7 @@ public record CurrentStockInfoResponse(
         Integer standardValue,
         Long transactionVolume,
         Long transactionValue,
-        LocalDateTime time
+        ZonedDateTime time
 ) {
     // Dto -> response
     public static CurrentStockInfoResponse fromDto(CurrentStockInfoDto dto) {

@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Setter
@@ -31,7 +31,7 @@ public class GithubUserInfo {
     private String email;
 
     @Column
-    private LocalDateTime lastLoginAt;
+    private ZonedDateTime lastLoginAt;
 
     @Column
     private Double fee;

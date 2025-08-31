@@ -2,14 +2,14 @@ package arile.toy.stock_service.dto.response;
 
 import arile.toy.stock_service.dto.GithubUserInfoDto;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record GithubUserInfoResponse(
         String unchangeableId,
         String id,
         String name,
         String email,
-        LocalDateTime lastLoginAt,
+        ZonedDateTime lastLoginAt,
         Double fee
 ) {
     // Dto -> response

@@ -1,6 +1,6 @@
 package arile.toy.stock_service.dto;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record InterestStockWithCurrentInfoDto(
         Long id,
@@ -19,9 +19,9 @@ public record InterestStockWithCurrentInfoDto(
         Integer realizedPL, // 실현손익
         String rateOfReturnString, // 수익률(String)
 
-        LocalDateTime createdAt,
+        ZonedDateTime createdAt,
         String createdBy,
-        LocalDateTime modifiedAt,
+        ZonedDateTime modifiedAt,
         String modifiedBy
 ) {
     // static method (전체)
@@ -42,9 +42,9 @@ public record InterestStockWithCurrentInfoDto(
             Integer realizedPL,
             String rateOfReturnString,
 
-            LocalDateTime createdAt,
+            ZonedDateTime createdAt,
             String createdBy,
-            LocalDateTime modifiedAt,
+            ZonedDateTime modifiedAt,
             String modifiedBy
     ) {
         return new InterestStockWithCurrentInfoDto(id, stockName, buyingPrice, numOfStocks,breakEvenPrice,totalBuyingPrice, fieldOrder, nowValue, changeValue, changeRateString, valuation, unrealizedPL, realizedPL, rateOfReturnString, createdAt, createdBy, modifiedAt, modifiedBy);

@@ -4,13 +4,13 @@ import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.Reply;
 import arile.toy.stock_service.domain.post.Post;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record ReplyDto(
         Long replyId,
         String body,
-        LocalDateTime createdAt,
-        LocalDateTime modifiedAt,
+        ZonedDateTime createdAt,
+        ZonedDateTime modifiedAt,
         String name,
         String unchangeableId
 ) {
@@ -30,8 +30,8 @@ public record ReplyDto(
     public static ReplyDto of(
             Long replyId,
             String body,
-            LocalDateTime createdAt,
-            LocalDateTime modifiedAt,
+            ZonedDateTime createdAt,
+            ZonedDateTime modifiedAt,
             String name,
             String unchangeableId
     ) {
