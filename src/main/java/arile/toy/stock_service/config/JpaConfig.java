@@ -3,14 +3,17 @@ package arile.toy.stock_service.config;
 import arile.toy.stock_service.dto.security.GithubUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
-@EnableJpaAuditing
+@EnableJpaAuditing(dateTimeProviderRef = "seoulDateTimeProvider")
 @Configuration
 public class JpaConfig {
 
@@ -31,5 +34,11 @@ public class JpaConfig {
 
             return Optional.of(authentication.getName()); // fallback
         };
+    }
+
+
+    @Bean
+    public DateTimeProvider seoulDateTimeProvider() {
+        return () -> Optional.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
     }
 }

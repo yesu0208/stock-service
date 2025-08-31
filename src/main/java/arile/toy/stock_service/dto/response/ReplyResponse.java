@@ -2,13 +2,13 @@ package arile.toy.stock_service.dto.response;
 
 import arile.toy.stock_service.dto.ReplyDto;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record ReplyResponse(
         Long replyId,
         String body,
-        LocalDateTime createdAt,
-        LocalDateTime modifiedAt,
+        ZonedDateTime createdAt,
+        ZonedDateTime modifiedAt,
         String name,
         String unchangeableId
 ) {

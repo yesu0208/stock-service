@@ -2,7 +2,7 @@ package arile.toy.stock_service.dto;
 
 import arile.toy.stock_service.domain.post.Post;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record SimplePostDto(
         Long postId,
@@ -11,8 +11,8 @@ public record SimplePostDto(
         Long repliesCount,
         Long likesCount,
         Long dislikesCount,
-        LocalDateTime createdAt,
-        LocalDateTime modifiedAt,
+        ZonedDateTime createdAt,
+        ZonedDateTime modifiedAt,
         String name,
         String unchangeableId
 ) {

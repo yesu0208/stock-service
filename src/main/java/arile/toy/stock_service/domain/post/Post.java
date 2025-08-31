@@ -8,7 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Getter
@@ -48,11 +49,11 @@ public class Post {
 
     @Setter
     @Column
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     @Setter
     @Column
-    private LocalDateTime modifiedAt;
+    private ZonedDateTime modifiedAt;
 
     @Setter
     @ManyToOne
@@ -80,13 +81,13 @@ public class Post {
 
     @PrePersist
     private void perPersist() {
-        this.createdAt = LocalDateTime.now();
-        this.modifiedAt = LocalDateTime.now();
+        this.createdAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.modifiedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
     @PreUpdate
     private void preUpdate() {
-        this.modifiedAt = LocalDateTime.now();
+        this.modifiedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
     @Override

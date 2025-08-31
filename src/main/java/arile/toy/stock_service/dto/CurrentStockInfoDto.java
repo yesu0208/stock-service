@@ -1,6 +1,6 @@
 package arile.toy.stock_service.dto;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record CurrentStockInfoDto(
         String shortCode,
@@ -20,7 +20,7 @@ public record CurrentStockInfoDto(
         Integer standardValue, // 기준가
         Long transactionVolume, // 거래량
         Long transactionValue,  // 거래대금
-        LocalDateTime time // 기준 시각
+        ZonedDateTime time // 기준 시각
 ) {
     // static method (전체)
     public static CurrentStockInfoDto of(
@@ -41,7 +41,7 @@ public record CurrentStockInfoDto(
             Integer standardValue,
             Long transactionVolume,
             Long transactionValue,
-            LocalDateTime time
+            ZonedDateTime time
     ) {
         return new CurrentStockInfoDto(shortCode, stockName, marketState, marketType, nowValue,
                 changeValue, changeRate, riseOrFall, highestValue, lowestValue, upperLimit, lowerLimit,

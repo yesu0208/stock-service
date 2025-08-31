@@ -2,7 +2,7 @@ package arile.toy.stock_service.dto.response;
 
 import arile.toy.stock_service.dto.PostDto;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record PostResponse(
         Long postId,
@@ -12,8 +12,8 @@ public record PostResponse(
         Long repliesCount,
         Long likesCount,
         Long dislikesCount,
-        LocalDateTime createdAt,
-        LocalDateTime modifiedAt,
+        ZonedDateTime createdAt,
+        ZonedDateTime modifiedAt,
         String name,
         String unchangeableId,
         Boolean isLiking,

@@ -3,7 +3,7 @@ package arile.toy.stock_service.dto;
 import arile.toy.stock_service.domain.InterestGroup;
 import arile.toy.stock_service.domain.InterestStock;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 public record InterestStockDto(
@@ -16,9 +16,9 @@ public record InterestStockDto(
         Integer totalBuyingPrice,
         Integer fieldOrder,
 
-        LocalDateTime createdAt,
+        ZonedDateTime createdAt,
         String createdBy,
-        LocalDateTime modifiedAt,
+        ZonedDateTime modifiedAt,
         String modifiedBy
 ) {
     // Entity -> Dto
@@ -48,9 +48,9 @@ public record InterestStockDto(
             Integer breakEvenPrice,
             Integer totalBuyingPrice,
             Integer fieldOrder,
-            LocalDateTime createdAt,
+            ZonedDateTime createdAt,
             String createdBy,
-            LocalDateTime modifiedAt,
+            ZonedDateTime modifiedAt,
             String modifiedBy
     ) {
         return new InterestStockDto(id, stockName, buyingPrice, numOfStocks,breakEvenPrice,totalBuyingPrice, fieldOrder, createdAt, createdBy, modifiedAt, modifiedBy);
