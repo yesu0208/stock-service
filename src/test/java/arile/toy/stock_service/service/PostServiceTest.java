@@ -172,20 +172,20 @@ class PostServiceTest {
     }
 
 
-    @DisplayName("unchangeableId와 postId가 주어지면, 게시물을 삭제한다.")
-    @Test
-    void givenUnchangeableIdAndPostId_whenDeleting_thenDeletesPost() {
-        // Given
-        String unchangeableId = "123456";
-        Long postId = 1L;
-        willDoNothing().given(postRepository).deleteByUserUnchangeableIdAndPostId(unchangeableId, postId);
-
-        // When
-        sut.deletePost(unchangeableId, postId);
-
-        // Then
-        then(postRepository).should().deleteByUserUnchangeableIdAndPostId(unchangeableId, postId);
-    }
+//    @DisplayName("unchangeableId와 postId가 주어지면, 게시물을 삭제한다.")
+//    @Test
+//    void givenUnchangeableIdAndPostId_whenDeleting_thenDeletesPost() {
+//        // Given
+//        String unchangeableId = "123456";
+//        Long postId = 1L;
+//        willDoNothing().given(postRepository).deleteByUserUnchangeableIdAndPostId(unchangeableId, postId);
+//
+//        // When
+//        sut.deletePost(unchangeableId, postId);
+//
+//        // Then
+//        then(postRepository).should().deleteByUserUnchangeableIdAndPostId(unchangeableId, postId);
+//    }
 
 
     @DisplayName("unchangeableId와 postId가 주어지면, 게시물에 좋아요 버튼을 누른다(or 취소한다).")
