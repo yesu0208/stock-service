@@ -3,17 +3,16 @@ package arile.toy.stock_service.service;
 import arile.toy.stock_service.domain.Dislike;
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.Like;
+import arile.toy.stock_service.domain.Reply;
 import arile.toy.stock_service.domain.post.Post;
 import arile.toy.stock_service.dto.PostDto;
+import arile.toy.stock_service.dto.ReplyDto;
 import arile.toy.stock_service.dto.SimplePostDto;
 import arile.toy.stock_service.dto.response.PostResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.exception.post.PostNotFoundException;
 import arile.toy.stock_service.exception.user.UserNotFoundException;
-import arile.toy.stock_service.repository.DislikeRepository;
-import arile.toy.stock_service.repository.GithubUserInfoRepository;
-import arile.toy.stock_service.repository.LikeRepository;
-import arile.toy.stock_service.repository.PostRepository;
+import arile.toy.stock_service.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +29,7 @@ public class PostService {
     private final GithubUserInfoRepository githubUserInfoRepository;
     private final LikeRepository likeRepository;
     private final DislikeRepository dislikeRepository;
+    private final ReplyService replyService;
 
     @Transactional(readOnly = true)
     public PostResponse loadPost(String unchangeableId, Long postId) {
@@ -81,6 +81,18 @@ public class PostService {
     }
 
     public void deletePost(String unchangeableId, Long postId) {
+
+        // post의 reply 삭제
+        List<Long> replyIdList = replyService.loadAllRepliesByPostId(postId)
+                .stream()
+                .map(ReplyDto::replyId)
+                .toList();
+        replyIdList.forEach(replyId -> replyService.deleteReply(unchangeableId, postId, replyId));
+
+        // post의 좋아요, 싫어요 삭제
+        likeRepository.deleteAllByPostPostId(postId);
+        dislikeRepository.deleteAllByPostPostId(postId);
+
         postRepository.deleteByUserUnchangeableIdAndPostId(unchangeableId, postId);
     }
 

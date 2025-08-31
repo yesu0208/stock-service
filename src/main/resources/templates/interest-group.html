@@ -364,7 +364,7 @@
         if (stockList.length <= 1) {
             const formError = document.getElementById("form-error");
             formError.classList.remove("hidden");
-            formError.innerText = "❗ 최소 1개 이상의 종목은 유지해야 합니다.";
+            formError.innerText = "❗ 최소 1개 이상의 종목을 선택해야 합니다.";
             return;
         }
 
@@ -577,7 +577,7 @@
             for (const input of stockValues) {
                 if (!input.value) {
                     e.preventDefault();
-                    errorBox.textContent = '❗ 최소 1개 이상의 종목을 선택해야 합니다.';
+                    errorBox.textContent = '❗ 종목을 선택해야 합니다.';
                     errorBox.classList.remove('hidden');
                     return;
                 }

@@ -67,8 +67,7 @@ public class InterestGroup extends AuditingFields {
 
         if (getId() == null) {
             return Objects.equals(this.getGroupName(), that.getGroupName()) &&
-                    Objects.equals(this.getUnchangeableId(), that.getUnchangeableId()) &&
-                    Objects.equals(this.getInterestStocks(), that.getInterestStocks());
+                    Objects.equals(this.getUnchangeableId(), that.getUnchangeableId());
         }
         return Objects.equals(this.getId(), that.getId());
     }
@@ -76,7 +75,7 @@ public class InterestGroup extends AuditingFields {
     @Override
     public int hashCode() {
         if (getId() == null) {
-            return Objects.hash(getGroupName(), getUnchangeableId(), getInterestStocks());
+            return Objects.hash(getGroupName(), getUnchangeableId());
         }
         return Objects.hash(getId());
     }

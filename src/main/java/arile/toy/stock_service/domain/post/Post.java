@@ -1,6 +1,7 @@
 package arile.toy.stock_service.domain.post;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
+import arile.toy.stock_service.domain.StockInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @ToString
@@ -87,10 +89,36 @@ public class Post {
         this.modifiedAt = LocalDateTime.now();
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof Post that)) return false;
+        if (getPostId() == null) {
+            return Objects.equals(this.getTitle(), that.getTitle()) &&
+                    Objects.equals(this.getStockName(), that.getStockName()) &&
+                    Objects.equals(this.getBody(), that.getBody()) &&
+                    Objects.equals(this.getRepliesCount(), that.getRepliesCount()) &&
+                    Objects.equals(this.getLikesCount(), that.getLikesCount()) &&
+                    Objects.equals(this.getDislikesCount(), that.getDislikesCount()) &&
+                    Objects.equals(this.getUser(), that.getUser()) &&
+                    Objects.equals(this.getCreatedAt(), that.getCreatedAt()) &&
+                    Objects.equals(this.getModifiedAt(), that.getModifiedAt());
+        }
+        return Objects.equals(this.getPostId(), that.getPostId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (getPostId() == null) {
+            return Objects.hash(getTitle(), getStockName(), getBody(), getRepliesCount(), getLikesCount(), getDislikesCount(), getCreatedAt(), getModifiedAt(), getUser());
+        }
+        return Objects.hash(getPostId());
+    }
 
 
 
-    // Test용
+
+// Test용
 
     public Post(Long postId, String title, String stockName, String body, Long repliesCount,
                 Long likesCount, Long dislikesCount, GithubUserInfo user) {

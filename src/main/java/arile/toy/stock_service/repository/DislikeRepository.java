@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface DislikeRepository extends JpaRepository<Dislike, Long> {
     Optional<Dislike> findByGithubUserInfoAndPost(GithubUserInfo githubUserInfo, Post post);
+    void deleteAllByPostPostId(Long postId);
 }
