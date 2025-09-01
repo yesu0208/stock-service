@@ -1,16 +1,14 @@
 package arile.toy.stock_service.controller;
 
-import arile.toy.stock_service.domain.StockInfo;
 import arile.toy.stock_service.dto.request.PostRequest;
 import arile.toy.stock_service.dto.request.ReplyRequest;
 import arile.toy.stock_service.dto.response.PostResponse;
 import arile.toy.stock_service.dto.response.ReplyResponse;
 import arile.toy.stock_service.dto.response.SimplePostResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
-import arile.toy.stock_service.repository.StockInfoRepository;
 import arile.toy.stock_service.service.PostService;
 import arile.toy.stock_service.service.ReplyService;
-import arile.toy.stock_service.service.StockInfoService;
+import arile.toy.stock_service.service.StaticStockInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -28,7 +26,7 @@ public class PostReplyController {
 
     private final PostService postService;
     private final ReplyService replyService;
-    private final StockInfoService stockInfoService;
+    private final StaticStockInfoService stockInfoService;
 
     // 단일 post 조회
     @GetMapping("/post")

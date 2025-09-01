@@ -2,7 +2,7 @@ package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.dto.response.CurrentStockInfoResponse;
 import arile.toy.stock_service.service.CurrentStockInfoService;
-import arile.toy.stock_service.service.StockInfoService;
+import arile.toy.stock_service.service.StaticStockInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +17,7 @@ import java.util.List;
 public class CurrentStockInfoController {
 
     private final CurrentStockInfoService currentStockInfoService;
-    private final StockInfoService stockInfoService;
+    private final StaticStockInfoService stockInfoService;
 
     @GetMapping("/stocks")
     public String stockPage(Model model) {

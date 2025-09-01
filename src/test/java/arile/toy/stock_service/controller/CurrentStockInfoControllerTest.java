@@ -4,7 +4,7 @@ import arile.toy.stock_service.config.SecurityConfig;
 import arile.toy.stock_service.dto.CurrentStockInfoDto;
 import arile.toy.stock_service.service.CurrentStockInfoService;
 import arile.toy.stock_service.service.GithubOAuth2UserService;
-import arile.toy.stock_service.service.StockInfoService;
+import arile.toy.stock_service.service.StaticStockInfoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ class CurrentStockInfoControllerTest {
     // 가짜 로직 : willReturn, ...
     @MockBean private GithubOAuth2UserService githubOAuth2UserService; // why?
     @MockBean private CurrentStockInfoService currentStockInfoService;
-    @MockBean private StockInfoService stockInfoService;
+    @MockBean private StaticStockInfoService stockInfoService;
 
     @DisplayName("[GET] 종목명 목록 페이지 -> 종목명 목록 뷰 (정상)")
     @Test

@@ -1,7 +1,6 @@
 package arile.toy.stock_service.repository;
 
-import arile.toy.stock_service.domain.Reply;
-import arile.toy.stock_service.domain.StockInfo;
+import arile.toy.stock_service.domain.StaticStockInfo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace =  AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
-class StockInfoRepositoryTest {
+class StaticStaticStockInfoRepositoryTest {
 
-    @Autowired StockInfoRepository sut;
+    @Autowired
+    StaticStockInfoRepository sut;
 
     @DisplayName("종목명으로 종목 정보를 반환한다.")
     @Test
@@ -29,7 +29,7 @@ class StockInfoRepositoryTest {
         String stockName = "SK하이닉스";
 
         // When
-        Optional<StockInfo> result = sut.findByStockName(stockName);
+        Optional<StaticStockInfo> result = sut.findByStockName(stockName);
 
         // Then
         assertThat(result)

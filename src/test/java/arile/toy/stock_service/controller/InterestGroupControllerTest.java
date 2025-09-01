@@ -9,7 +9,7 @@ import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.GithubOAuth2UserService;
 import arile.toy.stock_service.service.GithubUserInfoService;
 import arile.toy.stock_service.service.InterestGroupService;
-import arile.toy.stock_service.service.StockInfoService;
+import arile.toy.stock_service.service.StaticStockInfoService;
 import arile.toy.stock_service.util.FormDataEncoder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class InterestGroupControllerTest {
     @Autowired private FormDataEncoder formDataEncoder;
 
     @MockBean private GithubOAuth2UserService githubOAuth2UserService;
-    @MockBean private StockInfoService stockInfoService;
+    @MockBean private StaticStockInfoService stockInfoService;
     @MockBean private InterestGroupService interestGroupService;
     @MockBean private GithubUserInfoService githubUserInfoService;
 

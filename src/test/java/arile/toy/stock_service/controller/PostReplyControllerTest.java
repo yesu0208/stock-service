@@ -9,7 +9,7 @@ import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.GithubOAuth2UserService;
 import arile.toy.stock_service.service.PostService;
 import arile.toy.stock_service.service.ReplyService;
-import arile.toy.stock_service.service.StockInfoService;
+import arile.toy.stock_service.service.StaticStockInfoService;
 import arile.toy.stock_service.util.FormDataEncoder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class PostReplyControllerTest {
     @MockBean private GithubOAuth2UserService githubOAuth2UserService;
     @MockBean private PostService postService;
     @MockBean private ReplyService replyService;
-    @MockBean private StockInfoService stockInfoService;
+    @MockBean private StaticStockInfoService stockInfoService;
 
     @DisplayName("[GET] 게시물/댓글 페이지 -> 게시물/댓글 뷰 (로그인, 처음 생성, 정상)")
     @Test

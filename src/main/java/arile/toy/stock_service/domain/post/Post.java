@@ -1,7 +1,6 @@
 package arile.toy.stock_service.domain.post;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
-import arile.toy.stock_service.domain.StockInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

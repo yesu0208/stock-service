@@ -19,7 +19,7 @@ import java.util.Objects;
 public class CurrentStockInfoService {
 
     private final RestClient restClient = RestClient.create();
-    private final StockInfoService stockInfoService;
+    private final StaticStockInfoService stockInfoService;
 
     public CurrentStockInfoDto getCurrentStockInfo(String stockName) {
 

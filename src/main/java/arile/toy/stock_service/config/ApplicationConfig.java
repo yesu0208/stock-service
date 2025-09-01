@@ -1,7 +1,7 @@
 package arile.toy.stock_service.config;
 
 import arile.toy.stock_service.domain.naverstock.NaverStockResponse;
-import arile.toy.stock_service.service.StockInfoService;
+import arile.toy.stock_service.service.StaticStockInfoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -18,7 +18,8 @@ import org.springframework.web.client.RestClient;
 public class ApplicationConfig {
     private static final RestClient restClient = RestClient.create();
     private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
-    @Autowired StockInfoService stockInfoService;
+    @Autowired
+    StaticStockInfoService stockInfoService;
 
     @Bean
     public ApplicationRunner applicationRunner() {
