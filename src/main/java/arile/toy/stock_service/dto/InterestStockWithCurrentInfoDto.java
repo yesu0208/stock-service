@@ -3,7 +3,7 @@ package arile.toy.stock_service.dto;
 import java.time.LocalDateTime;
 
 public record InterestStockWithCurrentInfoDto(
-        Long id,
+        Long interestStockId,
         String stockName,
         Integer buyingPrice,
         Integer numOfStocks,
@@ -26,7 +26,7 @@ public record InterestStockWithCurrentInfoDto(
 ) {
     // static method (전체)
     public static InterestStockWithCurrentInfoDto of(
-            Long id,
+            Long interestStockId,
             String stockName,
             Integer buyingPrice,
             Integer numOfStocks,
@@ -47,7 +47,7 @@ public record InterestStockWithCurrentInfoDto(
             LocalDateTime modifiedAt,
             String modifiedBy
     ) {
-        return new InterestStockWithCurrentInfoDto(id, stockName, buyingPrice, numOfStocks,breakEvenPrice,totalBuyingPrice, fieldOrder, nowValue, changeValue, changeRateString, valuation, unrealizedPL, realizedPL, rateOfReturnString, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new InterestStockWithCurrentInfoDto(interestStockId, stockName, buyingPrice, numOfStocks,breakEvenPrice,totalBuyingPrice, fieldOrder, nowValue, changeValue, changeRateString, valuation, unrealizedPL, realizedPL, rateOfReturnString, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     // static method (일부)

@@ -15,7 +15,7 @@ public class InterestStock extends AuditingFields{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long interestStockId;
 
     @Setter
     @ManyToOne(optional = false) // 반드시 interestGroup을 가져야 함.
@@ -50,7 +50,7 @@ public class InterestStock extends AuditingFields{
         if (this == object) return true;
         if (!(object instanceof InterestStock that)) return false;
 
-        if (getId() == null) {
+        if (getInterestStockId() == null) {
             return Objects.equals(this.getInterestGroup(), that.getInterestGroup()) &&
                     Objects.equals(this.getStockName(), that.getStockName()) &&
                     Objects.equals(this.getBuyingPrice(), that.getBuyingPrice()) &&
@@ -59,15 +59,15 @@ public class InterestStock extends AuditingFields{
                     Objects.equals(this.getTotalBuyingPrice(), that.getTotalBuyingPrice()) &&
                     Objects.equals(this.getFieldOrder(), that.getFieldOrder());
         }
-        return Objects.equals(this.getId(), that.getId());
+        return Objects.equals(this.getInterestStockId(), that.getInterestStockId());
     }
 
     @Override
     public int hashCode() {
-        if (getId() == null) {
+        if (getInterestStockId() == null) {
             return Objects.hash(getInterestGroup(), getStockName(), getBuyingPrice(), getNumOfStocks(), getBreakEvenPrice(), getTotalBuyingPrice(), getFieldOrder());
         }
-        return Objects.hash(getId());
+        return Objects.hash(getInterestStockId());
     }
 }
 

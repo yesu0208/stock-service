@@ -75,7 +75,7 @@ public class InterestStockCurrentInfoService {
         }
 
         return InterestStockWithCurrentInfoDto.of(
-                dto.id(),
+                dto.interestStockId(),
                 dto.stockName(),
                 dto.buyingPrice(),
                 dto.numOfStocks(),
