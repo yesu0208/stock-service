@@ -1,4 +1,4 @@
-package arile.toy.stock_service.repository.stockchats;
+package arile.toy.stock_service.repository.chats;
 
 import arile.toy.stock_service.domain.Chatroom;
 import org.springframework.data.jpa.repository.JpaRepository;
