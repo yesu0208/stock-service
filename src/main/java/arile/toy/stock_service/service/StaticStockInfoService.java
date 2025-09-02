@@ -1,6 +1,7 @@
 package arile.toy.stock_service.service;
 
 import arile.toy.stock_service.domain.StaticStockInfo;
+import arile.toy.stock_service.exception.entity.StaticStockInfoNotFoundException;
 import arile.toy.stock_service.repository.StaticStockInfoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class StaticStockInfoService {
         return staticStockInfoRepository.findByStockName(stockName)
                 .map(StaticStockInfo::getShortCode)
                 // Optional
-                .orElseThrow(() -> new EntityNotFoundException("해당 이름의 종목이 없습니다 - stockName: " + stockName));
+                .orElseThrow(() -> new StaticStockInfoNotFoundException(stockName));
     }
 
     public List<String> loadStockNameList() {
