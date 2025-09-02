@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Set;
 
 public record InterestGroupWithCurrentInfoDto(
-        Long id,
+        Long interestGroupId,
         String groupName,
         String unchangeableId,
         Set<InterestStockWithCurrentInfoDto> interestStockWithCurrentInfoDtos,
@@ -25,7 +25,7 @@ public record InterestGroupWithCurrentInfoDto(
 
     // static method (전체)
     public static InterestGroupWithCurrentInfoDto of(
-            Long id,
+            Long interestGroupId,
             String groupName,
             String unchangeableId,
             Set<InterestStockWithCurrentInfoDto> interestStockWithCurrentInfoDtos,
@@ -35,6 +35,6 @@ public record InterestGroupWithCurrentInfoDto(
             LocalDateTime modifiedAt,
             String modifiedBy
     ) {
-        return new InterestGroupWithCurrentInfoDto(id, groupName, unchangeableId, interestStockWithCurrentInfoDtos,createdAt,createdBy, modifiedAt, modifiedBy);
+        return new InterestGroupWithCurrentInfoDto(interestGroupId, groupName, unchangeableId, interestStockWithCurrentInfoDtos,createdAt,createdBy, modifiedAt, modifiedBy);
     }
 }

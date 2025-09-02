@@ -1,5 +1,5 @@
 -- 종목 정보 테이블
-insert into stock_information (short_code, stock_name, market_class) values
+insert into static_stock_information (short_code, stock_name, market_class) values
 ('098120', '마이크로컨텍솔', 'KOSDAQ'),
 ('009520', '포스코엠텍', 'KOSDAQGLOBAL'),
 ('095570', 'AJ네트웍스', 'KOSPI'),

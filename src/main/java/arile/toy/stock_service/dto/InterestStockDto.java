@@ -1,13 +1,12 @@
 package arile.toy.stock_service.dto;
 
-import arile.toy.stock_service.domain.InterestGroup;
 import arile.toy.stock_service.domain.InterestStock;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public record InterestStockDto(
-        Long id,
+        Long interestStockId,
 //        InterestGroup interestGroup,
         String stockName,
         Integer buyingPrice,
@@ -24,7 +23,7 @@ public record InterestStockDto(
     // Entity -> Dto
     public static InterestStockDto fromEntity(InterestStock entity) {
         return new InterestStockDto(
-                entity.getId(),
+                entity.getInterestStockId(),
 //                entity.getInterestGroup(),
                 entity.getStockName(),
                 entity.getBuyingPrice(),
@@ -41,7 +40,7 @@ public record InterestStockDto(
 
     // static method (전체)
     public static InterestStockDto of(
-            Long id,
+            Long interestStockId,
             String stockName,
             Integer buyingPrice,
             Integer numOfStocks,
@@ -53,7 +52,7 @@ public record InterestStockDto(
             LocalDateTime modifiedAt,
             String modifiedBy
     ) {
-        return new InterestStockDto(id, stockName, buyingPrice, numOfStocks,breakEvenPrice,totalBuyingPrice, fieldOrder, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new InterestStockDto(interestStockId, stockName, buyingPrice, numOfStocks,breakEvenPrice,totalBuyingPrice, fieldOrder, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     // static method (일부)
@@ -85,7 +84,7 @@ public record InterestStockDto(
         if (this == object) return true;
         if (!(object instanceof InterestStockDto that)) return false;
 
-        if (id() == null) {
+        if (interestStockId() == null) {
             return Objects.equals(this.stockName(), that.stockName()) &&
                     Objects.equals(this.buyingPrice(), that.buyingPrice()) &&
                     Objects.equals(this.numOfStocks(), that.numOfStocks()) &&
@@ -97,15 +96,15 @@ public record InterestStockDto(
                     Objects.equals(this.modifiedAt(), that.modifiedBy()) &&
                     Objects.equals(this.modifiedBy(), that.modifiedBy());
         }
-        return Objects.equals(this.id(), that.id());
+        return Objects.equals(this.interestStockId(), that.interestStockId());
     }
 
     @Override
     public int hashCode() {
-        if (id() == null) {
+        if (interestStockId() == null) {
             return Objects.hash(stockName(), buyingPrice(), numOfStocks(), breakEvenPrice(),
                     totalBuyingPrice(), fieldOrder(), createdAt(), createdBy(), modifiedAt(), modifiedBy());
         }
-        return Objects.hash(id());
+        return Objects.hash(interestStockId());
     }
 }

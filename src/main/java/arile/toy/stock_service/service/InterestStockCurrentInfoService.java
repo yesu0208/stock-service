@@ -19,7 +19,7 @@ import java.util.Objects;
 public class InterestStockCurrentInfoService {
 
     private final RestClient restClient = RestClient.create();
-    private final StockInfoService stockInfoService;
+    private final StaticStockInfoService stockInfoService;
     private final GithubUserInfoRepository githubUserInfoRepository;
 
     public InterestStockWithCurrentInfoDto getInterestStockSimpleCurrentInfo(InterestStockDto dto, String unchangeableId) {
@@ -75,7 +75,7 @@ public class InterestStockCurrentInfoService {
         }
 
         return InterestStockWithCurrentInfoDto.of(
-                dto.id(),
+                dto.interestStockId(),
                 dto.stockName(),
                 dto.buyingPrice(),
                 dto.numOfStocks(),

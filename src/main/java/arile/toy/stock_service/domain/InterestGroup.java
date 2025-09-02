@@ -18,7 +18,7 @@ public class InterestGroup extends AuditingFields {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long interestGroupId;
 
     @Setter
     @Column(nullable = false)
@@ -65,19 +65,19 @@ public class InterestGroup extends AuditingFields {
         if (this == object) return true;
         if (!(object instanceof InterestGroup that)) return false;
 
-        if (getId() == null) {
+        if (getInterestGroupId() == null) {
             return Objects.equals(this.getGroupName(), that.getGroupName()) &&
                     Objects.equals(this.getUnchangeableId(), that.getUnchangeableId());
         }
-        return Objects.equals(this.getId(), that.getId());
+        return Objects.equals(this.getInterestGroupId(), that.getInterestGroupId());
     }
 
     @Override
     public int hashCode() {
-        if (getId() == null) {
+        if (getInterestGroupId() == null) {
             return Objects.hash(getGroupName(), getUnchangeableId());
         }
-        return Objects.hash(getId());
+        return Objects.hash(getInterestGroupId());
     }
 }
 

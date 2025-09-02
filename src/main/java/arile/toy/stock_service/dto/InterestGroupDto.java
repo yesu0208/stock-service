@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public record InterestGroupDto(
-        Long id,
+        Long interestGroupId,
         String groupName,
         String unchangeableId,
         Set<InterestStockDto> interestStocks,
@@ -20,7 +20,7 @@ public record InterestGroupDto(
     // Entity -> Dto
     public static InterestGroupDto fromEntity(InterestGroup entity) {
         return new InterestGroupDto(
-                entity.getId(),
+                entity.getInterestGroupId(),
                 entity.getGroupName(),
                 entity.getUnchangeableId(),
                 entity.getInterestStocks().stream() // DTO로 변환
@@ -35,7 +35,7 @@ public record InterestGroupDto(
 
     // static method (전체)
     public static InterestGroupDto of(
-            Long id,
+            Long interestGroupId,
             String groupName,
             String unchangeableId,
             Set<InterestStockDto> interestStocks,
@@ -44,7 +44,7 @@ public record InterestGroupDto(
             LocalDateTime modifiedAt,
             String modifiedBy
     ) {
-        return new InterestGroupDto(id, groupName, unchangeableId, interestStocks, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new InterestGroupDto(interestGroupId, groupName, unchangeableId, interestStocks, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     // static method (일부)

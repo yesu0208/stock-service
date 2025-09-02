@@ -9,13 +9,13 @@ import java.util.Objects;
 
 @Getter
 @ToString
-@Table(name = "stock_information")
+@Table(name = "static_stock_information")
 @Entity
-public class StockInfo {
+public class StaticStockInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long staticStockInfoId;
 
     @Column(nullable = false)
     private String stockName;
@@ -29,15 +29,15 @@ public class StockInfo {
 
 
 
-    protected StockInfo() {} // JPA Entity는 기본생성자 반드시 필요(프록시 생성을 위해)
+    protected StaticStockInfo() {} // JPA Entity는 기본생성자 반드시 필요(프록시 생성을 위해)
 
-    public StockInfo(String stockName, String shortCode, MarketClass marketClass) {
+    public StaticStockInfo(String stockName, String shortCode, MarketClass marketClass) {
         this.stockName = stockName;
         this.shortCode = shortCode;
         this.marketClass = marketClass;
     }
 
-    public StockInfo(String stockName) {
+    public StaticStockInfo(String stockName) {
         this.stockName = stockName;
     }
 
@@ -45,21 +45,21 @@ public class StockInfo {
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
-        if (!(object instanceof StockInfo that)) return false;
+        if (!(object instanceof StaticStockInfo that)) return false;
 
-        if (getId() == null) {
+        if (getStaticStockInfoId() == null) {
             return Objects.equals(this.getStockName(), that.getStockName()) &&
                     Objects.equals(this.getShortCode(), that.getShortCode()) &&
                     Objects.equals(this.getMarketClass(), that.getMarketClass());
         }
-        return Objects.equals(this.getId(), that.getId());
+        return Objects.equals(this.getStaticStockInfoId(), that.getStaticStockInfoId());
     }
 
     @Override
     public int hashCode() {
-        if (getId() == null) {
+        if (getStaticStockInfoId() == null) {
             return Objects.hash(getStockName(), getShortCode(), getMarketClass());
         }
-        return Objects.hash(getId());
+        return Objects.hash(getStaticStockInfoId());
     }
 }
