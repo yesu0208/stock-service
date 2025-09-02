@@ -44,7 +44,7 @@ public class InterestGroupService {
                 .collect(Collectors.toUnmodifiableSet());
 
         InterestGroupWithCurrentInfoDto response = new InterestGroupWithCurrentInfoDto(
-                interestGroupDto.id(),
+                interestGroupDto.interestGroupId(),
                 interestGroupDto.groupName(),
                 interestGroupDto.unchangeableId(),
                 new HashSet<>(),
