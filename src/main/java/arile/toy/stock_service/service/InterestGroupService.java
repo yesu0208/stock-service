@@ -4,7 +4,6 @@ import arile.toy.stock_service.dto.InterestGroupDto;
 import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
 import arile.toy.stock_service.exception.group.GroupNotFoundException;
 import arile.toy.stock_service.repository.InterestGroupRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

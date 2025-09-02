@@ -1,8 +1,7 @@
 package arile.toy.stock_service.service;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
-import arile.toy.stock_service.domain.InterestStock;
-import arile.toy.stock_service.dto.*;
+import arile.toy.stock_service.dto.GithubUserInfoDto;
 import arile.toy.stock_service.exception.user.UserNotFoundException;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import arile.toy.stock_service.repository.InterestStockRepository;
@@ -13,14 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;

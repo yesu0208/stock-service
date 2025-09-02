@@ -1,10 +1,8 @@
 package arile.toy.stock_service.service;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
-import arile.toy.stock_service.domain.InterestGroup;
 import arile.toy.stock_service.domain.Reply;
 import arile.toy.stock_service.domain.post.Post;
-import arile.toy.stock_service.dto.InterestGroupDto;
 import arile.toy.stock_service.dto.ReplyDto;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import arile.toy.stock_service.repository.PostRepository;
@@ -18,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

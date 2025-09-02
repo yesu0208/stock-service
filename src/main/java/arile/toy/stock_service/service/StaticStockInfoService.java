@@ -3,7 +3,6 @@ package arile.toy.stock_service.service;
 import arile.toy.stock_service.domain.StaticStockInfo;
 import arile.toy.stock_service.exception.entity.StaticStockInfoNotFoundException;
 import arile.toy.stock_service.repository.StaticStockInfoRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

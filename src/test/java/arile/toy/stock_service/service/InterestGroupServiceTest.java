@@ -3,7 +3,6 @@ package arile.toy.stock_service.service;
 import arile.toy.stock_service.domain.InterestGroup;
 import arile.toy.stock_service.dto.InterestGroupDto;
 import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
-import arile.toy.stock_service.dto.InterestStockDto;
 import arile.toy.stock_service.exception.group.GroupNotFoundException;
 import arile.toy.stock_service.repository.InterestGroupRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -13,14 +12,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 

@@ -1,13 +1,12 @@
 package arile.toy.stock_service.service;
 
-import arile.toy.stock_service.domain.*;
+import arile.toy.stock_service.domain.Dislike;
+import arile.toy.stock_service.domain.GithubUserInfo;
+import arile.toy.stock_service.domain.Like;
 import arile.toy.stock_service.domain.post.Post;
-import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
 import arile.toy.stock_service.dto.PostDto;
-import arile.toy.stock_service.dto.ReplyDto;
 import arile.toy.stock_service.dto.SimplePostDto;
 import arile.toy.stock_service.dto.response.PostResponse;
-import arile.toy.stock_service.exception.group.GroupNotFoundException;
 import arile.toy.stock_service.exception.post.PostNotFoundException;
 import arile.toy.stock_service.repository.DislikeRepository;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
@@ -20,13 +19,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 

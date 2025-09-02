@@ -1,6 +1,5 @@
 package arile.toy.stock_service.repository;
 
-import arile.toy.stock_service.config.JpaConfig;
 import arile.toy.stock_service.domain.InterestGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
