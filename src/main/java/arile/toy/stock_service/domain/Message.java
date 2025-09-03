@@ -32,13 +32,14 @@ public class Message {
     public Message() {
     }
 
-    public Message(String text, GithubUserInfo githubUserInfo, Chatroom chatroom) {
+    public Message(String text, GithubUserInfo githubUserInfo, Chatroom chatroom, LocalDateTime createdAt) {
         this.text = text;
         this.githubUserInfo = githubUserInfo;
         this.chatroom = chatroom;
+        this.createdAt = createdAt;
     }
 
-    public static Message of(String text, GithubUserInfo githubUserInfo, Chatroom chatroom) {
-        return new Message(text, githubUserInfo, chatroom);
+    public static Message of(String text, GithubUserInfo githubUserInfo, Chatroom chatroom, LocalDateTime createdAt) {
+        return new Message(text, githubUserInfo, chatroom, createdAt);
     }
 }

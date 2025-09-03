@@ -117,7 +117,7 @@ public class ChatService {
                 .orElseThrow(() -> new UserNotFoundException(unchangeableId));;
 
 
-        Message message = Message.of(text, githubUserInfo, chatroom);
+        Message message = Message.of(text, githubUserInfo, chatroom, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
 
         return messageRepository.save(message);
     }
