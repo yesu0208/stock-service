@@ -8,7 +8,8 @@ public record ChatroomDto(
         Long chatroomId,
         String title,
         Integer memberCount,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Boolean hasNewMessage
 ) {
     // Entity -> Dto
     public static ChatroomDto fromEntity(Chatroom entity) {
@@ -16,7 +17,8 @@ public record ChatroomDto(
                 entity.getChatroomId(),
                 entity.getTitle(),
                 entity.getGithubUserChatroomMappings().size(),
-                entity.getCreatedAt()
+                entity.getCreatedAt(),
+                entity.getHasNewMessage()
         );
     }
 }

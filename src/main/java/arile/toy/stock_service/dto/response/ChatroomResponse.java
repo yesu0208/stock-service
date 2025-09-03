@@ -9,7 +9,8 @@ public record ChatroomResponse(
         Long chatroomId,
         String title,
         Integer memberCount,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Boolean hasNewMessage
 ) {
     // Dto -> response
     public static ChatroomResponse fromDto(ChatroomDto dto) {
@@ -17,7 +18,8 @@ public record ChatroomResponse(
                 dto.chatroomId(),
                 dto.title(),
                 dto.memberCount(),
-                dto.createdAt()
+                dto.createdAt(),
+                dto.hasNewMessage()
         );
     }
 }
