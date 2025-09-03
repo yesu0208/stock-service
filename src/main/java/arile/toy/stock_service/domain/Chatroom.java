@@ -4,6 +4,7 @@ import arile.toy.stock_service.domain.post.Post;
 import arile.toy.stock_service.dto.security.GithubUser;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ public class Chatroom {
     @Column(columnDefinition = "DATETIME")
     LocalDateTime createdAt;
 
+    @Setter
     @Transient
     Boolean hasNewMessage;
 

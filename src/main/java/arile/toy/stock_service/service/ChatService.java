@@ -97,7 +97,12 @@ public class ChatService {
                 githubUserChatroomMappingRepository.findAllByGithubUserInfoUnchangeableId(unchangeableId);
 
         return githubUserChatroomMappings.stream()
-                .map(GithubUserChatroomMapping::getChatroom)
+                .map(githubUserChatroomMapping -> {
+                    Chatroom chatroom = githubUserChatroomMapping.getChatroom();
+                    chatroom.setHasNewMessage(messageRepository.existsByChatroomChatIdAndCreatedAtAfter(
+                            chatroom.getChatroomId(), githubUserChatroomMapping.getLastCheckedAt()));
+                    return chatroom;
+                })
                 .map(ChatroomDto::fromEntity)
                 .toList();
     }
