@@ -28,8 +28,9 @@ public class ChatController {
 
     @PostMapping("{chatroomId}")
     public Boolean joinChatroom(@AuthenticationPrincipal GithubUser githubUser,
-                                @PathVariable Long chatroomId) {
-        return chatService.joinChatroom(githubUser.unchangeableId(), chatroomId);
+                                @PathVariable Long chatroomId,
+                                @RequestParam(required = false) Long currentChatroomId) {
+        return chatService.joinChatroom(githubUser.unchangeableId(), chatroomId, currentChatroomId);
     }
 
     @DeleteMapping("/{chatroomId}")

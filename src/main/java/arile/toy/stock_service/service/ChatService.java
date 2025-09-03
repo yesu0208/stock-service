@@ -11,6 +11,7 @@ import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import arile.toy.stock_service.repository.chats.ChatroomRepository;
 import arile.toy.stock_service.repository.chats.GithubUserChatroomMappingRepository;
 import arile.toy.stock_service.repository.chats.MessageRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,20 +54,25 @@ public class ChatService {
 
 
     // 다른 사람이 만든 채팅방에 참여
-    public Boolean joinChatroom(String unchangeableId, Long chatroomId) {
-
-        if(githubUserChatroomMappingRepository.existsByGithubUserInfoUnchangeableIdAndChatroomChatroomId(
-                unchangeableId,chatroomId)) {
-            // 이미 참여
-            return false;
-        }
+    public Boolean joinChatroom(String unchangeableId, Long newChatroomId, Long currentChatroomId) {
 
         // Dto로 변경 필요(사실은)
         GithubUserInfo githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
                 .orElseThrow(() -> new UserNotFoundException(unchangeableId));;
 
-        Chatroom chatroom = chatroomRepository.findById(chatroomId)
-                .orElseThrow(() -> new ChatroomNotFoundException(chatroomId));
+        if (currentChatroomId != null) { // 기존 채팅방(current)에서 새로운 채팅방(new)으로 이동
+            updateLastCheckedAt(githubUserInfo, currentChatroomId); // 기존 채팅방에 LastCheckedAt 정보 setting
+        }
+
+        if(githubUserChatroomMappingRepository.existsByGithubUserInfoUnchangeableIdAndChatroomChatroomId(
+                unchangeableId,newChatroomId)) {
+            // 이미 참여
+            return false;
+        }
+
+
+        Chatroom chatroom = chatroomRepository.findById(newChatroomId)
+                .orElseThrow(() -> new ChatroomNotFoundException(newChatroomId));
 
         GithubUserChatroomMapping githubUserChatroomMapping =
                 GithubUserChatroomMapping.of(githubUserInfo, chatroom);
@@ -74,6 +80,17 @@ public class ChatService {
         githubUserChatroomMappingRepository.save(githubUserChatroomMapping);
 
         return true;
+    }
+
+    private void updateLastCheckedAt(GithubUserInfo githubUserInfo, Long currentChatroomId) {
+        GithubUserChatroomMapping githubUserChatroomMapping =
+                githubUserChatroomMappingRepository.findByGithubUserInfoUnchangeableIdAndChatroomChatroomId(
+                        githubUserInfo.getUnchangeableId(), currentChatroomId)
+                        .orElseThrow(() -> new EntityNotFoundException("githubUserInfo-chatroom mapping not exists."));
+
+        githubUserChatroomMapping.setLastCheckedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+
+        githubUserChatroomMappingRepository.save(githubUserChatroomMapping);
     }
 
     // 참여한 방에서 나오기
