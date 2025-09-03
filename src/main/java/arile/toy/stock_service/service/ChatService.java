@@ -3,12 +3,14 @@ package arile.toy.stock_service.service;
 import arile.toy.stock_service.domain.Chatroom;
 import arile.toy.stock_service.domain.GithubUserChatroomMapping;
 import arile.toy.stock_service.domain.GithubUserInfo;
+import arile.toy.stock_service.domain.Message;
 import arile.toy.stock_service.dto.ChatroomDto;
 import arile.toy.stock_service.exception.chats.ChatroomNotFoundException;
 import arile.toy.stock_service.exception.user.UserNotFoundException;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import arile.toy.stock_service.repository.chats.ChatroomRepository;
 import arile.toy.stock_service.repository.chats.GithubUserChatroomMappingRepository;
+import arile.toy.stock_service.repository.chats.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ public class ChatService {
 
     private final ChatroomRepository chatroomRepository;
     private final GithubUserChatroomMappingRepository githubUserChatroomMappingRepository;
+    private final MessageRepository messageRepository;
 
     private final GithubUserInfoRepository githubUserInfoRepository;
 
@@ -97,5 +100,20 @@ public class ChatService {
                 .map(GithubUserChatroomMapping::getChatroom)
                 .map(ChatroomDto::fromEntity)
                 .toList();
+    }
+
+    // 메시지 저장
+    public Message saveMessage(GithubUserInfo githubUserInfo, Long chatroomId, String text) {
+        Chatroom chatroom = chatroomRepository.findById(chatroomId)
+                .orElseThrow(() -> new ChatroomNotFoundException(chatroomId));
+
+        Message message = Message.of(text, githubUserInfo, chatroom);
+
+        return messageRepository.save(message);
+    }
+
+    // 채팅방의 메시지(목록) 조회
+    public List<Message> loadMessageList(Long chatroomId) {
+        return  messageRepository.findAllByChatroomId(chatroomId);
     }
 }
