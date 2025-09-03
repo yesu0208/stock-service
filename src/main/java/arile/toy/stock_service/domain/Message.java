@@ -4,6 +4,8 @@ import arile.toy.stock_service.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Table(name = "messages")
 @Entity
@@ -23,6 +25,9 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "chatroom_id")
     Chatroom chatroom;
+
+    @Column(columnDefinition = "DATETIME")
+    LocalDateTime createdAt;
 
     public Message() {
     }

@@ -23,6 +23,9 @@ public class GithubUserChatroomMapping {
     @ManyToOne
     Chatroom chatroom;
 
+    @Column(columnDefinition = "DATETIME")
+    LocalDateTime lastCheckedAt;
+
 
     public GithubUserChatroomMapping() {}
 

@@ -28,6 +28,9 @@ public class Chatroom {
     @Column(columnDefinition = "DATETIME")
     LocalDateTime createdAt;
 
+    @Transient
+    Boolean hasNewMessage;
+
     public Chatroom() {}
 
     public Chatroom(String title, LocalDateTime createdAt) {
