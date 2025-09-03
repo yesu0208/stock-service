@@ -12,6 +12,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
@@ -26,10 +27,12 @@ public class StompChatController {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     @MessageMapping("/chats/{chatroomId}")
-    @SendTo("/sub/chats")
-    public ChatMessage handleMessage(@AuthenticationPrincipal GithubUser githubUser,
+    @SendTo("/sub/chats/{chatroomId}")
+    public ChatMessage handleMessage(@AuthenticationPrincipal Principal principal,
                                      @Payload Map<String, String> payload, // payload 자체는 JSON String -> String 내에서 message 속성값 빼내기
                                      @DestinationVariable Long chatroomId) {
+
+        GithubUser githubUser = (GithubUser) ((AbstractAuthenticationToken) principal).getPrincipal();
 
         Message message = chatService.saveMessage(githubUser.unchangeableId(), chatroomId, payload.get("message"));
         simpMessagingTemplate.convertAndSend("/sub/chats/news", chatroomId);
