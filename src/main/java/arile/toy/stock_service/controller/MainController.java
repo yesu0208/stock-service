@@ -11,4 +11,10 @@ public class MainController {
     public String root() { // return : view 이름
         return "forward:/interest-group"; // interest group으로 포워딩
     }
+
+    // 종목톡 메인 페이지
+    @GetMapping("/stock-chats")
+    public String stockChatRoot() {
+        return "stock-chats";
+    }
 }
