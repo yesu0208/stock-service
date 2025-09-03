@@ -1,5 +1,6 @@
 package arile.toy.stock_service.domain;
 
+import arile.toy.stock_service.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -22,4 +23,17 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "chatroom_id")
     Chatroom chatroom;
+
+    public Message() {
+    }
+
+    public Message(String text, GithubUserInfo githubUserInfo, Chatroom chatroom) {
+        this.text = text;
+        this.githubUserInfo = githubUserInfo;
+        this.chatroom = chatroom;
+    }
+
+    public static Message of(String text, GithubUserInfo githubUserInfo, Chatroom chatroom) {
+        return new Message(text, githubUserInfo, chatroom);
+    }
 }
