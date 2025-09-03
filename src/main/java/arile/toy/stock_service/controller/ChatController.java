@@ -2,6 +2,7 @@ package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.domain.Chatroom;
 import arile.toy.stock_service.domain.GithubUserInfo;
+import arile.toy.stock_service.domain.Message;
 import arile.toy.stock_service.dto.response.ChatroomResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.ChatService;
@@ -45,4 +46,8 @@ public class ChatController {
     }
 
 
+    @GetMapping("/{chatroomId}/messages")
+    public List<Message> getMessagelist(@PathVariable Long chatroomId) {
+        return chatService.getMessageList(chatroomId);
+    }
 }
