@@ -9,5 +9,5 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findAllByChatroomChatroomId(Long chatroomId);
 
-    Boolean existsByChatroomChatIdAndCreatedAtAfter(Long chatroomId, LocalDateTime createdAt);
+    Boolean existsByChatroomChatroomIdAndCreatedAtAfter(Long chatroomId, LocalDateTime createdAt);
 }

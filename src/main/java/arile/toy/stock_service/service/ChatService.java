@@ -99,7 +99,7 @@ public class ChatService {
         return githubUserChatroomMappings.stream()
                 .map(githubUserChatroomMapping -> {
                     Chatroom chatroom = githubUserChatroomMapping.getChatroom();
-                    chatroom.setHasNewMessage(messageRepository.existsByChatroomChatIdAndCreatedAtAfter(
+                    chatroom.setHasNewMessage(messageRepository.existsByChatroomChatroomIdAndCreatedAtAfter(
                             chatroom.getChatroomId(), githubUserChatroomMapping.getLastCheckedAt()));
                     return chatroom;
                 })
