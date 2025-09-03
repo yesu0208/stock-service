@@ -103,9 +103,14 @@ public class ChatService {
     }
 
     // 메시지 저장
-    public Message saveMessage(GithubUserInfo githubUserInfo, Long chatroomId, String text) {
+    public Message saveMessage(String unchangeableId, Long chatroomId, String text) {
         Chatroom chatroom = chatroomRepository.findById(chatroomId)
                 .orElseThrow(() -> new ChatroomNotFoundException(chatroomId));
+
+        // Dto로 변경 필요(사실은)
+        GithubUserInfo githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
+                .orElseThrow(() -> new UserNotFoundException(unchangeableId));;
+
 
         Message message = Message.of(text, githubUserInfo, chatroom);
 
