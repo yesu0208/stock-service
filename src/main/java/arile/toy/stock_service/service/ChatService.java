@@ -119,6 +119,6 @@ public class ChatService {
 
     // 채팅방의 메시지(목록) 조회
     public List<Message> getMessageList(Long chatroomId) {
-        return  messageRepository.findAllByChatroomId(chatroomId);
+        return  messageRepository.findAllByChatroomChatroomId(chatroomId);
     }
 }
