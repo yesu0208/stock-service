@@ -1,6 +1,7 @@
 package arile.toy.stock_service.domain;
 
 import arile.toy.stock_service.domain.post.Post;
+import arile.toy.stock_service.dto.security.GithubUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -36,5 +37,15 @@ public class Chatroom {
 
     public static Chatroom of(String title, LocalDateTime createdAt) {
         return new Chatroom(title, createdAt);
+    }
+
+    public GithubUserChatroomMapping addGithubUserInfo(GithubUserInfo githubUserInfo) {
+
+        GithubUserChatroomMapping githubUserChatroomMapping =
+                GithubUserChatroomMapping.of(githubUserInfo, this);
+
+        this.githubUserChatroomMappings.add(githubUserChatroomMapping);
+
+        return  githubUserChatroomMapping;
     }
 }

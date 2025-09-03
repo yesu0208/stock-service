@@ -11,12 +11,14 @@ import arile.toy.stock_service.repository.chats.ChatroomRepository;
 import arile.toy.stock_service.repository.chats.GithubUserChatroomMappingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class ChatService {
 
@@ -38,8 +40,7 @@ public class ChatService {
         chatroom = chatroomRepository.save(chatroom);
 
         // 채팅방 만든 사람은 바로 입장
-        GithubUserChatroomMapping githubUserChatroomMapping = GithubUserChatroomMapping.of(
-                githubUserInfo, chatroom);
+        GithubUserChatroomMapping githubUserChatroomMapping = chatroom.addGithubUserInfo(githubUserInfo);
 
         // 자식 넣고
         githubUserChatroomMappingRepository.save(githubUserChatroomMapping);
