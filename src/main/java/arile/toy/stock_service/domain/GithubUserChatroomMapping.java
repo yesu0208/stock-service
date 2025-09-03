@@ -1,7 +1,11 @@
 package arile.toy.stock_service.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
+import java.time.LocalDateTime;
+
+@Getter
 @Table(name = "github_user_chatroom_mappings")
 @Entity
 public class GithubUserChatroomMapping {
@@ -18,4 +22,16 @@ public class GithubUserChatroomMapping {
     @JoinColumn(name = "chatroom_id")
     @ManyToOne
     Chatroom chatroom;
+
+
+    public GithubUserChatroomMapping() {}
+
+    public GithubUserChatroomMapping(GithubUserInfo githubUserInfo, Chatroom chatroom) {
+        this.githubUserInfo = githubUserInfo;
+        this.chatroom = chatroom;
+    }
+
+    public static GithubUserChatroomMapping of(GithubUserInfo githubUserInfo, Chatroom chatroom) {
+        return new GithubUserChatroomMapping(githubUserInfo, chatroom);
+    }
 }
