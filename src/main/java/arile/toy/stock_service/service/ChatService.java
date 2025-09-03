@@ -3,6 +3,7 @@ package arile.toy.stock_service.service;
 import arile.toy.stock_service.domain.Chatroom;
 import arile.toy.stock_service.domain.GithubUserChatroomMapping;
 import arile.toy.stock_service.domain.GithubUserInfo;
+import arile.toy.stock_service.dto.ChatroomDto;
 import arile.toy.stock_service.exception.chats.ChatroomNotFoundException;
 import arile.toy.stock_service.exception.user.UserNotFoundException;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
@@ -25,7 +26,7 @@ public class ChatService {
     private final GithubUserInfoRepository githubUserInfoRepository;
 
     // 채팅방 생성 기능
-    public Chatroom createChatroom(String unchangeableId, String title) {
+    public ChatroomDto createChatroom(String unchangeableId, String title) {
 
         // Dto로 변경 필요(사실은)
         GithubUserInfo githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
@@ -43,7 +44,7 @@ public class ChatService {
         // 자식 넣고
         githubUserChatroomMappingRepository.save(githubUserChatroomMapping);
 
-        return chatroom;
+        return ChatroomDto.fromEntity(chatroom);
     }
 
 
@@ -87,12 +88,13 @@ public class ChatService {
 
 
     // 사용자 참여 채팅방 목록 조회
-    public List<Chatroom> getChatroomList(String unchangeableId) {
+    public List<ChatroomDto> getChatroomList(String unchangeableId) {
         List<GithubUserChatroomMapping> githubUserChatroomMappings =
                 githubUserChatroomMappingRepository.findAllByGithubUserInfoUnchangeableId(unchangeableId);
 
         return githubUserChatroomMappings.stream()
                 .map(GithubUserChatroomMapping::getChatroom)
+                .map(ChatroomDto::fromEntity)
                 .toList();
     }
 }

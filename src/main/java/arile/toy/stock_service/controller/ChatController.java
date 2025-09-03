@@ -2,6 +2,7 @@ package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.domain.Chatroom;
 import arile.toy.stock_service.domain.GithubUserInfo;
+import arile.toy.stock_service.dto.response.ChatroomResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,9 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping
-    public Chatroom createChatroom(@AuthenticationPrincipal GithubUser githubUser,
-                                   @RequestParam String title) {
-        return chatService.createChatroom(githubUser.unchangeableId(), title);
+    public ChatroomResponse createChatroom(@AuthenticationPrincipal GithubUser githubUser,
+                                           @RequestParam String title) {
+        return ChatroomResponse.fromDto(chatService.createChatroom(githubUser.unchangeableId(), title));
     }
 
     @PostMapping("{chatroomId}")
@@ -36,8 +37,11 @@ public class ChatController {
     }
 
     @GetMapping
-    public List<Chatroom> getChatroomList(@AuthenticationPrincipal GithubUser githubUser) {
-        return chatService.getChatroomList(githubUser.unchangeableId());
+    public List<ChatroomResponse> getChatroomList(@AuthenticationPrincipal GithubUser githubUser) {
+        return chatService.getChatroomList(githubUser.unchangeableId())
+                .stream()
+                .map(ChatroomResponse::fromDto)
+                .toList();
     }
 
 
