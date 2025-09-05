@@ -26,7 +26,7 @@ public class ChatController {
         return ChatroomResponse.fromDto(chatService.createChatroom(githubUser.unchangeableId(), title));
     }
 
-    @PostMapping("{chatroomId}")
+    @PostMapping("/{chatroomId}")
     public Boolean joinChatroom(@AuthenticationPrincipal GithubUser githubUser,
                                 @PathVariable Long chatroomId,
                                 @RequestParam(required = false) Long currentChatroomId) {
