@@ -1,6 +1,5 @@
 package arile.toy.stock_service.dto.response;
 
-import arile.toy.stock_service.dto.ChatroomDto;
 import arile.toy.stock_service.dto.ChatroomWithCurrentStockDto;
 
 import java.time.LocalDateTime;

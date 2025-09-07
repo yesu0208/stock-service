@@ -1,7 +1,6 @@
 package arile.toy.stock_service.domain;
 
 import arile.toy.stock_service.domain.constant.MessageType;
-import arile.toy.stock_service.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 

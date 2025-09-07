@@ -1,13 +1,11 @@
 package arile.toy.stock_service.controller;
 
-import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.Message;
 import arile.toy.stock_service.domain.constant.MessageType;
 import arile.toy.stock_service.dto.ChatMessage;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.ChatService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
