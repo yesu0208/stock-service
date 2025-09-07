@@ -80,10 +80,11 @@ class GithubUserInfoServiceTest {
 
     @DisplayName("unchangeableId와 fee가 주어지면 해당 사용자의 fee를 수정한다.")
     @Test
-    void givenUnchangeableIdAndFee_whenUpdating_thenUpdatesUserFee() {
+    void givenUnchangeableIdAndFeeRate_whenUpdating_thenUpdatesUserFee() {
         // Given
         String unchangeableId = "123456";
-        Double fee = 0.2;
+        Double feeRate = 20.0;
+        Double fee = feeRate/100;
         var githubUserInfo = GithubUserInfo.of(unchangeableId, "test-id", "test-name", "test@email.com", 0.1);
         given(githubUserInfoRepository.findById(unchangeableId)).willReturn(Optional.of(githubUserInfo));
         githubUserInfo.setFee(fee);

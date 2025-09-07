@@ -28,11 +28,11 @@ public class GithubUserInfoService {
                 .orElseThrow(() -> new UserNotFoundException(unchangeableId));
     }
 
-    public void updateGithubUserFee(String unchangeableId, Double fee) {
+    public void updateGithubUserFee(String unchangeableId, Double feeRate) {
         githubUserInfoRepository.findById(unchangeableId)
                 .ifPresentOrElse(
                         entity -> {
-                            entity.setFee(fee);
+                            entity.setFee(feeRate/100);
                             githubUserInfoRepository.save(entity);
                         },
                         () -> { throw new UserNotFoundException(unchangeableId); }
