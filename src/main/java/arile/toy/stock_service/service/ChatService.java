@@ -124,8 +124,8 @@ public class ChatService {
             throw new IllegalClientAccessException();
         }
 
-        List<Message> messages = messageRepository.findAllByChatroomChatroomId(chatroomId);
-        messages.forEach(messageRepository::delete);
+//        List<Message> messages = messageRepository.findAllByChatroomChatroomId(chatroomId);
+//        messages.forEach(messageRepository::delete);
 
         chatroomRepository.deleteById(chatroomId);
 
