@@ -22,8 +22,10 @@ public class ChatController {
 
     @PostMapping
     public ChatroomResponse createChatroom(@AuthenticationPrincipal GithubUser githubUser,
-                                           @RequestParam String title) {
-        return ChatroomResponse.fromDto(chatService.createChatroom(githubUser.unchangeableId(), title));
+                                           @RequestBody ChatroomRequest chatroomRequest) {
+        var chatroomResponse = ChatroomResponse.fromDto(chatService.createChatroom(
+                githubUser.unchangeableId(), chatroomRequest.title(), chatroomRequest.stockName(), githubUser.name()));
+        return chatroomResponse;
     }
 
     @PostMapping("/{chatroomId}")

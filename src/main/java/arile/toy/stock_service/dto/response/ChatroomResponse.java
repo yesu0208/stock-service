@@ -10,6 +10,9 @@ public record ChatroomResponse(
         String title,
         Integer memberCount,
         LocalDateTime createdAt,
+        String stockName,
+        String createdBy,
+        String unchangeableId,
         Boolean hasNewMessage
 ) {
     // Dto -> response
@@ -19,6 +22,9 @@ public record ChatroomResponse(
                 dto.title(),
                 dto.memberCount(),
                 dto.createdAt(),
+                dto.stockName(),
+                dto.createdBy(),
+                dto.unchangeableId(),
                 dto.hasNewMessage()
         );
     }

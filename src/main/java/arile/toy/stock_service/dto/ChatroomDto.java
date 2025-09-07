@@ -9,6 +9,9 @@ public record ChatroomDto(
         String title,
         Integer memberCount,
         LocalDateTime createdAt,
+        String stockName,
+        String createdBy,
+        String unchangeableId,
         Boolean hasNewMessage
 ) {
     // Entity -> Dto
@@ -18,6 +21,9 @@ public record ChatroomDto(
                 entity.getTitle(),
                 entity.getGithubUserChatroomMappings().size(),
                 entity.getCreatedAt(),
+                entity.getStockName(),
+                entity.getCreatedBy(),
+                entity.getUnchangeableId(),
                 entity.getHasNewMessage()
         );
     }

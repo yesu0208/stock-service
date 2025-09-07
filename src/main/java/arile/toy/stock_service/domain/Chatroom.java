@@ -23,11 +23,21 @@ public class Chatroom {
     @Column
     String title;
 
-    @OneToMany(mappedBy = "chatroom")
+    @Column
+    @OneToMany(mappedBy = "chatroom", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<GithubUserChatroomMapping> githubUserChatroomMappings = new HashSet<>();
 
     @Column(columnDefinition = "DATETIME")
     LocalDateTime createdAt;
+
+    @Column
+    String stockName;
+
+    @Column
+    String createdBy;
+
+    @Column
+    String unchangeableId;
 
     @Setter
     @Transient
@@ -35,13 +45,16 @@ public class Chatroom {
 
     public Chatroom() {}
 
-    public Chatroom(String title, LocalDateTime createdAt) {
+    public Chatroom(String title, LocalDateTime createdAt, String stockName, String createdBy, String unchangeableId) {
         this.title = title;
         this.createdAt = createdAt;
+        this.stockName = stockName;
+        this.createdBy = createdBy;
+        this.unchangeableId = unchangeableId;
     }
 
-    public static Chatroom of(String title, LocalDateTime createdAt) {
-        return new Chatroom(title, createdAt);
+    public static Chatroom of(String title, LocalDateTime createdAt, String stockName, String createdBy, String unchangeableId) {
+        return new Chatroom(title, createdAt, stockName, createdBy, unchangeableId);
     }
 
     public GithubUserChatroomMapping addGithubUserInfo(GithubUserInfo githubUserInfo) {
