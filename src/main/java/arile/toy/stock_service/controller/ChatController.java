@@ -47,6 +47,14 @@ public class ChatController {
                 .toList();
     }
 
+    @GetMapping("/total")
+    public List<ChatroomResponse> getAllChatroomListExceptJoined(@AuthenticationPrincipal GithubUser githubUser) {
+        return chatService.getAllChatroomListExceptJoined(githubUser.unchangeableId())
+                .stream()
+                .map(ChatroomResponse::fromDto)
+                .toList();
+    }
+
 
     @GetMapping("/{chatroomId}/messages")
     public List<ChatMessage> getMessagelist(@PathVariable Long chatroomId) {

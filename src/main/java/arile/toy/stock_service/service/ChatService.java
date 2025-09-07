@@ -124,6 +124,24 @@ public class ChatService {
                 .toList();
     }
 
+
+    // 모든 채팅방 목록 조회 (내가 참여한 채팅방 제외)
+    public List<ChatroomDto> getAllChatroomListExceptJoined(String unchangeableId) {
+
+        List<Long> joinedChatroomIds = githubUserChatroomMappingRepository
+                .findAllByGithubUserInfoUnchangeableId(unchangeableId).stream()
+                .map(mapping -> mapping.getChatroom().getChatroomId())
+                .toList();
+
+        List<Chatroom> chatrooms = chatroomRepository.findAll().stream()
+                .filter(chatroom -> !joinedChatroomIds.contains(chatroom.getChatroomId()))
+                .toList();
+
+        return chatrooms.stream()
+                .map(ChatroomDto::fromEntity)
+                .toList();
+    }
+
     // 메시지 저장
     public Message saveMessage(String unchangeableId, Long chatroomId, String text) {
         Chatroom chatroom = chatroomRepository.findById(chatroomId)
