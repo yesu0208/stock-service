@@ -52,3 +52,9 @@ values
 (1, 1, '123456', DATE '2020-02-02', '메시지 내용 1', 'USER'),
 (2, 1, '123456', DATE '2020-02-02', '메시지 내용 2', 'USER')
 ;
+
+-- 예제 매핑 테이블
+insert into github_user_chatroom_mappings (github_user_chatroom_mapping_id, chatroom_id, unchangeable_id, last_checked_at)
+values
+(1, 1, '123456', DATE '2020-02-02')
+;
