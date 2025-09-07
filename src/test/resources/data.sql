@@ -39,3 +39,16 @@ values
 (1, 1, '삼성전자', 50000, 50, 50100, 1, 2500000, now(), 'test-name', now(), 'test-name'),
 (2, 1, 'SK하이닉스', 200000, 50, 202000, 2, 10000000, now(), 'test-name', now(), 'test-name')
 ;
+
+-- 예제 채팅방
+insert into chatrooms (chatroom_id, created_at, created_by, stock_name, title, unchangeable_id)
+values
+(1, now(), now(), '삼성전자', '채팅방 제목 1', '123456')
+;
+
+-- 예제 메시지
+insert into messages (message_id, chatroom_id, unchangeable_id, created_at, text, message_type)
+values
+(1, 1, '123456', DATE '2020-02-02', '메시지 내용 1', 'USER'),
+(2, 1, '123456', DATE '2020-02-02', '메시지 내용 2', 'USER')
+;
