@@ -4,27 +4,36 @@ import arile.toy.stock_service.domain.Chatroom;
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.Message;
 import arile.toy.stock_service.dto.ChatMessage;
+import arile.toy.stock_service.dto.ChatroomWithCurrentStockDto;
+import arile.toy.stock_service.dto.request.ChatroomRequest;
 import arile.toy.stock_service.dto.response.ChatroomResponse;
+import arile.toy.stock_service.dto.response.ChatroomWithCurrentStockResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("/chats")
+@RequestMapping("/api/chats")
 @RestController
 public class ChatController {
 
     private final ChatService chatService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @PostMapping
     public ChatroomResponse createChatroom(@AuthenticationPrincipal GithubUser githubUser,
                                            @RequestBody ChatroomRequest chatroomRequest) {
         var chatroomResponse = ChatroomResponse.fromDto(chatService.createChatroom(
                 githubUser.unchangeableId(), chatroomRequest.title(), chatroomRequest.stockName(), githubUser.name()));
+
+        // STOMP로 새 채팅방 알림
+        simpMessagingTemplate.convertAndSend("/sub/chats/room-created", chatroomResponse);
+
         return chatroomResponse;
     }
 
@@ -49,6 +58,8 @@ public class ChatController {
 
         chatService.deleteChatroom(githubUser.unchangeableId(), chatroomId);
 
+        // STOMP로 모든 구독자에게 삭제 알림 전송
+        simpMessagingTemplate.convertAndSend("/sub/chats/room-deleted", chatroomId);
     }
 
     @DeleteMapping("/{chatroomId}")
