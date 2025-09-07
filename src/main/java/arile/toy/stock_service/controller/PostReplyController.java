@@ -113,7 +113,7 @@ public class PostReplyController {
             @AuthenticationPrincipal GithubUser githubUser,
             @PathVariable Long postId
     ) {
-        var postResponse = postService.toggleLike(postId, githubUser.unchangeableId());
+        var postResponse = postService.toggleLike(githubUser.unchangeableId(), postId);
         Map<String, Object> result = new HashMap<>();
         result.put("isLiking", postResponse.isLiking());
         result.put("likesCount", postResponse.likesCount());
@@ -130,7 +130,7 @@ public class PostReplyController {
             @AuthenticationPrincipal GithubUser githubUser,
             @PathVariable Long postId
     ) {
-        var postResponse = postService.toggleDislike(postId, githubUser.unchangeableId());
+        var postResponse = postService.toggleDislike(githubUser.unchangeableId(), postId);
         Map<String, Object> result = new HashMap<>();
         result.put("isLiking", postResponse.isLiking());
         result.put("likesCount", postResponse.likesCount());

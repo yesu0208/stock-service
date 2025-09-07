@@ -40,9 +40,9 @@ public class PostService {
                 // Optional
                 .orElseThrow(() -> new UserNotFoundException(unchangeableId));
 
-        Boolean isLiking = likeRepository.findByGithubUserInfoAndPost(githubUserInfo, post).isPresent();
+        Boolean isLiking = likeRepository.findByGithubUserInfoUnchangeableIdAndPostPostId(unchangeableId, postId).isPresent();
 
-        Boolean isDisliking = dislikeRepository.findByGithubUserInfoAndPost(githubUserInfo, post).isPresent();
+        Boolean isDisliking = dislikeRepository.findByGithubUserInfoUnchangeableIdAndPostPostId(unchangeableId, postId).isPresent();
 
         return PostResponse.fromDto(PostDto.fromEntity(post), isLiking, isDisliking);
     }
@@ -96,16 +96,16 @@ public class PostService {
     }
 
 
-    public PostResponse toggleLike(Long postId, String unchangeableId) {
+    public PostResponse toggleLike(String unchangeableId, Long postId) {
         var post = postRepository.findById(postId) // Optional<PostEntity>
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
         var githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
                 .orElseThrow(() -> new UserNotFoundException(unchangeableId));
 
-        var like = likeRepository.findByGithubUserInfoAndPost(githubUserInfo, post); // 좋아요를 눌렀거나, 안눌렀거나(Optional)
+        var like = likeRepository.findByGithubUserInfoUnchangeableIdAndPostPostId(unchangeableId, postId); // 좋아요를 눌렀거나, 안눌렀거나(Optional)
 
-        var dislike = dislikeRepository.findByGithubUserInfoAndPost(githubUserInfo, post);
+        var dislike = dislikeRepository.findByGithubUserInfoUnchangeableIdAndPostPostId(unchangeableId, postId);
 
         if (like.isPresent()) { // 이미 존재하면, 삭제
             likeRepository.delete(like.get());
@@ -123,16 +123,16 @@ public class PostService {
     }
 
 
-    public PostResponse toggleDislike(Long postId, String unchangeableId) {
+    public PostResponse toggleDislike(String unchangeableId, Long postId) {
         var post = postRepository.findById(postId) // Optional<PostEntity>
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
         var githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
                 .orElseThrow(() -> new UserNotFoundException(unchangeableId));
 
-        var like = likeRepository.findByGithubUserInfoAndPost(githubUserInfo, post); // 좋아요를 눌렀거나, 안눌렀거나(Optional)
+        var like = likeRepository.findByGithubUserInfoUnchangeableIdAndPostPostId(unchangeableId, postId); // 좋아요를 눌렀거나, 안눌렀거나(Optional)
 
-        var dislike = dislikeRepository.findByGithubUserInfoAndPost(githubUserInfo, post);
+        var dislike = dislikeRepository.findByGithubUserInfoUnchangeableIdAndPostPostId(unchangeableId, postId);
 
         if (dislike.isPresent()) { // 이미 존재하면, 삭제
             dislikeRepository.delete(dislike.get());
