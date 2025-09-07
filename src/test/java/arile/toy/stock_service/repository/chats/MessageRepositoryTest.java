@@ -43,7 +43,7 @@ class MessageRepositoryTest {
 
     @DisplayName("chatroomID와 lastCheckedAt(마지막 채팅방 들어간 시각)으로 해당 채팅방에 새 메시지가 있는지 확인한다.")
     @Test
-    void givenChatroomIdA_whenSelectingMessageList_thenReturnsMessageList() {
+    void givenChatroomIdAndLastCheckedAt_whenCheckingNewMessage_thenReturnsNewMessageExists() {
         // Given
         Long chatroomId = 1L;
         LocalDateTime lastCheckedAt = LocalDateTime.now();
