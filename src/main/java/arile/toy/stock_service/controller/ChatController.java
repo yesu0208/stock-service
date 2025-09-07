@@ -35,6 +35,13 @@ public class ChatController {
         return chatService.joinChatroom(githubUser.unchangeableId(), chatroomId, currentChatroomId);
     }
 
+
+    @GetMapping("/{chatroomId}")
+    public ChatroomWithCurrentStockResponse getChatroom(@AuthenticationPrincipal GithubUser githubUser,
+                                                        @PathVariable Long chatroomId) {
+        return ChatroomWithCurrentStockResponse.fromDto(chatService.getChatroomWithCurrentStock(chatroomId));
+    }
+
     @DeleteMapping("/{chatroomId}")
     public Boolean leaveChatroom(@AuthenticationPrincipal GithubUser githubUser,
                                  @PathVariable Long chatroomId) {

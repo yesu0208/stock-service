@@ -30,6 +30,7 @@ public class ChatService {
     private final MessageRepository messageRepository;
 
     private final GithubUserInfoRepository githubUserInfoRepository;
+    private final CurrentStockInfoService currentStockInfoService;
 
     // 채팅방 생성 기능
     public ChatroomDto createChatroom(String unchangeableId, String title, String stockName, String createdBy) {
@@ -95,6 +96,19 @@ public class ChatService {
         githubUserChatroomMappingRepository.save(githubUserChatroomMapping);
     }
 
+    // 단일 채팅방 정보 가져오기
+    public ChatroomWithCurrentStockDto getChatroomWithCurrentStock(Long chatroomId) {
+        var chatroomDto = chatroomRepository.findById(chatroomId)
+                .map(ChatroomDto::fromEntity)
+                .orElseThrow(() -> new ChatroomNotFoundException(chatroomId));
+
+        var currentStockInfoDto = currentStockInfoService.getCurrentStockInfo(chatroomDto.stockName());
+
+        return ChatroomWithCurrentStockDto.of(chatroomId, chatroomDto.title(), chatroomDto.memberCount(),
+                chatroomDto.createdAt(), chatroomDto.stockName(), chatroomDto.createdBy(), chatroomDto.hasNewMessage(),
+                currentStockInfoDto.marketState(), currentStockInfoDto.nowValue(), currentStockInfoDto.changeValue(),
+                currentStockInfoDto.changeRate());
+    }
     // 참여한 방에서 나오기
     public Boolean leaveChatroom(String unchangeableId, Long chatroomId) {
 
