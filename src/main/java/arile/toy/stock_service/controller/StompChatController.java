@@ -2,6 +2,7 @@ package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.Message;
+import arile.toy.stock_service.domain.constant.MessageType;
 import arile.toy.stock_service.dto.ChatMessage;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.ChatService;
@@ -34,10 +35,10 @@ public class StompChatController {
 
         GithubUser githubUser = (GithubUser) ((AbstractAuthenticationToken) principal).getPrincipal();
 
-        Message message = chatService.saveMessage(githubUser.unchangeableId(), chatroomId, payload.get("message"));
+        Message message = chatService.saveMessage(githubUser.unchangeableId(), chatroomId, payload.get("message"), MessageType.valueOf(payload.get("type")));
         simpMessagingTemplate.convertAndSend("/sub/chats/news", chatroomId);
 
-        return new ChatMessage(githubUser.getName(), payload.get("message"));
+        return new ChatMessage(githubUser.getName(), payload.get("message"), message.getCreatedAt(), message.getMessageType(), githubUser.unchangeableId());
     }
 }
 

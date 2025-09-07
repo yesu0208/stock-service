@@ -16,5 +16,8 @@ public class MainController {
     @GetMapping("/stock-chats")
     public String stockChatRoot() {
         return "stock-chats";
+        model.addAttribute("stompBrokerUrl", "ws://localhost:8080/stomp/chats");
+        model.addAttribute("currentUser", githubUser.getName());
+        model.addAttribute("unchangeableId", githubUser.unchangeableId());
     }
 }

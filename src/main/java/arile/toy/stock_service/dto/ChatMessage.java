@@ -8,6 +8,7 @@ public record ChatMessage(
         String sender,
         String message,
         LocalDateTime createdAt,
-        MessageType messageType
+        MessageType messageType,
+        String unchangeableId
 ) {
 }
