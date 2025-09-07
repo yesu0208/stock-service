@@ -26,16 +26,16 @@ values
 (2, 1, '123456', '댓글 내용 2', now(), now())
 ;
 
----- 예제 관심 그룹
---insert into interest_groups (id, group_name, unchangeable_id, created_at, created_by, modified_at, modified_by)
---values
---(1, 'group_name', '123456', now(), 'Arile', now(), 'Arile')
---;
---
----- 예제 관심 종목
---insert into interest_stocks (id, interest_group_id, stock_name, buying_price, num_of_stocks, break_even_price, field_order,
--- total_buying_price, created_at, created_by, modified_at, modified_by)
---values
---(1, 1, '삼성전자', 50000, 50, 50100, 1, 2500000, now(), 'Arile', now(), 'Arile'),
---(2, 1, '삼성전자', 50000, 50, 50100, 2, 2500000, now(), 'Arile', now(), 'Arile')
---;
+-- 예제 관심 그룹
+insert into interest_groups (interest_group_id, group_name, unchangeable_id, created_at, created_by, modified_at, modified_by)
+values
+(1, 'group_name1', '123456', now(), 'test-name', now(), 'test-name')
+;
+
+-- 예제 관심 종목
+insert into interest_stocks (interest_stock_id, interest_group_id, stock_name, buying_price, num_of_stocks, break_even_price, field_order,
+ total_buying_price, created_at, created_by, modified_at, modified_by)
+values
+(1, 1, '삼성전자', 50000, 50, 50100, 1, 2500000, now(), 'test-name', now(), 'test-name'),
+(2, 1, 'SK하이닉스', 200000, 50, 202000, 2, 10000000, now(), 'test-name', now(), 'test-name')
+;
