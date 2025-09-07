@@ -89,7 +89,7 @@ public class ChatController {
     public List<ChatMessage> getMessagelist(@PathVariable Long chatroomId) {
         return chatService.getMessageList(chatroomId).stream()
                 .map(message -> new ChatMessage(message.getGithubUserInfo().getName(),
-                        message.getText()))
+                        message.getText(),message.getCreatedAt(), message.getMessageType(), message.getGithubUserInfo().getUnchangeableId()))
                 .toList();
     }
 }
