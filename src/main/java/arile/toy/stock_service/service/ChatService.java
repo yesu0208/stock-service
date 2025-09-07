@@ -4,7 +4,10 @@ import arile.toy.stock_service.domain.Chatroom;
 import arile.toy.stock_service.domain.GithubUserChatroomMapping;
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.Message;
+import arile.toy.stock_service.domain.constant.MessageType;
 import arile.toy.stock_service.dto.ChatroomDto;
+import arile.toy.stock_service.dto.ChatroomWithCurrentStockDto;
+import arile.toy.stock_service.exception.IllegalClientAccessException;
 import arile.toy.stock_service.exception.chats.ChatroomNotFoundException;
 import arile.toy.stock_service.exception.user.UserNotFoundException;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
@@ -109,6 +112,25 @@ public class ChatService {
                 currentStockInfoDto.marketState(), currentStockInfoDto.nowValue(), currentStockInfoDto.changeValue(),
                 currentStockInfoDto.changeRate());
     }
+
+
+    // 단일 채팅방 삭제하기 (생성한 유저만 가능)
+    public void deleteChatroom(String unchangeableId, Long chatroomId) {
+        var chatroomDto = chatroomRepository.findById(chatroomId)
+                .map(ChatroomDto::fromEntity)
+                .orElseThrow(() -> new ChatroomNotFoundException(chatroomId));
+
+        if (!chatroomDto.unchangeableId().equals(unchangeableId)) {
+            throw new IllegalClientAccessException();
+        }
+
+        List<Message> messages = messageRepository.findAllByChatroomChatroomId(chatroomId);
+        messages.forEach(messageRepository::delete);
+
+        chatroomRepository.deleteById(chatroomId);
+
+    }
+
     // 참여한 방에서 나오기
     public Boolean leaveChatroom(String unchangeableId, Long chatroomId) {
 

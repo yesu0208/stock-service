@@ -42,6 +42,15 @@ public class ChatController {
         return ChatroomWithCurrentStockResponse.fromDto(chatService.getChatroomWithCurrentStock(chatroomId));
     }
 
+
+    @DeleteMapping("/delete/{chatroomId}")
+    public void deleteChatroom(@AuthenticationPrincipal GithubUser githubUser,
+                               @PathVariable Long chatroomId) {
+
+        chatService.deleteChatroom(githubUser.unchangeableId(), chatroomId);
+
+    }
+
     @DeleteMapping("/{chatroomId}")
     public Boolean leaveChatroom(@AuthenticationPrincipal GithubUser githubUser,
                                  @PathVariable Long chatroomId) {
