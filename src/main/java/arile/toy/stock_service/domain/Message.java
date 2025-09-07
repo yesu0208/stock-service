@@ -1,5 +1,6 @@
 package arile.toy.stock_service.domain;
 
+import arile.toy.stock_service.domain.constant.MessageType;
 import arile.toy.stock_service.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,17 +30,22 @@ public class Message {
     @Column(columnDefinition = "DATETIME")
     LocalDateTime createdAt;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    MessageType messageType;
+
     public Message() {
     }
 
-    public Message(String text, GithubUserInfo githubUserInfo, Chatroom chatroom, LocalDateTime createdAt) {
+    public Message(String text, GithubUserInfo githubUserInfo, Chatroom chatroom, LocalDateTime createdAt, MessageType messageType) {
         this.text = text;
         this.githubUserInfo = githubUserInfo;
         this.chatroom = chatroom;
         this.createdAt = createdAt;
+        this.messageType = messageType;
     }
 
-    public static Message of(String text, GithubUserInfo githubUserInfo, Chatroom chatroom, LocalDateTime createdAt) {
-        return new Message(text, githubUserInfo, chatroom, createdAt);
+    public static Message of(String text, GithubUserInfo githubUserInfo, Chatroom chatroom, LocalDateTime createdAt, MessageType messageType) {
+        return new Message(text, githubUserInfo, chatroom, createdAt, messageType);
     }
 }
