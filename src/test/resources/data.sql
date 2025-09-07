@@ -7,8 +7,8 @@ values ('123456', 'test-id', 'test-name', 'test@email.com', now(), 0.01)
 insert into posts (post_id, unchangeable_id, stock_name, body, replies_count, likes_count, dislikes_count, title,
 created_at, modified_at)
 values
-(1, '123456', '삼성전자', '내용1', 0, 1, 2, '제목1', now(), now()),
-(2, '123456', 'SK하이닉스', '내용2', 0, 1, 2, '제목2', now(), now());
+(1, '123456', '삼성전자', '내용 1', 0, 1, 2, '제목 1', now(), now()),
+(2, '123456', 'SK하이닉스', '내용 2', 0, 1, 2, '제목 2', now(), now());
 
 -- 예제 싫어요 (**)
 insert into dislikes (dislike_id, unchangeable_id, post_id)
@@ -19,12 +19,12 @@ insert into likes (like_id, unchangeable_id, post_id)
 values (1, '123456', 2);
 
 
----- 예제 댓글
---insert into replies (reply_id, post_id, unchangeable_id, body, created_at, modified_at)
---values
---(1, 1, '123456', '내용 1', now(), now()),
---(2, 1, '123456', '내용 2', now(), now())
---;
+-- 예제 댓글
+insert into replies (reply_id, post_id, unchangeable_id, body, created_at, modified_at)
+values
+(1, 1, '123456', '댓글 내용 1', now(), now()),
+(2, 1, '123456', '댓글 내용 2', now(), now())
+;
 
 ---- 예제 관심 그룹
 --insert into interest_groups (id, group_name, unchangeable_id, created_at, created_by, modified_at, modified_by)
