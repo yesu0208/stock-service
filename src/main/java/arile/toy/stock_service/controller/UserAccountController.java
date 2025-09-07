@@ -58,7 +58,7 @@ public class UserAccountController {
             @AuthenticationPrincipal GithubUser githubUser,
             GithubUserInfoRequest githubUserInfoRequest // 폼 data로 받음
     ) {
-        githubUserInfoService.updateGithubUserFee(githubUser.unchangeableId(), githubUserInfoRequest.toDto());
+        githubUserInfoService.updateGithubUserFee(githubUser.unchangeableId(), githubUserInfoRequest.fee());
 
         return "redirect:/my-account"; // redirection : PRG pattern (POST REDIRECT GET)
     }
