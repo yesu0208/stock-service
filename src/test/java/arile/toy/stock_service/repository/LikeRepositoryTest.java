@@ -19,8 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 class LikeRepositoryTest {
 
-    @Autowired
-    private LikeRepository sut;
+    @Autowired private LikeRepository sut;
 
 
     @DisplayName("unchangeableId와 postId로 좋아요 정보를 반환한다.")

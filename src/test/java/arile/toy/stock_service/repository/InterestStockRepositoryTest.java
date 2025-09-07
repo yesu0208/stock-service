@@ -19,7 +19,7 @@ import static org.assertj.core.api.BDDAssertions.tuple;
 @DataJpaTest
 class InterestStockRepositoryTest {
 
-    @Autowired InterestStockRepository sut;
+    @Autowired private InterestStockRepository sut;
 
     @DisplayName("unchangeableId로 관심 종목 목록을 반환한다.")
     @Test

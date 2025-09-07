@@ -21,7 +21,6 @@ import static org.assertj.core.api.BDDAssertions.tuple;
 class PostRepositoryTest {
 
     @Autowired private PostRepository sut;
-    @Autowired private ReplyRepository replyRepository;
 
     @DisplayName("unchangeableId와 postId로 게시물을 반환한다.")
     @Test

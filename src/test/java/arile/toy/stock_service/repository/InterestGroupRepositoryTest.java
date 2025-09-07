@@ -20,7 +20,7 @@ import static org.assertj.core.api.BDDAssertions.tuple;
 @DataJpaTest
 class InterestGroupRepositoryTest {
 
-    @Autowired InterestGroupRepository sut;
+    @Autowired private InterestGroupRepository sut;
 
     @DisplayName("unchangeableId로 관심 그룹 목록을 반환한다.")
     @Test

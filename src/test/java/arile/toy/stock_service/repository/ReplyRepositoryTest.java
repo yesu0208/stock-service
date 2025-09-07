@@ -20,7 +20,7 @@ import static org.assertj.core.api.BDDAssertions.tuple;
 @DataJpaTest
 class ReplyRepositoryTest {
 
-    @Autowired ReplyRepository sut;
+    @Autowired private ReplyRepository sut;
 
     @DisplayName("unchangeableId와 postId, replyId로 댓글을 반환한다.")
     @Test
