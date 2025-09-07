@@ -75,9 +75,27 @@
 
 <main class="container mx-auto px-4 py-8 flex-grow">
     <section class="mb-8 bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
-        <h1 class="text-4xl font-bold text-gray-800 mb-6 text-left dark:text-gray-100">
-            종목 정보
-        </h1>
+        <!-- Flex container: 제목과 버튼+텍스트를 한 줄에 배치 -->
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100">
+                종목 정보
+            </h1>
+
+            <!-- 톡 아이콘 + 텍스트 버튼 -->
+            <button id="goToChats" class="flex items-center text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 cursor-pointer text-2xl space-x-2">
+                <i class="fa-solid fa-comment"></i>
+                <span class="text-base font-medium">종목톡 입장</span>
+            </button>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const btn = document.getElementById("goToChats");
+                btn.addEventListener("click", () => {
+                    window.location.href = "/chats";
+                });
+            });
+        </script>
     </section>
 
     <!-- 주식 정보 선택 영역 -->

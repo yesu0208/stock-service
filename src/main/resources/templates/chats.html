@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Chatrooms</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const WS_URL = /*[[${stompBrokerUrl}]]*/ 'ws://localhost:8080/stomp/chats';
+        const CURRENT_USER = /*[[${currentUser}]]*/ || "익명";
+        const CURRENT_USER_ID = /*[[${unchangeableId}]]*/ 'anonymous';
+        /*]]>*/
+    </script>
+    <script>
+        tailwind.config = {
+          darkMode: 'class'
+        }
+    </script>
+    <script>
+        (function() {
+          const theme = localStorage.getItem('theme');
+          if (theme === 'dark' ||
+              (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        })();
+    </script>
+    <style>
+    .new-message-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: red;
+    border-radius: 50%;
+    margin-left: 5px;
+    }
+    </style>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-900">
+<noscript>
+    <h2 class="text-red-600">
+        브라우저가 Javascript를 지원하지 않는 것 같아요! WebSocket은 Javascript가 활성화되어야 합니다.<br/>
+        설정에서 Javascript를 켜고 이 페이지를 다시 로드하세요.
+    </h2>
+</noscript>
+
+
+<!-- 로딩 화면 -->
+<div id="loading-screen" class="fixed inset-0 bg-white dark:bg-gray-900 flex flex-col items-center justify-center z-50 space-y-4">
+    <div class="w-12 h-12 border-4 border-gray-300 border-t-sky-600 rounded-full animate-spin"></div>
+    <div class="text-gray-800 dark:text-gray-100 text-xl font-bold animate-pulse">
+        잠시만 기다려주세요...
+    </div>
+</div>
+
+<header class="bg-white shadow dark:bg-gray-800 dark:text-gray-100">
+    <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+        <a class="text-2xl font-bold text-sky-600">종목톡</a>
+
+        <nav class="ml-auto flex items-center space-x-4">
+            <a onclick="disconnect()"
+               class="cursor-pointer text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                종목톡 종료
+            </a>
+            <!-- 다크 모드 토글 버튼 -->
+            <button id="darkModeToggle"
+                    class="ml-4 text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400">
+                <i id="darkModeIcon" class="fas fa-moon"></i>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<div class="max-w-[1200px] mx-auto my-5 flex gap-5 h-[80vh]">
+
+    <!-- 좌측 전체 채팅방 + 내 채팅방 -->
+    <div class="flex-[1.5] flex gap-2">
+        <!-- 전체 채팅방 -->
+        <div class="flex-1 bg-white dark:bg-gray-800 p-4 border border-gray-200 dark:border-gray-700 rounded flex flex-col">
+            <div class="flex justify-between items-center mb-2">
+                <h4 class="text-xl font-bold text-gray-800 dark:text-gray-100">전체 채팅방</h4>
+                <!-- 전체 채팅방 새로고침 -->
+                <button id="refreshTotal"
+                        class="text-black dark:text-white text-2xl font-bold p-2 rounded-full hover:opacity-70"
+                        title="새로고침">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300 text-xs mb-2">내가 참여하지 않은 채팅방 목록입니다.</p>
+            <div id="total-chatroom-list-wrapper" class="flex-1 overflow-y-auto">
+                <div id="total-chatroom-list" class="space-y-2"></div>
+            </div>
+        </div>
+
+        <!-- 내 채팅방 -->
+        <div class="flex-1 bg-white dark:bg-gray-800 p-4 border border-gray-200 dark:border-gray-700 rounded flex flex-col">
+            <div class="flex justify-between items-center mb-2">
+                <h4 class="text-xl font-bold text-gray-800 dark:text-gray-100">내 채팅방</h4>
+                <!-- 내 채팅방 새로고침 -->
+                <button id="refreshMy"
+                        class="text-black dark:text-white text-2xl font-bold p-2 rounded-full hover:opacity-70"
+                        title="새로고침">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300 text-xs mb-2">내가 참여한 채팅방 목록입니다.</p>
+            <div id="chatroom-list-wrapper" class="flex-1 overflow-y-auto mb-2">
+                <div id="chatroom-list" class="space-y-2"></div>
+            </div>
+
+            <div id="chatroom-input" class="space-y-2">
+                <input type="text" id="chatroom-title"
+                       class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded
+                      bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                       placeholder="채팅방 이름">
+                <button id="selectStockBtn"
+                        class="w-full bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200
+                       py-2 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition">
+                    종목 선택
+                </button>
+                <input type="hidden" id="chatroom-stockName">
+                <button id="create"
+                        class="w-full bg-blue-500 text-white py-2 rounded disabled:opacity-50
+                       hover:bg-blue-600 transition-colors" disabled>
+                    만들기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 우측 채팅방 -->
+    <div class="flex-[1.5] flex flex-col bg-white dark:bg-gray-800 p-4
+              border border-gray-200 dark:border-gray-700 rounded">
+        <div class="mb-2 flex gap-2">
+            <input type="hidden" id="chatroom-id">
+        </div>
+
+        <div id="chatroom-title-bar"
+             class="text-center font-bold text-lg mb-2 text-gray-800 dark:text-gray-100"></div>
+        <div id="chatroom-meta-bar"
+             class="text-center text-xs text-gray-600 dark:text-gray-300 mb-2"></div>
+
+        <!-- 주식 정보 칸 -->
+        <div id="stock-info"
+             class="mb-2 p-2 border rounded bg-gray-50 dark:bg-gray-700 text-sm
+                text-gray-700 dark:text-gray-200 hidden flex gap-4 justify-center items-center">
+            <div class="text-center"><span class="font-semibold"></span> <span id="stockName">-</span></div>
+            <div class="text-center"><span class="font-semibold"></span> <span id="nowValue">-</span></div>
+            <div class="text-center">
+                <span class="font-semibold"></span>
+                <span id="changeContainer">
+          <span id="changeValue">-</span>
+          (<span id="changeRate">-</span>)
+        </span>
+            </div>
+            <div id="marketStateContainer" class="text-center"></div>
+        </div>
+
+        <div id="conversation-container" class="flex-1 overflow-y-auto mb-2">
+            <table id="conversation" class="w-full table-auto">
+                <tbody id="messages"></tbody>
+            </table>
+        </div>
+
+        <div class="space-y-2">
+            <input type="text" id="message"
+                   class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded
+                    bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                   placeholder="메시지 입력">
+            <button id="send"
+                    class="w-full bg-blue-500 text-white py-2 rounded disabled:opacity-50">
+                보내기
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 종목 선택 모달 -->
+<div id="stockModal"
+     class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg w-[400px] h-[470px] flex flex-col
+                text-gray-900 dark:text-gray-100">
+        <div class="flex-shrink-0">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">종목 선택</h3>
+            <input type="text" id="searchInput" placeholder="검색..."
+                   class="w-full p-2 mb-4 border border-gray-300 dark:border-gray-600 rounded-lg
+                          focus:outline-none focus:ring-2 focus:ring-blue-400
+                          bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-base">
+        </div>
+
+        <div class="flex-1 overflow-y-auto">
+            <ul id="modalStockList" class="space-y-2"></ul>
+        </div>
+
+        <div class="flex-shrink-0 mt-4 flex justify-center border-t border-gray-200 dark:border-gray-700 pt-2">
+            <button id="modalCloseBtn"
+                    class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200
+                           py-2 px-6 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors">
+                닫기
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<footer class="bg-white shadow w-full mt-auto dark:bg-gray-800 dark:text-gray-400">
+    <div class="container mx-auto px-4 py-6 text-center text-gray-600 dark:text-gray-300">
+        © 2025 Arile, Inc
+    </div>
+</footer>
+
+<script>
+    const toggleBtn = document.getElementById("darkModeToggle");
+    const icon = document.getElementById("darkModeIcon");
+    const root = document.documentElement;
+
+    if (localStorage.getItem("theme") === "dark") {
+        root.classList.add("dark");
+        icon.classList.replace("fa-moon","fa-sun");
+    }
+
+    toggleBtn.addEventListener("click", () => {
+        const isDark = root.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+        icon.classList.toggle("fa-moon", !isDark);
+        icon.classList.toggle("fa-sun", isDark);
+    });
+</script>
+
+<script>
+    const stompClient = new StompJs.Client({ brokerURL: WS_URL });
+
+    stompClient.onConnect = (frame) => {
+        setConnected(true);
+        showChatrooms();
+        showTotalChatrooms();
+        stompClient.subscribe('/sub/chats/news',
+            (chatMessage) => {
+                toggleNewMessageIcon(JSON.parse(chatMessage.body), true);
+            });
+
+
+        // 🔹 채팅방 삭제 구독
+        stompClient.subscribe('/sub/chats/room-deleted', (message) => {
+            const deletedChatroomId = message.body;
+
+            // 현재 채팅방이면 종료
+            const currentChatroomId = $("#chatroom-id").val();
+            if (currentChatroomId == deletedChatroomId) {
+                alert("현재 채팅방이 삭제되었습니다.");
+                exitChatroom(currentChatroomId);
+            }
+
+            // 채팅방 목록 갱신
+            showChatrooms();
+            showTotalChatrooms();
+        });
+
+        // 새 채팅방 생성 구독
+        stompClient.subscribe('/sub/chats/room-created', (message) => {
+            const newChatroom = JSON.parse(message.body);
+            // 전체 채팅방 렌더링에 추가
+            showTotalChatrooms();
+        });
+
+
+        console.log('Connected: ' + frame);
+    };
+
+    function toggleNewMessageIcon(chatroomId, toggle) {
+        if (toggle) {
+            $("#new_" + chatroomId).show();
+        } else {
+            $("#new_" + chatroomId).hide();
+        }
+    }
+
+    stompClient.onWebSocketError = (error) => { console.error('Error with websocket', error); };
+    stompClient.onStompError = (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+    };
+
+    function setConnected(connected) {
+        $("#connect").prop("disabled", connected);
+        $("#disconnect").prop("disabled", !connected);
+        $("#create").prop("disabled", !connected);
+    }
+
+    function connect() { stompClient.activate(); }
+    function disconnect() {
+
+        // 🔹 확인 메시지
+        if (!confirm("종목톡을 종료하시겠습니까?")) {
+            return; // 사용자가 취소하면 종료
+        }
+
+        stompClient.deactivate();
+        setConnected(false);
+        console.log("Disconnected");
+        window.location.href = "/stocks";
+    }
+
+    function sendMessage() {
+    let chatroomId = $("#chatroom-id").val();
+
+    let message = $("#message").val();   // 메시지 입력값 가져오기
+    if (!message) {
+        alert("메시지를 입력해주세요."); // 메시지가 없으면 알림
+        return;
+    }
+    stompClient.publish({
+        destination: "/pub/chats/" + chatroomId,
+        body: JSON.stringify({
+            message: $("#message").val(),
+            type: "USER"
+        })
+    });
+    $("#message").val("")
+}
+
+    function createChatroom() {
+    const title = $("#chatroom-title").val();
+    const stockName = $("#chatroom-stockName").val(); // hidden input에서 가져옴
+
+    if (!title) {
+        alert("채팅방 이름을 입력해주세요."); // 채팅방 이름 알림
+        return;
+    }
+
+    if(!stockName) {
+        alert("종목을 선택해주세요.");
+        return;
+    }
+
+    // 🔹 확인 메시지
+        if (!confirm("새 채팅방을 만드시겠습니까?")) {
+            return; // 사용자가 취소하면 종료
+        }
+
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        url: '/api/chats',
+        data: JSON.stringify({ title, stockName }),
+        success: function (data) { showChatrooms(); enterChatroom(data.chatroomId, true); },
+        error: function (request, status, error) { console.log('error: ', error); }
+    });
+    }
+
+    function showChatrooms() {
+        $.ajax({ type: 'GET', dataType: 'json', url: '/api/chats',
+            success: function (data) { renderChatrooms(data); },
+            error: function (request, status, error) { console.log('error: ', error); },
+        })
+    }
+
+        // 🔹 카드 기반 렌더링
+        function renderChatrooms(chatrooms) {
+            let currentChatroomId = $("#chatroom-id").val();
+            $("#chatroom-list").html("");
+
+            for (let i = 0; i < chatrooms.length; i++) {
+                let chatroom = chatrooms[i];
+
+                // 현재 채팅방 강조 색상 (다크 모드 포함)
+                let isActive = chatroom.chatroomId == currentChatroomId
+                    ? "bg-blue-100 dark:bg-blue-900"
+                    : "bg-white dark:bg-gray-800";
+
+                let createdDate = chatroom.createdAt.split("T")[0];
+                let createdTime = createdDate + " 생성됨";
+                let createdByText = chatroom.createdBy ? "Created By " + chatroom.createdBy : "";
+
+                // 내가 생성한 채팅방인지 확인
+                let isCreator = chatroom.unchangeableId === CURRENT_USER_ID;
+
+                // 버튼 HTML 생성
+                let buttonsHtml = "";
+                if (isCreator) {
+                    buttonsHtml =
+                        "<button class='leave-btn text-xs bg-red-500 text-white py-1.5 px-3 rounded border border-red-600 hover:bg-red-600 transition-colors mr-2' data-id='" + chatroom.chatroomId + "'>나가기</button>" +
+                        "<button class='delete-btn text-xs bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200 py-1.5 px-3 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors' data-id='" + chatroom.chatroomId + "'>삭제</button>";
+                } else {
+                    buttonsHtml =
+                        "<button class='leave-btn text-xs bg-red-500 text-white py-1.5 px-3 rounded border border-red-600 hover:bg-red-600 transition-colors' data-id='" + chatroom.chatroomId + "'>나가기</button>";
+                }
+
+                let cardHtml =
+                    "<div class='chatroom-row p-2 rounded-xl border border-gray-200 dark:border-gray-700 shadow mb-3 " + isActive + " cursor-pointer' data-id='" + chatroom.chatroomId + "'>" +
+                        "<div class='chatroom-title font-semibold text-sm text-gray-800 dark:text-gray-100'>" +
+                            chatroom.title +
+                            "<span id='new_" + chatroom.chatroomId + "' class='new-message-indicator' style='display:" + getDisplayValue(chatroom.hasNewMessage) + "'></span>" +
+                        "</div>" +
+                        "<div class='chatroom-creator text-xs text-gray-500 dark:text-gray-400 mt-1'>" + createdByText + "</div>" +
+                        "<div class='chatroom-meta text-xs text-gray-500 dark:text-gray-400 mt-1'>" +
+                            chatroom.memberCount + "명 · " + createdTime +
+                        "</div>" +
+                        "<div style='text-align: center; margin-top:5px;'>" + buttonsHtml + "</div>" +
+                    "</div>";
+
+                $("#chatroom-list").append(cardHtml);
+            }
+
+            // 🔹 카드 전체 클릭 → 참여
+            $(".chatroom-row").click(function () {
+                let chatroomId = $(this).data("id");
+                joinChatroom(chatroomId);
+            });
+
+            // 🔹 "나가기" 버튼 이벤트 바인딩
+            $(".leave-btn").click(function (e) {
+                e.stopPropagation(); // 카드 클릭 이벤트 차단
+                let chatroomId = $(this).data("id");
+
+                if (confirm("채팅방에서 나가시겠습니까?")) {
+                    stompClient.publish({
+                        destination: "/pub/chats/" + chatroomId,
+                        body: JSON.stringify({ message: "님이 방을 나갔습니다.", type: "SYSTEM" })
+                    });
+
+                    $.ajax({
+                        type: 'DELETE',
+                        dataType: 'json',
+                        url: '/api/chats/' + chatroomId,
+                        success: function () { showChatrooms(); showTotalChatrooms(); exitChatroom(chatroomId); },
+                        error: function (request, status, error) { console.log('error: ', error); },
+                    });
+                }
+            });
+
+            // 🔹 "삭제" 버튼 이벤트 바인딩
+            $(".delete-btn").click(function (e) {
+                e.stopPropagation(); // 카드 클릭 이벤트 차단
+                let chatroomId = $(this).data("id");
+
+                if (confirm("채팅방을 삭제하시겠습니까?")) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '/api/chats/delete/' + chatroomId,
+                        success: function () { showChatrooms(); showTotalChatrooms(); exitChatroom(chatroomId); },
+                        error: function (request, status, error) { console.log('error: ', error); },
+                    });
+                }
+            });
+        }
+
+
+
+
+
+
+    function getDisplayValue(hasNewMessage) { return hasNewMessage ? "inline-block" : "none"; }
+
+    let subscription;
+
+    function enterChatroom(chatroomId, newMember) {
+        $("#chatroom-id").val(chatroomId);
+        $("#messages").html("");
+        $("#send").prop("disabled", false);
+        $("#leave").prop("disabled", false);
+        toggleNewMessageIcon(chatroomId, false);
+
+        if (subscription != undefined) subscription.unsubscribe();
+
+        // 채팅방 정보 가져오기 (제목 + 부가 정보 표시용)
+        $.getJSON("/api/chats/" + chatroomId, function(chatroom) {
+            $("#chatroom-title-bar").text(chatroom.title);
+
+            // 예: 5명 · 2025-09-06 생성됨
+            let createdDate = chatroom.createdAt.split("T")[0];
+            $("#chatroom-meta-bar").text(chatroom.memberCount + "명 · " + createdDate + " 생성됨");
+
+            // 주식 정보 표시
+            if (chatroom.nowValue !== undefined && chatroom.nowValue !== null) {
+                updateStockInfo(chatroom);
+            } else {
+                clearStockInfo();
+            }
+        });
+
+
+
+        // 1. 과거 메시지 가져오기
+        $.ajax({
+            type: 'GET',
+            dataType: 'json',
+            url: '/api/chats/' + chatroomId + '/messages',
+            success: function (data) {
+                data.forEach(msg => showMessage(msg));
+
+                // 2. Ajax 완료 후 WebSocket 구독
+                subscription = stompClient.subscribe('/sub/chats/' + chatroomId,
+                    (chatMessage) => { showMessage(JSON.parse(chatMessage.body)); });
+
+                // 3. 구독 완료 후 입장 메시지 전송
+                if (newMember) {
+                stompClient.publish({
+                    destination: "/pub/chats/" + chatroomId,
+                    body: JSON.stringify({
+                        message: "님이 방에 들어왔습니다.",
+                        type: "SYSTEM"
+                    })
+                });
+                }
+            },
+            error: function (request, status, error) { console.log('error: ', error); },
+        });
+
+        // 현재 join한 채팅방 강조
+        showChatrooms();
+        showTotalChatrooms();
+        }
+
+        function showMessages(chatroomId) {
+            $.ajax({ type: 'GET', dataType: 'json', url: '/api/chats/' + chatroomId + '/messages',
+                success: function (data) { for (let i = 0; i < data.length; i++) showMessage(data[i]); },
+                error: function (request, status, error) { console.log('error: ', error); },
+            })
+        }
+
+
+        function showMessage(chatMessage) {
+            let messageHtml;
+
+            if (chatMessage.messageType === "SYSTEM") {
+                // 시스템 메시지: 가운데 정렬, 시각 없음
+                messageHtml = `
+                    <tr class="bg-transparent border-none">
+                        <td class="p-0 border-none text-center">
+                            <div class="text-gray-500 dark:text-gray-400 italic my-2.5">
+                                ${chatMessage.sender} ${chatMessage.message}
+                            </div>
+                        </td>
+                    </tr>`;
+            } else {
+                // 일반 메시지
+                let date = new Date(chatMessage.createdAt);
+                let year = date.getFullYear();
+                let month = (date.getMonth() + 1).toString().padStart(2, '0');
+                let day = date.getDate().toString().padStart(2, '0');
+                let hours = date.getHours().toString().padStart(2, '0');
+                let minutes = date.getMinutes().toString().padStart(2, '0');
+                let createdAt = `${year}.${month}.${day} ${hours}:${minutes}`;
+
+                let isMine = chatMessage.unchangeableId === CURRENT_USER_ID;
+
+                // 정렬 방향 + 오른쪽 여백
+                let alignClass = isMine ? "items-end mr-3" : "items-start ml-0";
+
+                // 발신자 이름 색상
+                let nameClass = isMine
+                    ? "text-white dark:text-white"
+                    : "text-black dark:text-gray-100";
+
+                // 버블 스타일
+                let bubbleClass = isMine
+                    ? "bg-blue-500 text-white dark:bg-blue-600"
+                    : "bg-gray-200 text-black dark:bg-gray-700 dark:text-gray-100";
+
+                // 시간 텍스트 색
+                let timeClass = isMine
+                    ? "text-gray-300"
+                    : "text-gray-500 dark:text-gray-400";
+
+                messageHtml = `
+                    <tr class="bg-transparent border-none">
+                        <td class="p-0 border-none">
+                            <div class="flex flex-col ${alignClass} mb-2.5">
+                                <div class="font-bold mb-1 ${nameClass}">${chatMessage.sender}</div>
+                                <div class="relative ${bubbleClass} px-3 py-2 pb-5 rounded-xl max-w-[70%] min-w-[100px] break-words">
+                                    <span>${chatMessage.message}</span>
+                                    <span class="absolute right-2 bottom-1 text-[0.7em] ${timeClass} whitespace-nowrap">
+                                        ${createdAt}
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>`;
+            }
+
+            $("#messages").append(messageHtml);
+            // 스크롤 아래로 자동 이동
+            $("#conversation-container").scrollTop($("#conversation-container")[0].scrollHeight);
+        }
+
+
+
+
+    function joinChatroom(chatroomId) {
+        let currentChatroomId = $("#chatroom-id").val();
+        $.ajax({ type: 'POST', dataType: 'json', url: '/api/chats/' + chatroomId + getRequestParam(currentChatroomId),
+            success: function (data) {
+             enterChatroom(chatroomId, data); },
+            error: function (request, status, error) { console.log('error: ', error); },
+        })
+    }
+
+    function getRequestParam(currentChatroomId) { return currentChatroomId == "" ? "" : "?currentChatroomId=" + currentChatroomId; }
+
+    function leaveChatroom() {
+        let chatroomId = $("#chatroom-id").val();
+
+        // 🔹 확인 메시지
+        if (!confirm("채팅방에서 나가시겠습니까?")) {
+            return; // 사용자가 취소하면 종료
+        }
+
+        // 퇴장 메시지 WebSocket 전송
+        stompClient.publish({
+        destination: "/pub/chats/" + chatroomId,
+        body: JSON.stringify({
+            message: "님이 방을 나갔습니다.",
+            type: "SYSTEM"
+        })
+        });
+
+        $.ajax({ type: 'DELETE', dataType: 'json', url: '/api/chats/' + chatroomId,
+            success: function (data) { showChatrooms(); showTotalChatrooms(); exitChatroom(chatroomId); },
+            error: function (request, status, error) { console.log('error: ', error); },
+        })
+    }
+
+    function exitChatroom(chatroomId) {
+    $("#chatroom-id").val("");
+    $("#send").prop("disabled", true);
+    $("#leave").prop("disabled", true);
+
+    // ✅ 구독 해제
+    if (subscription != undefined) {
+        subscription.unsubscribe();
+        subscription = undefined;
+    }
+
+    // 메시지와 제목 모두 초기화
+    showSelectChatroomMessage();
+
+    // 주식 정보 초기화
+    clearStockInfo();
+}
+
+        // 전체 채팅방 가져오기
+        function showTotalChatrooms() {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                url: '/api/chats/total',
+                success: function (data) { renderTotalChatrooms(data); },
+                error: function (request, status, error) { console.log('error: ', error); }
+            });
+        }
+
+        // 카드 렌더링 (전체 채팅방)
+function renderTotalChatrooms(chatrooms) {
+    let currentChatroomId = $("#chatroom-id").val();
+    $("#total-chatroom-list").html("");
+
+    for (let i = 0; i < chatrooms.length; i++) {
+        let chatroom = chatrooms[i];
+        let isActive = chatroom.chatroomId == currentChatroomId ? "active" : "";
+
+        let createdDate = chatroom.createdAt.split("T")[0];
+        let createdTime = createdDate + " 생성됨";
+        let createdByText = chatroom.createdBy ? "Created By " + chatroom.createdBy : "";
+
+        // 🔹 내가 생성한 채팅방인지 확인
+        let isCreator = chatroom.unchangeableId === CURRENT_USER_ID;
+
+        // 버튼 HTML 생성
+        let buttonsHtml = "";
+        if (isCreator) {
+            buttonsHtml =
+                "<button class='join-btn text-xs bg-blue-500 text-white py-1.5 px-3 rounded border border-blue-600 hover:bg-blue-600 transition-colors mr-2' data-id='" + chatroom.chatroomId + "'>참여</button>" +
+                "<button class='delete-btn text-xs bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200 py-1.5 px-3 rounded border border-gray-400 hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors' data-id='" + chatroom.chatroomId + "'>삭제</button>";
+        } else {
+            buttonsHtml =
+                "<button class='join-btn text-xs bg-blue-500 text-white py-1.5 px-3 rounded border border-blue-600 hover:bg-blue-600 transition-colors' data-id='" + chatroom.chatroomId + "'>참여</button>";
+        }
+
+        let cardHtml =
+            "<div class='chatroom-row p-2 rounded-xl border border-gray-200 dark:border-gray-700 shadow mb-3 " + isActive + "'>" +
+                "<div class='chatroom-title font-semibold text-sm text-gray-800 dark:text-gray-100'>" + chatroom.title + "</div>" +
+                "<div class='chatroom-creator text-xs text-gray-500 mt-1'>" + createdByText + "</div>" +
+                "<div class='chatroom-meta text-xs text-gray-500 mt-1'>" +
+                    chatroom.memberCount + "명 · " + createdTime +
+                "</div>" +
+                "<div style='text-align: center; margin-top:5px;'>" + buttonsHtml + "</div>" +
+            "</div>";
+
+        $("#total-chatroom-list").append(cardHtml);
+    }
+
+    // 🔹 참여 버튼 이벤트 바인딩
+    $(".join-btn").click(function() {
+        let chatroomId = $(this).data("id");
+        if (confirm("채팅방에 참여하시겠습니까?")) {
+            joinChatroom(chatroomId);
+        }
+    });
+
+    // 🔹 삭제 버튼 이벤트 바인딩 (내가 생성한 채팅방만)
+    $(".delete-btn").click(function (e) {
+        e.stopPropagation();
+        let chatroomId = $(this).data("id");
+
+        if (confirm("채팅방을 삭제하시겠습니까?")) {
+            // 필요시 STOMP 발송 가능
+            /*
+            stompClient.publish({
+                destination: "/pub/chats/" + chatroomId,
+                body: JSON.stringify({
+                    message: "님이 이 채팅방을 삭제하였습니다.",
+                    type: "SYSTEM"
+                })
+            });
+            */
+
+            $.ajax({
+                type: 'DELETE',
+                url: '/api/chats/delete/' + chatroomId,
+                success: function () {
+                    renderTotalChatrooms(chatrooms); // 다시 렌더링
+                    showChatrooms();
+                    showTotalChatrooms();
+                    exitChatroom(chatroomId);
+                },
+                error: function (request, status, error) { console.log('error: ', error); },
+            });
+        }
+    });
+    }
+
+
+    // 메시지 영역 안내 문구만 표시
+    function showSelectChatroomMessage() {
+        $("#messages").html(
+            "<tr><td style='color: #888; text-align: center; font-size: 1.2em; padding: 20px;'>채팅방을 선택해주세요</td></tr>"
+        );
+        $("#chatroom-title-bar").text(""); // ✅ 제목도 같이 변경
+        // 채팅방 부가 정보 초기화
+        $("#chatroom-meta-bar").text("");
+    }
+
+    $(function () {
+        $("form").on('submit', (e) => e.preventDefault());
+        $("#connect").click(() => connect());
+        $("#disconnect").click(() => disconnect());
+        $("#create").click(() => createChatroom());
+        $("#leave").click(() => leaveChatroom());
+        $("#send").click(() => sendMessage());
+
+        // 새로고침
+        $("#refreshTotal").click(() => showTotalChatrooms());
+        $("#refreshMy").click(() => showChatrooms());
+
+        // 자동 연결
+        connect();
+
+        // 메시지 창 초기화
+        showSelectChatroomMessage();
+    });
+
+    function updateStockInfo(data) {
+    $("#stock-info").removeClass("hidden");
+
+    // 종목명 표시
+    $("#stockName").text(data.stockName || "-");
+
+    // 값 가져오기
+    const nowValue = data.nowValue;
+    const changeValue = parseFloat(data.changeValue);
+    const changeRate = parseFloat(data.changeRate);
+
+    // 색상 클래스 초기화
+    $("#nowValue, #changeContainer").removeClass(
+        "text-red-500 text-blue-500 text-gray-500 dark:text-red-400 dark:text-blue-400 dark:text-gray-400"
+    );
+
+    let valueClass;
+    let arrowSymbol;
+
+    if (changeValue > 0) {
+        valueClass = "text-red-500 dark:text-red-400"; // 상승: 빨강
+        arrowSymbol = "▲";
+    } else if (changeValue < 0) {
+        valueClass = "text-blue-500 dark:text-blue-400"; // 하락: 파랑
+        arrowSymbol = "▼";
+    } else {
+        valueClass = "text-gray-500 dark:text-gray-400"; // 보합: 회색
+        arrowSymbol = "-";
+    }
+
+    // 값 표시 (화살표 왼쪽)
+    $("#nowValue")
+    .text(nowValue)
+    .addClass(valueClass + " font-bold");  // 굵게
+    $("#changeValue").text(`${arrowSymbol} ${changeValue}`); // arrow 왼쪽
+    $("#changeRate").text(`${changeRate}%`);                // JS에서 % 붙이기
+    $("#changeContainer").addClass(valueClass);            // 괄호 + %까지 색상 적용
+
+    // 시장상태 아이콘 적용
+    const marketStateHtml = `
+        <div class="px-2 py-1 rounded text-white text-xs font-bold ${
+            data.marketState === 'CLOSE' ? 'bg-red-500' : 'bg-green-500'
+        }">
+            ${data.marketState}
+        </div>`;
+    $("#marketStateContainer").html(marketStateHtml);
+    }
+
+
+
+
+    // 채팅방 떠날 때 초기화
+    function clearStockInfo() {
+    $("#stock-info").addClass("hidden");
+    $("#nowValue").text("");
+    $("#changeValue").text("");
+    $("#changeRate").text("");
+    $("#stockName").text("");
+    $("#changeContainer").removeClass("text-red-500 text-blue-500 text-gray-500 dark:text-red-400 dark:text-blue-400 dark:text-gray-400");
+    $("#marketStateContainer").html(""); // 아이콘 초기화
+    }
+
+
+
+
+</script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const selectStockBtn = document.getElementById("selectStockBtn");
+    const modal = document.getElementById("stockModal");
+    const modalCloseBtn = document.getElementById("modalCloseBtn");
+    const stockInput = document.getElementById("chatroom-stockName");
+    const modalStockList = document.getElementById("modalStockList");
+    const searchInput = document.getElementById("searchInput");
+
+    // 모달 열기/닫기
+    selectStockBtn.addEventListener("click", () => modal.classList.remove("hidden"));
+    modalCloseBtn.addEventListener("click", () => modal.classList.add("hidden"));
+
+    // Thymeleaf에서 가져온 stockNames 사용
+    const stockNames = [[${stockNames}]];
+
+    function renderStockList(names) {
+        modalStockList.innerHTML = "";
+        names.forEach(name => {
+            const li = document.createElement("li");
+            li.textContent = name;
+            li.dataset.value = name;
+            li.classList.add("cursor-pointer", "hover:bg-sky-100", "dark:hover:bg-gray-700", "p-3", "rounded", "text-base", "h-12", "flex", "items-center");
+            li.addEventListener("click", () => {
+                stockInput.value = name;
+                selectStockBtn.textContent = name;
+                modal.classList.add("hidden");
+            });
+            modalStockList.appendChild(li);
+        });
+    }
+
+    // 초기 렌더링
+    renderStockList(stockNames);
+
+    // 검색 기능
+    searchInput.addEventListener("input", () => {
+        const filter = searchInput.value.toLowerCase();
+        const filtered = stockNames.filter(name => name.toLowerCase().includes(filter));
+        renderStockList(filtered);
+    });
+    /*]]>*/
+</script>
+
+<script>
+    window.addEventListener('load', () => {
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.style.transition = "opacity 0.5s";
+        loadingScreen.style.opacity = 0;
+        setTimeout(() => loadingScreen.remove(), 500);
+      }
+    });
+</script>
+
+
+</body>
+</html>
