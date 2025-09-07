@@ -20,7 +20,7 @@ class DislikeRepositoryTest {
 
     @Autowired private DislikeRepository sut;
 
-    @DisplayName("유저 정보와 게시물 정보로 싫어요 정보를 반환한다.")
+    @DisplayName("unchangeableId와 postId로 싫어요 정보를 반환한다.")
     @Test
     void givenUnchangeableIdAndPostId_whenSelectingDislike_thenReturnsDislike() {
         // Given

@@ -23,7 +23,7 @@ class LikeRepositoryTest {
     private LikeRepository sut;
 
 
-    @DisplayName("유저 정보와 게시물 정보로 좋아요 정보를 반환한다.")
+    @DisplayName("unchangeableId와 postId로 좋아요 정보를 반환한다.")
     @Test
     void givenUnchangeableIdAndPostId_whenSelectingLike_thenReturnsLike() {
         // Given
