@@ -10,7 +10,7 @@ public record InterestGroupDto(
         Long interestGroupId,
         String groupName,
         String unchangeableId,
-        Set<InterestStockDto> interestStocks,
+        Set<InterestStockDto> interestStockDtos,
 
         LocalDateTime createdAt,
         String createdBy,
@@ -38,28 +38,28 @@ public record InterestGroupDto(
             Long interestGroupId,
             String groupName,
             String unchangeableId,
-            Set<InterestStockDto> interestStocks,
+            Set<InterestStockDto> interestStockDtos,
             LocalDateTime createdAt,
             String createdBy,
             LocalDateTime modifiedAt,
             String modifiedBy
     ) {
-        return new InterestGroupDto(interestGroupId, groupName, unchangeableId, interestStocks, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new InterestGroupDto(interestGroupId, groupName, unchangeableId, interestStockDtos, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     // static method (일부)
     public static InterestGroupDto of(
             String groupName,
             String unchangeableId,
-            Set<InterestStockDto> interestStocks
+            Set<InterestStockDto> interestStockDtos
     ) {
-        return new InterestGroupDto(null, groupName, unchangeableId, interestStocks,null, null, null, null);
+        return new InterestGroupDto(null, groupName, unchangeableId, interestStockDtos,null, null, null, null);
     }
 
     // Dto -> Entity
     public InterestGroup createEntity() {
         InterestGroup entity = InterestGroup.of(groupName, unchangeableId);
-        entity.addInterestStocks(interestStocks.stream().map(InterestStockDto::createEntity).toList()); // Collection을 받을 수 있도록 설계 .toSet()이 없으니, .toList()를 사용
+        entity.addInterestStocks(interestStockDtos.stream().map(InterestStockDto::createEntity).toList()); // Collection을 받을 수 있도록 설계 .toSet()이 없으니, .toList()를 사용
 
         return entity;
     }
@@ -68,10 +68,10 @@ public record InterestGroupDto(
     public InterestGroup updateEntity(InterestGroup entity) {
         if (groupName != null) entity.setGroupName(groupName); // null로 요청이 들어오면 무시
         if (unchangeableId != null) entity.setUnchangeableId(unchangeableId);
-        if (interestStocks != null) { // 아무것도 없으면 무시
+        if (interestStockDtos != null) { // 아무것도 없으면 무시
             entity.setModifiedAt(null); // AuditingFields의 @LastModifiedDate, @LastModifiedBy 정상작동 위해서 추가
             entity.clearInterestStocks();
-            entity.addInterestStocks(interestStocks.stream().map(InterestStockDto::createEntity).toList());
+            entity.addInterestStocks(interestStockDtos.stream().map(InterestStockDto::createEntity).toList());
         }
 
         return entity;

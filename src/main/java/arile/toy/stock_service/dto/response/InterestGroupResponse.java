@@ -14,7 +14,7 @@ public record InterestGroupResponse(
         return new InterestGroupResponse(
                 dto.groupName(),
                 dto.unchangeableId(),
-                dto.interestStocks().stream().map(InterestStockResponse::fromDto).toList()
+                dto.interestStockDtos().stream().map(InterestStockResponse::fromDto).toList()
         );
     }
 }

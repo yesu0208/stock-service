@@ -36,7 +36,7 @@ public class InterestGroupService {
                 // Optional
                 .orElseThrow(() -> new GroupNotFoundException(unchangeableId, groupName)); // optional이므로
 
-        var interestStockWithCurrentInfoDtos = interestGroupDto.interestStocks()
+        var interestStockWithCurrentInfoDtos = interestGroupDto.interestStockDtos()
                 .stream()
                 .map(interestStockDto
                         -> interestStockCurrentInfoService.getInterestStockSimpleCurrentInfo(interestStockDto, unchangeableId))
