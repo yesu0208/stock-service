@@ -130,15 +130,13 @@
                 const dislikesCountSpan = document.getElementById("dislikesCount");
 
                 const postId = /*[[${post.postId}]]*/ 0;
-                const csrfToken = /*[[${_csrf.token}]]*/ '';
 
                 // 좋아요 클릭
                 likeBtn.addEventListener("click", () => {
                     fetch(`/post/likes/${postId}`, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken
+                            'Content-Type': 'application/json'
                         }
                     })
                     .then(response => response.json())
@@ -168,8 +166,7 @@
                     fetch(`/post/dislikes/${postId}`, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken
+                            'Content-Type': 'application/json'
                         }
                     })
                     .then(response => response.json())

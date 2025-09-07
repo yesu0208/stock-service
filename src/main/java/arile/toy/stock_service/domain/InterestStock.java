@@ -18,6 +18,7 @@ public class InterestStock extends AuditingFields{
     private Long interestStockId;
 
     @Setter
+    @JoinColumn(name = "interest_group_id")
     @ManyToOne(optional = false) // 반드시 interestGroup을 가져야 함.
     private InterestGroup interestGroup;
 

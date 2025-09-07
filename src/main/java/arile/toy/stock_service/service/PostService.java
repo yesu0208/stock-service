@@ -81,16 +81,16 @@ public class PostService {
 
     public void deletePost(String unchangeableId, Long postId) {
 
-        // post의 reply 삭제
-        List<Long> replyIdList = replyService.loadAllRepliesByPostId(postId)
-                .stream()
-                .map(ReplyDto::replyId)
-                .toList();
-        replyIdList.forEach(replyId -> replyService.deleteReply(unchangeableId, postId, replyId));
-
-        // post의 좋아요, 싫어요 삭제
-        likeRepository.deleteAllByPostPostId(postId);
-        dislikeRepository.deleteAllByPostPostId(postId);
+//        // post의 reply 삭제
+//        List<Long> replyIdList = replyService.loadAllRepliesByPostId(postId)
+//                .stream()
+//                .map(ReplyDto::replyId)
+//                .toList();
+//        replyIdList.forEach(replyId -> replyService.deleteReply(unchangeableId, postId, replyId));
+//
+//        // post의 좋아요, 싫어요 삭제
+//        likeRepository.deleteAllByPostPostId(postId);
+//        dislikeRepository.deleteAllByPostPostId(postId);
 
         postRepository.deleteByUserUnchangeableIdAndPostId(unchangeableId, postId);
     }

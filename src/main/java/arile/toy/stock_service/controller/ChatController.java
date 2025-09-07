@@ -1,10 +1,6 @@
 package arile.toy.stock_service.controller;
 
-import arile.toy.stock_service.domain.Chatroom;
-import arile.toy.stock_service.domain.GithubUserInfo;
-import arile.toy.stock_service.domain.Message;
 import arile.toy.stock_service.dto.ChatMessage;
-import arile.toy.stock_service.dto.ChatroomWithCurrentStockDto;
 import arile.toy.stock_service.dto.request.ChatroomRequest;
 import arile.toy.stock_service.dto.response.ChatroomResponse;
 import arile.toy.stock_service.dto.response.ChatroomWithCurrentStockResponse;
