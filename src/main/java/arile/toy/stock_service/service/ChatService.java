@@ -32,13 +32,15 @@ public class ChatService {
     private final GithubUserInfoRepository githubUserInfoRepository;
 
     // 채팅방 생성 기능
-    public ChatroomDto createChatroom(String unchangeableId, String title) {
+    public ChatroomDto createChatroom(String unchangeableId, String title, String stockName, String createdBy) {
 
         // Dto로 변경 필요(사실은)
         GithubUserInfo githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
-                .orElseThrow(() -> new UserNotFoundException(unchangeableId));;
+                .orElseThrow(() -> new UserNotFoundException(unchangeableId));
 
-        Chatroom chatroom = Chatroom.of(title, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+        String newTitle = "[" + stockName + "] " + title;
+
+        Chatroom chatroom = Chatroom.of(newTitle, LocalDateTime.now(ZoneId.of("Asia/Seoul")), stockName, createdBy, unchangeableId);
 
         // 부모 먼저 넣고
         chatroom = chatroomRepository.save(chatroom);
@@ -58,7 +60,7 @@ public class ChatService {
 
         // Dto로 변경 필요(사실은)
         GithubUserInfo githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
-                .orElseThrow(() -> new UserNotFoundException(unchangeableId));;
+                .orElseThrow(() -> new UserNotFoundException(unchangeableId));
 
         if (currentChatroomId != null) { // 기존 채팅방(current)에서 새로운 채팅방(new)으로 이동
             updateLastCheckedAt(githubUserInfo, currentChatroomId); // 기존 채팅방에 LastCheckedAt 정보 setting
@@ -143,7 +145,7 @@ public class ChatService {
     }
 
     // 메시지 저장
-    public Message saveMessage(String unchangeableId, Long chatroomId, String text) {
+    public Message saveMessage(String unchangeableId, Long chatroomId, String text, MessageType messageType) {
         Chatroom chatroom = chatroomRepository.findById(chatroomId)
                 .orElseThrow(() -> new ChatroomNotFoundException(chatroomId));
 
@@ -152,7 +154,7 @@ public class ChatService {
                 .orElseThrow(() -> new UserNotFoundException(unchangeableId));;
 
 
-        Message message = Message.of(text, githubUserInfo, chatroom, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+        Message message = Message.of(text, githubUserInfo, chatroom, LocalDateTime.now(ZoneId.of("Asia/Seoul")), messageType);
 
         return messageRepository.save(message);
     }
