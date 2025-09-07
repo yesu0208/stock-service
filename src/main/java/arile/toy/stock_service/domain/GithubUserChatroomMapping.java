@@ -16,7 +16,7 @@ public class GithubUserChatroomMapping {
     @Id
     Long githubUserChatroomMappingId;
 
-    @JoinColumn(name = "unchangeableId")
+    @JoinColumn(name = "unchangeable_id")
     @ManyToOne
     GithubUserInfo githubUserInfo;
 
