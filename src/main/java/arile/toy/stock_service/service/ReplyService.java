@@ -40,7 +40,7 @@ public class ReplyService {
         var post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
-        replyRepository.findByReplyIdAndUserUnchangeableIdAndPostPostId(replyId, dto.unchangeableId(), postId)
+        replyRepository.findByUserUnchangeableIdAndPostPostIdAndReplyId(dto.unchangeableId(), postId, replyId)
                 .ifPresentOrElse( // Optional
                         entity -> replyRepository.save(dto.updateEntity(entity)),
                         () -> replyRepository.save(dto.createEntity(user, post))

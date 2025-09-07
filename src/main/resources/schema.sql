@@ -1,3 +1,15 @@
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS github_user_chatroom_mappings;
+DROP TABLE IF EXISTS replies;
+DROP TABLE IF EXISTS likes;
+DROP TABLE IF EXISTS dislikes;
+DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS chatrooms;
+DROP TABLE IF EXISTS interest_stocks;
+DROP TABLE IF EXISTS interest_groups;
+DROP TABLE IF EXISTS github_user_information;
+DROP TABLE IF EXISTS static_stock_information;
+
 -- 1️⃣ 기본 테이블
 CREATE TABLE github_user_information (
     unchangeable_id VARCHAR(255) PRIMARY KEY,
@@ -177,111 +189,3 @@ CREATE TABLE messages (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
-
-
----- posts 테이블
---ALTER TABLE posts
---ADD CONSTRAINT fk_posts_unchangeable_id
---FOREIGN KEY (unchangeable_id)
---REFERENCES github_user_information(unchangeable_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
----- replies 테이블
---ALTER TABLE replies
---ADD CONSTRAINT fk_replies_post_id
---FOREIGN KEY (post_id)
---REFERENCES posts(post_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
---ALTER TABLE replies
---ADD CONSTRAINT fk_replies_unchangeable_id
---FOREIGN KEY (unchangeable_id)
---REFERENCES github_user_information(unchangeable_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
----- likes 테이블
---ALTER TABLE likes
---ADD CONSTRAINT fk_likes_unchangeable_id
---FOREIGN KEY (unchangeable_id)
---REFERENCES github_user_information(unchangeable_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
---ALTER TABLE likes
---ADD CONSTRAINT fk_likes_post_id
---FOREIGN KEY (post_id)
---REFERENCES posts(post_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
----- dislikes 테이블
---ALTER TABLE dislikes
---ADD CONSTRAINT fk_dislikes_unchangeable_id
---FOREIGN KEY (unchangeable_id)
---REFERENCES github_user_information(unchangeable_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
---ALTER TABLE dislikes
---ADD CONSTRAINT fk_dislikes_post_id
---FOREIGN KEY (post_id)
---REFERENCES posts(post_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
----- interest_groups
---ALTER TABLE interest_groups
---ADD CONSTRAINT fk_interest_groups_unchangeable_id
---FOREIGN KEY (unchangeable_id)
---REFERENCES github_user_information(unchangeable_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
----- interest_stocks
---ALTER TABLE interest_stocks
---ADD CONSTRAINT fk_interest_stocks_interest_group_id
---FOREIGN KEY (interest_group_id)
---REFERENCES interest_groups(interest_group_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
----- chatrooms
---ALTER TABLE chatrooms
---ADD CONSTRAINT fk_chatrooms_unchangeable_id
---FOREIGN KEY (unchangeable_id)
---REFERENCES github_user_information(unchangeable_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
----- github_user_chatroom_mappings
---ALTER TABLE github_user_chatroom_mappings
---ADD CONSTRAINT fk_github_user_chatroom_mappings_chatroom_id
---FOREIGN KEY (chatroom_id)
---REFERENCES chatrooms(chatroom_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
---ALTER TABLE github_user_chatroom_mappings
---ADD CONSTRAINT fk_github_user_chatroom_mappings_unchangeable_id
---FOREIGN KEY (unchangeable_id)
---REFERENCES github_user_information(unchangeable_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
----- messages
---ALTER TABLE messages
---ADD CONSTRAINT fk_messages_unchangeable_id
---FOREIGN KEY (unchangeable_id)
---REFERENCES github_user_information(unchangeable_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
---
---ALTER TABLE messages
---ADD CONSTRAINT fk_messages_chatroom_id
---FOREIGN KEY (chatroom_id)
---REFERENCES chatrooms(chatroom_id)
---ON DELETE CASCADE
---ON UPDATE CASCADE;
