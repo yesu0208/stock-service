@@ -28,7 +28,7 @@ public class MainController {
 
         List<String> stockNames = stockInfoService.loadStockNameList();
 
-        model.addAttribute("stompBrokerUrl", "ws://localhost:8080/stomp/chats");
+        model.addAttribute("stompBrokerUrl", "ws://https://stock-service-89300edadb9e.herokuapp.com//stomp/chats");
         model.addAttribute("currentUser", githubUser.getName());
         model.addAttribute("stockNames", stockNames);
         model.addAttribute("unchangeableId", githubUser.unchangeableId());

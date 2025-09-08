@@ -1,8 +1,6 @@
 package arile.toy.stock_service.dto.request;
 
 
-import arile.toy.stock_service.dto.GithubUserInfoDto;
-
 public record GithubUserInfoRequest(
         Double feeRate
 ) {
