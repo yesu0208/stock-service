@@ -38,7 +38,6 @@ public class ChatService {
     // 채팅방 생성 기능
     public ChatroomDto createChatroom(String unchangeableId, String title, String stockName, String createdBy) {
 
-        // Dto로 변경 필요(사실은)
         GithubUserInfo githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
                 .orElseThrow(() -> new UserNotFoundException(unchangeableId));
 
@@ -62,7 +61,6 @@ public class ChatService {
     // 다른 사람이 만든 채팅방에 참여
     public Boolean joinChatroom(String unchangeableId, Long newChatroomId, Long currentChatroomId) {
 
-        // Dto로 변경 필요(사실은)
         GithubUserInfo githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
                 .orElseThrow(() -> new UserNotFoundException(unchangeableId));
 
@@ -123,9 +121,6 @@ public class ChatService {
         if (!chatroomDto.unchangeableId().equals(unchangeableId)) {
             throw new IllegalClientAccessException();
         }
-
-//        List<Message> messages = messageRepository.findAllByChatroomChatroomId(chatroomId);
-//        messages.forEach(messageRepository::delete);
 
         chatroomRepository.deleteById(chatroomId);
 

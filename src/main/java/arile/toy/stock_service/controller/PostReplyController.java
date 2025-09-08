@@ -36,11 +36,11 @@ public class PostReplyController {
 
         List<String> stockNames = stockInfoService.loadStockNameList();
 
-        // postId x : sample post, postId : 해당 postId의 post 조회
+        // postId(x) : sample post, postId(o) : 해당 postId의 post 조회
         PostResponse post = (postId != null) ?
-                postService.loadPost(githubUser.unchangeableId(), postId) : defaultPost(githubUser);
+                PostResponse.fromDto(postService.loadPost(githubUser.unchangeableId(), postId)) : defaultPost(githubUser);
 
-        // postId x : sample reply, postId : 해당 postId의 reply 조회
+        // postId(x) : sample reply, postId(o) : 해당 postId의 reply 조회
         List<ReplyResponse> replies = (postId != null) ?
                 replyService.loadAllRepliesByPostId(postId)
                         .stream()
@@ -113,7 +113,7 @@ public class PostReplyController {
             @AuthenticationPrincipal GithubUser githubUser,
             @PathVariable Long postId
     ) {
-        var postResponse = postService.toggleLike(githubUser.unchangeableId(), postId);
+        var postResponse = PostResponse.fromDto(postService.toggleLike(githubUser.unchangeableId(), postId));
         Map<String, Object> result = new HashMap<>();
         result.put("isLiking", postResponse.isLiking());
         result.put("likesCount", postResponse.likesCount());
@@ -130,7 +130,7 @@ public class PostReplyController {
             @AuthenticationPrincipal GithubUser githubUser,
             @PathVariable Long postId
     ) {
-        var postResponse = postService.toggleDislike(githubUser.unchangeableId(), postId);
+        var postResponse = PostResponse.fromDto(postService.toggleDislike(githubUser.unchangeableId(), postId));
         Map<String, Object> result = new HashMap<>();
         result.put("isLiking", postResponse.isLiking());
         result.put("likesCount", postResponse.likesCount());

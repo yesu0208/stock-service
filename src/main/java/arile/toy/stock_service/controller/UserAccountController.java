@@ -46,7 +46,7 @@ public class UserAccountController {
         model.addAttribute("totalRealizedPLStr", df.format(current_response.totalRealizedPL()));
         model.addAttribute("rateOfReturn", current_response.rateOfReturnString());
 
-        // 원본 숫자도 넘겨서 색상 조건에는 그대로 사용
+        // 원본 숫자도 넘겨서 색상 조건에는 그대로 사용 (양수, 음수, 보합에 따라 색 변화)
         model.addAttribute("totalRealizedPL", current_response.totalRealizedPL());
 
         return "my-account";
@@ -58,7 +58,7 @@ public class UserAccountController {
             @AuthenticationPrincipal GithubUser githubUser,
             GithubUserInfoRequest githubUserInfoRequest // 폼 data로 받음
     ) {
-        githubUserInfoService.updateGithubUserFee(githubUser.unchangeableId(), githubUserInfoRequest.toDto());
+        githubUserInfoService.updateGithubUserFee(githubUser.unchangeableId(), githubUserInfoRequest.feeRate());
 
         return "redirect:/my-account"; // redirection : PRG pattern (POST REDIRECT GET)
     }

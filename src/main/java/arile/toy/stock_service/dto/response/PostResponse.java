@@ -20,7 +20,7 @@ public record PostResponse(
         Boolean isDisliking
 ) {
     // Dto -> response
-    public static PostResponse fromDto(PostDto dto, Boolean isLiking, Boolean isDisliking) {
+    public static PostResponse fromDto(PostDto dto) {
         return new PostResponse(
                 dto.postId(),
                 dto.title(),
@@ -33,8 +33,8 @@ public record PostResponse(
                 dto.modifiedAt(),
                 dto.name(),
                 dto.unchangeableId(),
-                isLiking,
-                isDisliking
+                dto.isLiking(),
+                dto.isDisliking()
         );
     }
 }

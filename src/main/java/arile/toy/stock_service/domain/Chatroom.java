@@ -55,6 +55,23 @@ public class Chatroom {
         return new Chatroom(title, createdAt, stockName, createdBy, unchangeableId);
     }
 
+    // 테스트용
+    public Chatroom(Long chatroomId, String title, Set<GithubUserChatroomMapping> githubUserChatroomMappings,
+                    LocalDateTime createdAt, String stockName, String createdBy, String unchangeableId) {
+        this.chatroomId = chatroomId;
+        this.title = title;
+        this.githubUserChatroomMappings = githubUserChatroomMappings;
+        this.createdAt = createdAt;
+        this.stockName = stockName;
+        this.createdBy = createdBy;
+        this.unchangeableId = unchangeableId;
+    }
+
+    public static Chatroom of(Long chatroomId, String title, Set<GithubUserChatroomMapping> githubUserChatroomMappings, LocalDateTime createdAt, String stockName,
+                              String createdBy, String unchangeableId) {
+        return new Chatroom(chatroomId, title, githubUserChatroomMappings, createdAt, stockName, createdBy, unchangeableId);
+    }
+
     public GithubUserChatroomMapping addGithubUserInfo(GithubUserInfo githubUserInfo) {
 
         GithubUserChatroomMapping githubUserChatroomMapping =

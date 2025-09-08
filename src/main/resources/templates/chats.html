@@ -798,13 +798,14 @@ function renderTotalChatrooms(chatrooms) {
         arrowSymbol = "-";
     }
 
-    // 값 표시 (화살표 왼쪽)
+    // 천 단위 콤마 추가
     $("#nowValue")
-    .text(nowValue)
-    .addClass(valueClass + " font-bold");  // 굵게
-    $("#changeValue").text(`${arrowSymbol} ${changeValue}`); // arrow 왼쪽
-    $("#changeRate").text(`${changeRate}%`);                // JS에서 % 붙이기
-    $("#changeContainer").addClass(valueClass);            // 괄호 + %까지 색상 적용
+        .text(nowValue.toLocaleString())
+        .addClass(valueClass + " font-bold");
+
+    $("#changeValue").text(`${arrowSymbol} ${Math.abs(changeValue).toLocaleString()}`);
+    $("#changeRate").text(`${changeRate}%`);
+    $("#changeContainer").addClass(valueClass);
 
     // 시장상태 아이콘 적용
     const marketStateHtml = `

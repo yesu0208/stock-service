@@ -5,4 +5,12 @@ public record ChatroomRequest(
         String stockName,
         String createdBy
 ) {
+    // static method
+    public static ChatroomRequest of(
+            String title,
+            String stockName,
+            String createdBy
+    ) {
+        return new ChatroomRequest(title, stockName, createdBy);
+    }
 }
