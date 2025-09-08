@@ -16,7 +16,9 @@ public record PostDto(
         LocalDateTime createdAt,
         LocalDateTime modifiedAt,
         String name,
-        String unchangeableId
+        String unchangeableId,
+        Boolean isLiking,
+        Boolean isDisliking
 ) {
     // Entity -> Dto
     public static PostDto fromEntity(Post entity) {
@@ -31,7 +33,28 @@ public record PostDto(
                 entity.getCreatedAt(),
                 entity.getModifiedAt(),
                 entity.getUser().getName(),
-                entity.getUser().getUnchangeableId()
+                entity.getUser().getUnchangeableId(),
+                null,
+                null
+        );
+    }
+
+    // Entity -> Dto + isLiking, isDisliking
+    public static PostDto fromEntity(Post entity, Boolean isLiking, Boolean isDisliking) {
+        return new PostDto(
+                entity.getPostId(),
+                entity.getTitle(),
+                entity.getStockName(),
+                entity.getBody(),
+                entity.getRepliesCount(),
+                entity.getLikesCount(),
+                entity.getDislikesCount(),
+                entity.getCreatedAt(),
+                entity.getModifiedAt(),
+                entity.getUser().getName(),
+                entity.getUser().getUnchangeableId(),
+                isLiking,
+                isDisliking
         );
     }
 
@@ -47,14 +70,16 @@ public record PostDto(
             LocalDateTime createdAt,
             LocalDateTime modifiedAt,
             String name,
-            String unchangeableId
+            String unchangeableId,
+            Boolean isLiking,
+            Boolean isDisliking
     ) {
-        return new PostDto(postId, title, stockName, body, repliesCount, likesCount, dislikesCount, createdAt, modifiedAt, name, unchangeableId);
+        return new PostDto(postId, title, stockName, body, repliesCount, likesCount, dislikesCount, createdAt, modifiedAt, name, unchangeableId, isLiking, isDisliking);
     }
 
     // static method (일부)
     public static PostDto of(String title, String stockName, String body, String name, String unchangeableId) {
-        return new PostDto(null, title, stockName, body, null, null, null, null, null, name, unchangeableId);
+        return new PostDto(null, title, stockName, body, null, null, null, null, null, name, unchangeableId, null, null);
     }
 
 
