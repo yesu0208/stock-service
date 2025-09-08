@@ -27,4 +27,18 @@ public record ChatroomDto(
                 entity.getHasNewMessage()
         );
     }
+
+    // static method
+    public static ChatroomDto of(
+            Long chatroomId,
+            String title,
+            Integer memberCount,
+            LocalDateTime createdAt,
+            String stockName,
+            String createdBy,
+            String unchangeableId,
+            Boolean hasNewMessage
+    ){
+        return new ChatroomDto(chatroomId, title, memberCount, createdAt, stockName, createdBy, unchangeableId, hasNewMessage);
+    }
 }
