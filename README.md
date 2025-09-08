@@ -39,7 +39,8 @@ Spring Boot
 - JUnit5
 - Mockito
 - Tailwind CSS
-- Heroku
+- GithubActions (CI)
+- Heroku (CD)
 
 ## Tools
 - MySQL Workbench 8.0 CE
