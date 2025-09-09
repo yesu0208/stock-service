@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface StaticStockInfoRepository extends JpaRepository<StaticStockInfo, Long> {
-    @Cacheable("stockNames")
+    @Cacheable(value = "stockNames", key = "'stockNames'")
     Optional<StaticStockInfo> findByStockName(String stockName);
 }
