@@ -18,6 +18,11 @@ spring:
     show-sql: true
     properties:
       hibernate.format_sql: true
+
+  spring:
+    redis:
+      url: ${REDIS_URL}
+
   sql.init.mode: always
 
   security.oauth2.client:
