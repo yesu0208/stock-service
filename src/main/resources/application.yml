@@ -19,9 +19,9 @@ spring:
     properties:
       hibernate.format_sql: true
 
-  spring:
-    redis:
-      url: ${REDIS_URL}
+#  spring:
+#    redis:
+#      url: ${REDIS_URL}
 
   sql.init.mode: always
 
