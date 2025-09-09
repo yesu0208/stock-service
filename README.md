@@ -48,4 +48,127 @@ Spring Boot
 - Git
 - GitKraken
 
+## ERD
+
+```mermaid
+erDiagram
+    GITHUB_USER_INFORMATION ||--o{ POSTS : writes
+    GITHUB_USER_INFORMATION ||--o{ INTEREST_GROUPS : owns
+    GITHUB_USER_INFORMATION ||--o{ CHATROOMS : creates
+    GITHUB_USER_INFORMATION ||--o{ REPLIES : writes
+    GITHUB_USER_INFORMATION ||--o{ LIKES : likes
+    GITHUB_USER_INFORMATION ||--o{ DISLIKES : dislikes
+    GITHUB_USER_INFORMATION ||--o{ GITHUB_USER_CHATROOM_MAPPINGS : maps
+    GITHUB_USER_INFORMATION ||--o{ MESSAGES : sends
+
+    POSTS ||--o{ REPLIES : has
+    POSTS ||--o{ LIKES : has
+    POSTS ||--o{ DISLIKES : has
+
+    INTEREST_GROUPS ||--o{ INTEREST_STOCKS : contains
+    CHATROOMS ||--o{ GITHUB_USER_CHATROOM_MAPPINGS : maps
+    CHATROOMS ||--o{ MESSAGES : has
+
+    GITHUB_USER_INFORMATION {
+        varchar unchangeable_id PK
+        varchar id
+        varchar name
+        varchar email
+        datetime last_login_at
+        double fee
+    }
+
+    STATIC_STOCK_INFORMATION {
+        bigint static_stock_info_id PK
+        varchar short_code
+        varchar stock_name
+        enum market_class
+    }
+
+    POSTS {
+        bigint post_id PK
+        varchar stock_name
+        varchar unchangeable_id FK
+        varchar title
+        text body
+        bigint replies_count
+        bigint likes_count
+        bigint dislikes_count
+        datetime created_at
+        datetime modified_at
+    }
+
+    INTEREST_GROUPS {
+        bigint interest_group_id PK
+        varchar unchangeable_id FK
+        datetime created_at
+        varchar created_by
+        datetime modified_at
+        varchar modified_by
+        varchar group_name
+    }
+
+    CHATROOMS {
+        bigint chatroom_id PK
+        datetime created_at
+        varchar created_by
+        varchar stock_name
+        varchar title
+        varchar unchangeable_id FK
+    }
+
+    REPLIES {
+        bigint reply_id PK
+        bigint post_id FK
+        varchar unchangeable_id FK
+        text body
+        datetime created_at
+        datetime modified_at
+    }
+
+    LIKES {
+        bigint like_id PK
+        varchar unchangeable_id FK
+        bigint post_id FK
+    }
+
+    DISLIKES {
+        bigint dislike_id PK
+        varchar unchangeable_id FK
+        bigint post_id FK
+    }
+
+    INTEREST_STOCKS {
+        bigint interest_stock_id PK
+        bigint interest_group_id FK
+        varchar stock_name
+        int buying_price
+        int num_of_stocks
+        int break_even_price
+        int total_buying_price
+        int field_order
+        datetime created_at
+        varchar created_by
+        datetime modified_at
+        varchar modified_by
+    }
+
+    GITHUB_USER_CHATROOM_MAPPINGS {
+        bigint github_user_chatroom_mapping_id PK
+        bigint chatroom_id FK
+        varchar unchangeable_id FK
+        datetime last_checked_at
+    }
+
+    MESSAGES {
+        bigint message_id PK
+        bigint chatroom_id FK
+        varchar unchangeable_id FK
+        datetime created_at
+        text text
+        enum message_type
+    }
+
+
+
   
