@@ -3,12 +3,7 @@ package arile.toy.stock_service.controller;
 import arile.toy.stock_service.config.SecurityConfig;
 import arile.toy.stock_service.dto.ChatroomDto;
 import arile.toy.stock_service.dto.ChatroomWithCurrentStockDto;
-import arile.toy.stock_service.dto.GithubUserInfoDto;
-import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
 import arile.toy.stock_service.dto.request.ChatroomRequest;
-import arile.toy.stock_service.dto.request.InterestGroupRequest;
-import arile.toy.stock_service.dto.request.InterestStockRequest;
-import arile.toy.stock_service.dto.response.ChatroomResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.ChatService;
 import arile.toy.stock_service.service.GithubOAuth2UserService;
@@ -24,12 +19,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.BDDMockito.then;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
