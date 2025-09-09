@@ -12,14 +12,4 @@ import java.time.Duration;
 @EnableCaching
 @Configuration
 public class CacheConfig {
-
-    @Bean
-    public RedisCacheConfiguration redisCacheConfiguration() {
-        return RedisCacheConfiguration.defaultCacheConfig()
-                .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair
-                                .fromSerializer(new GenericJackson2JsonRedisSerializer())
-                )
-                .entryTtl(Duration.ofMinutes(60));
-    }
 }
