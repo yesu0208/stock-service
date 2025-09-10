@@ -48,126 +48,127 @@ Spring Boot
 - Git
 - GitKraken
 
-## ERD
+## Stock Service DB ERD
 
 ```mermaid
 erDiagram
-    GITHUB_USER_INFORMATION ||--o{ POSTS : writes
-    GITHUB_USER_INFORMATION ||--o{ INTEREST_GROUPS : owns
-    GITHUB_USER_INFORMATION ||--o{ CHATROOMS : creates
-    GITHUB_USER_INFORMATION ||--o{ REPLIES : writes
-    GITHUB_USER_INFORMATION ||--o{ LIKES : likes
-    GITHUB_USER_INFORMATION ||--o{ DISLIKES : dislikes
-    GITHUB_USER_INFORMATION ||--o{ GITHUB_USER_CHATROOM_MAPPINGS : maps
-    GITHUB_USER_INFORMATION ||--o{ MESSAGES : sends
-
-    POSTS ||--o{ REPLIES : has
-    POSTS ||--o{ LIKES : has
-    POSTS ||--o{ DISLIKES : has
-
-    INTEREST_GROUPS ||--o{ INTEREST_STOCKS : contains
-    CHATROOMS ||--o{ GITHUB_USER_CHATROOM_MAPPINGS : maps
-    CHATROOMS ||--o{ MESSAGES : has
-
     GITHUB_USER_INFORMATION {
-        varchar unchangeable_id PK
-        varchar id
-        varchar name
-        varchar email
-        datetime last_login_at
-        double fee
+        VARCHAR unchangeable_id PK
+        VARCHAR id
+        VARCHAR name
+        VARCHAR email
+        DATETIME last_login_at
+        DOUBLE fee
     }
 
     STATIC_STOCK_INFORMATION {
-        bigint static_stock_info_id PK
-        varchar short_code
-        varchar stock_name
-        enum market_class
+        VARCHAR stock_name PK
+        VARCHAR short_code
+        ENUM market_class
     }
 
     POSTS {
-        bigint post_id PK
-        varchar stock_name
-        varchar unchangeable_id FK
-        varchar title
-        text body
-        bigint replies_count
-        bigint likes_count
-        bigint dislikes_count
-        datetime created_at
-        datetime modified_at
+        BIGINT post_id PK
+        VARCHAR stock_name FK
+        VARCHAR unchangeable_id FK
+        VARCHAR title
+        TEXT body
+        BIGINT replies_count
+        BIGINT likes_count
+        BIGINT dislikes_count
+        DATETIME created_at
+        DATETIME modified_at
     }
 
     INTEREST_GROUPS {
-        bigint interest_group_id PK
-        varchar unchangeable_id FK
-        datetime created_at
-        varchar created_by
-        datetime modified_at
-        varchar modified_by
-        varchar group_name
-    }
-
-    CHATROOMS {
-        bigint chatroom_id PK
-        datetime created_at
-        varchar created_by
-        varchar stock_name
-        varchar title
-        varchar unchangeable_id FK
-    }
-
-    REPLIES {
-        bigint reply_id PK
-        bigint post_id FK
-        varchar unchangeable_id FK
-        text body
-        datetime created_at
-        datetime modified_at
-    }
-
-    LIKES {
-        bigint like_id PK
-        varchar unchangeable_id FK
-        bigint post_id FK
-    }
-
-    DISLIKES {
-        bigint dislike_id PK
-        varchar unchangeable_id FK
-        bigint post_id FK
+        BIGINT interest_group_id PK
+        VARCHAR unchangeable_id FK
+        DATETIME created_at
+        VARCHAR created_by
+        DATETIME modified_at
+        VARCHAR modified_by
+        VARCHAR group_name
     }
 
     INTEREST_STOCKS {
-        bigint interest_stock_id PK
-        bigint interest_group_id FK
-        varchar stock_name
-        int buying_price
-        int num_of_stocks
-        int break_even_price
-        int total_buying_price
-        int field_order
-        datetime created_at
-        varchar created_by
-        datetime modified_at
-        varchar modified_by
+        BIGINT interest_stock_id PK
+        BIGINT interest_group_id FK
+        VARCHAR stock_name FK
+        INT buying_price
+        INT num_of_stocks
+        INT break_even_price
+        INT total_buying_price
+        INT field_order
+        DATETIME created_at
+        VARCHAR created_by
+        DATETIME modified_at
+        VARCHAR modified_by
+    }
+
+    CHATROOMS {
+        BIGINT chatroom_id PK
+        DATETIME created_at
+        VARCHAR created_by
+        VARCHAR stock_name FK
+        VARCHAR title
+        VARCHAR unchangeable_id FK
     }
 
     GITHUB_USER_CHATROOM_MAPPINGS {
-        bigint github_user_chatroom_mapping_id PK
-        bigint chatroom_id FK
-        varchar unchangeable_id FK
-        datetime last_checked_at
+        BIGINT github_user_chatroom_mapping_id PK
+        BIGINT chatroom_id FK
+        VARCHAR unchangeable_id FK
+        DATETIME last_checked_at
     }
 
     MESSAGES {
-        bigint message_id PK
-        bigint chatroom_id FK
-        varchar unchangeable_id FK
-        datetime created_at
-        text text
-        enum message_type
+        BIGINT message_id PK
+        BIGINT chatroom_id FK
+        VARCHAR unchangeable_id FK
+        DATETIME created_at
+        TEXT text
+        ENUM message_type
     }
+
+    REPLIES {
+        BIGINT reply_id PK
+        BIGINT post_id FK
+        VARCHAR unchangeable_id FK
+        TEXT body
+        DATETIME created_at
+        DATETIME modified_at
+    }
+
+    LIKES {
+        BIGINT like_id PK
+        VARCHAR unchangeable_id FK
+        BIGINT post_id FK
+    }
+
+    DISLIKES {
+        BIGINT dislike_id PK
+        VARCHAR unchangeable_id FK
+        BIGINT post_id FK
+    }
+
+    POSTS ||--|| GITHUB_USER_INFORMATION : "unchangeable_id"
+    POSTS ||--|| STATIC_STOCK_INFORMATION : "stock_name"
+    INTEREST_GROUPS ||--|| GITHUB_USER_INFORMATION : "unchangeable_id"
+    INTEREST_STOCKS ||--|| INTEREST_GROUPS : "interest_group_id"
+    INTEREST_STOCKS ||--|| STATIC_STOCK_INFORMATION : "stock_name"
+    CHATROOMS ||--|| GITHUB_USER_INFORMATION : "unchangeable_id"
+    CHATROOMS ||--|| STATIC_STOCK_INFORMATION : "stock_name"
+    GITHUB_USER_CHATROOM_MAPPINGS ||--|| CHATROOMS : "chatroom_id"
+    GITHUB_USER_CHATROOM_MAPPINGS ||--|| GITHUB_USER_INFORMATION : "unchangeable_id"
+    MESSAGES ||--|| CHATROOMS : "chatroom_id"
+    MESSAGES ||--|| GITHUB_USER_INFORMATION : "unchangeable_id"
+    REPLIES ||--|| POSTS : "post_id"
+    REPLIES ||--|| GITHUB_USER_INFORMATION : "unchangeable_id"
+    LIKES ||--|| POSTS : "post_id"
+    LIKES ||--|| GITHUB_USER_INFORMATION : "unchangeable_id"
+    DISLIKES ||--|| POSTS : "post_id"
+    DISLIKES ||--|| GITHUB_USER_INFORMATION : "unchangeable_id"
+
 
 
 
