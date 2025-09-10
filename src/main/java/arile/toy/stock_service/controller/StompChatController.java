@@ -28,7 +28,7 @@ public class StompChatController {
     @MessageMapping("/chats/{chatroomId}")
     @SendTo("/sub/chats/{chatroomId}")
     public ChatMessage handleMessage(@AuthenticationPrincipal Principal principal,
-                                     @Payload Map<String, String> payload, // payload 자체는 JSON String -> String 내에서 message 속성값 빼내기
+                                     @Payload Map<String, String> payload,
                                      @DestinationVariable Long chatroomId) {
 
         GithubUser githubUser = (GithubUser) ((AbstractAuthenticationToken) principal).getPrincipal();

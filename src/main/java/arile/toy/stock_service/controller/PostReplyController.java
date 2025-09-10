@@ -28,10 +28,9 @@ public class PostReplyController {
     private final ReplyService replyService;
     private final StaticStockInfoService stockInfoService;
 
-    // 단일 post 조회
     @GetMapping("/post")
-    public String post(@AuthenticationPrincipal GithubUser githubUser,
-                        @RequestParam(required = false) Long postId, // postId 들어가면 해당 내용, 아니면 빈 내용 보여주기
+    public String getPost(@AuthenticationPrincipal GithubUser githubUser,
+                        @RequestParam(required = false) Long postId,
                        Model model) {
 
         List<String> stockNames = stockInfoService.loadStockNameList();
@@ -40,7 +39,7 @@ public class PostReplyController {
         PostResponse post = (postId != null) ?
                 PostResponse.fromDto(postService.loadPost(githubUser.unchangeableId(), postId)) : defaultPost(githubUser);
 
-        // postId(x) : sample reply, postId(o) : 해당 postId의 reply 조회
+        // postId(x) : sample reply(null), postId(o) : 해당 postId의 reply 조회
         List<ReplyResponse> replies = (postId != null) ?
                 replyService.loadAllRepliesByPostId(postId)
                         .stream()
@@ -56,9 +55,10 @@ public class PostReplyController {
         return "post";
     }
 
-    // 모든 post 목록 조회 (내용 제외)
+    // 모든 post 목록 조회 (내용 제외한 SimplePostResponse)
     @GetMapping("/posts")
-    public String allSimplePosts(Model model) {
+    public String getAllSimplePostList(Model model) {
+
         List<SimplePostResponse> posts = postService.loadAllSimplePosts()
                         .stream()
                         .map(SimplePostResponse::fromDto)
@@ -67,10 +67,10 @@ public class PostReplyController {
         return "posts";
     }
 
-    // 내 post 목록 조회 (내용 제외)
     @GetMapping("/my-posts")
-    public String allMySimplePosts(@AuthenticationPrincipal GithubUser githubUser,
+    public String getAllMySimplePostList(@AuthenticationPrincipal GithubUser githubUser,
                                     Model model) {
+
         List<SimplePostResponse> posts = postService.loadAllMySimplePosts(githubUser.unchangeableId())
                 .stream()
                 .map(SimplePostResponse::fromDto)
@@ -79,14 +79,11 @@ public class PostReplyController {
         return "my-posts";
     }
 
-    // post 생성/수정
     @PostMapping("/post")
-    public String createOrUpdateMyPost(
-            @AuthenticationPrincipal GithubUser githubUser,
-            @RequestParam(required = false) Long postId,
-            PostRequest postRequest, // 폼 data로 받음
-            RedirectAttributes redirectAttrs // redirection할 때, 생성/수정한 interest-group을 화면에서 유지하고 싶다
-    ) {
+    public String createOrUpdatePost(@AuthenticationPrincipal GithubUser githubUser,
+                                       @RequestParam(required = false) Long postId,
+                                       PostRequest postRequest,
+                                       RedirectAttributes redirectAttrs) {
 
         Long upsertPostId = postService.upsertPost(postRequest.toDto(githubUser.name(), githubUser.unchangeableId()), postId);
 
@@ -96,23 +93,19 @@ public class PostReplyController {
     }
 
 
-    // post 삭제
     @PostMapping("/my-posts/{postId}")
-    public String deleteMyPost(
-            @AuthenticationPrincipal GithubUser githubUser,
-            @PathVariable Long postId
-    ){
+    public String deletePost(@AuthenticationPrincipal GithubUser githubUser,
+                             @PathVariable Long postId){
+
         postService.deletePost(githubUser.unchangeableId(), postId);
         return "redirect:/my-posts"; // redirection : PRG pattern (POST REDIRECT GET)
     }
 
-    // post 좋아요
+
     @PostMapping("/post/likes/{postId}")
-    @ResponseBody // ajax 사용을 위해 폼이 아닌 Json으로 전달
-    public Map<String, Object> toggleLike(
-            @AuthenticationPrincipal GithubUser githubUser,
-            @PathVariable Long postId
-    ) {
+    @ResponseBody
+    public Map<String, Object> toggleLike(@AuthenticationPrincipal GithubUser githubUser,
+                                          @PathVariable Long postId) {
         var postResponse = PostResponse.fromDto(postService.toggleLike(githubUser.unchangeableId(), postId));
         Map<String, Object> result = new HashMap<>();
         result.put("isLiking", postResponse.isLiking());
@@ -123,13 +116,11 @@ public class PostReplyController {
     }
 
 
-    // post 싫어요
     @PostMapping("/post/dislikes/{postId}")
     @ResponseBody
-    public Map<String, Object> toggleDislike(
-            @AuthenticationPrincipal GithubUser githubUser,
-            @PathVariable Long postId
-    ) {
+    public Map<String, Object> toggleDislike(@AuthenticationPrincipal GithubUser githubUser,
+                                             @PathVariable Long postId) {
+
         var postResponse = PostResponse.fromDto(postService.toggleDislike(githubUser.unchangeableId(), postId));
         Map<String, Object> result = new HashMap<>();
         result.put("isLiking", postResponse.isLiking());
@@ -140,15 +131,12 @@ public class PostReplyController {
     }
 
 
-    // reply 생성/수정
     @PostMapping("/reply/upsert/{postId}")
-    public String createOrUpdateMyReply(
-            @AuthenticationPrincipal GithubUser githubUser,
-            @PathVariable Long postId,
-            @RequestParam(required = false) Long replyId,
-            ReplyRequest replyRequest, // 폼 data로 받음
-            RedirectAttributes redirectAttrs // redirection할 때, 생성/수정한 interest-group을 화면에서 유지하고 싶다
-    ) {
+    public String createOrUpdateReply(@AuthenticationPrincipal GithubUser githubUser,
+                                      @PathVariable Long postId,
+                                      @RequestParam(required = false) Long replyId,
+                                      ReplyRequest replyRequest,
+                                      RedirectAttributes redirectAttrs) {
 
         replyService.upsertReply(replyRequest.toDto(githubUser.name(), githubUser.unchangeableId()),
                 postId, replyId);
@@ -159,14 +147,12 @@ public class PostReplyController {
     }
 
 
-    // reply 삭제
     @PostMapping("/reply/delete/{postId}")
-    public String deleteMyReply(
-            @AuthenticationPrincipal GithubUser githubUser,
-            @PathVariable Long postId,
-            @RequestParam(required = false) Long replyId,
-            RedirectAttributes redirectAttrs
-    ){
+    public String deleteReply(@AuthenticationPrincipal GithubUser githubUser,
+                              @PathVariable Long postId,
+                              @RequestParam(required = false) Long replyId,
+                              RedirectAttributes redirectAttrs){
+
         replyService.deleteReply(githubUser.unchangeableId(), postId, replyId);
         redirectAttrs.addAttribute("postId", postId); // GET에 postId 전달
 
@@ -174,20 +160,11 @@ public class PostReplyController {
     }
 
 
-
-
-    // 기본 post
     private PostResponse defaultPost(GithubUser githubUser) {
-        // 만약, 로그인된 상태라면
-        if (githubUser != null) {
-            return new PostResponse(null, null, null, null,
+
+        return new PostResponse(null, null, null, null,
                     0L, 0L, 0L, null, null,
                     githubUser.getName(), githubUser.unchangeableId(),null, null);
-        } else { // 로그인 인한 상태
-            return new PostResponse(null, null, null, null,
-                    0L, 0L, 0L, null, null,
-                    null, null, null, null);
-        }
 
     }
 }

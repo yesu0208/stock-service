@@ -20,11 +20,9 @@ public class UserAccountController {
 
     private final GithubUserInfoService githubUserInfoService;
 
-    // 내 정보 페이지
+
     @GetMapping("/my-account")
-    public String myAccount(
-            @AuthenticationPrincipal GithubUser githubUser, // 인증정보임을 알려주는 @AuthenticationPrincipal
-            Model model) {
+    public String getMyAccount(@AuthenticationPrincipal GithubUser githubUser, Model model) {
 
         GithubUserInfoResponse response =
                 GithubUserInfoResponse.fromDto(githubUserInfoService.loadGithubUserInfo(githubUser.unchangeableId()));
@@ -38,7 +36,7 @@ public class UserAccountController {
         model.addAttribute("lastLoginAt", response.lastLoginAt());
         model.addAttribute("fee", response.fee());
 
-        DecimalFormat df = new DecimalFormat("#,###"); // 천 단위 콤마
+        DecimalFormat df = new DecimalFormat("#,###");
 
         model.addAttribute("totalBuyingPriceStr", df.format(current_response.totalBuyingPrice()));
         model.addAttribute("totalValuationStr", df.format(current_response.totalValuation()));
@@ -46,18 +44,17 @@ public class UserAccountController {
         model.addAttribute("totalRealizedPLStr", df.format(current_response.totalRealizedPL()));
         model.addAttribute("rateOfReturn", current_response.rateOfReturnString());
 
-        // 원본 숫자도 넘겨서 색상 조건에는 그대로 사용 (양수, 음수, 보합에 따라 색 변화)
+        // 원본 숫자도 넘겨서 색상 조건에 사용 (양수, 음수, 보합에 따라 색 변화)
         model.addAttribute("totalRealizedPL", current_response.totalRealizedPL());
 
         return "my-account";
     }
 
-    // 내 fee 수정
+
     @PostMapping("/my-account")
-    public String updateMyFee(
-            @AuthenticationPrincipal GithubUser githubUser,
-            GithubUserInfoRequest githubUserInfoRequest // 폼 data로 받음
-    ) {
+    public String updateFee(@AuthenticationPrincipal GithubUser githubUser,
+                            GithubUserInfoRequest githubUserInfoRequest) {
+
         githubUserInfoService.updateGithubUserFee(githubUser.unchangeableId(), githubUserInfoRequest.feeRate());
 
         return "redirect:/my-account"; // redirection : PRG pattern (POST REDIRECT GET)

@@ -29,17 +29,15 @@ public class InterestGroupController {
     private final InterestGroupService interestGroupService;
     private final GithubUserInfoService githubUserInfoService;
 
-    // 단일 interest group 조회
     @GetMapping("/interest-group")
-    public String interestGroup(
-            @AuthenticationPrincipal GithubUser githubUser,
-            @RequestParam(required = false) String groupName, // 필수값이 아닌 옵션값 (내 관심그룹 목록 페이지에서 관심그룹 이름 클릭 시에만 적용)
-            Model model) { // redirect를 위해 parameter 후가
+    public String getInterestGroup(@AuthenticationPrincipal GithubUser githubUser,
+                                   @RequestParam(required = false) String groupName,
+                                   Model model) {
 
-        // 비로그인 or 로그인 + groupName x : sample group, 로그인 : 해당 groupName의 interest group 조회
+        // 비로그인 or (로그인 + groupName x) : sample(default) group, 로그인 : 해당 groupName의 interest group 조회
         InterestGroupWithCurrentInfoResponse interestGroup = (githubUser != null && groupName != null) ?
                 InterestGroupWithCurrentInfoResponse.fromDto(interestGroupService.loadMyGroup(githubUser.unchangeableId(), groupName)) :
-                defaultInterestGroup(groupName);
+                defaultInterestGroup();
 
         List<String> stockNames = stockInfoService.loadStockNameList();
 
@@ -49,30 +47,26 @@ public class InterestGroupController {
         return "interest-group";
     }
 
-    // 내 interest group 생성/수정
+
     @PostMapping("/interest-group")
-    public String createOrUpdateInterestGroup(
-            @AuthenticationPrincipal GithubUser githubUser,
-            InterestGroupRequest interestGroupRequest, // 폼 data로 받음
-            RedirectAttributes redirectAttrs // redirection할 때, 생성/수정한 interest-group을 화면에서 유지하고 싶다
-    ) {
-        // redirectAttrs.addFlashAttribute("interestGroupRequest", interestGroupRequest); // key-value 형식으로 data 전달
+    public String createOrUpdateInterestGroup(@AuthenticationPrincipal GithubUser githubUser,
+                                              InterestGroupRequest interestGroupRequest,
+                                              RedirectAttributes redirectAttrs) {
 
         // interestGroupRequest form data로 받아 작업을 하고, "/interest-group"으로 redirect할 때 이 정보를 전달하면 어떻까?
-        // redirection하면서 열릴 페이지에 내가 만들었던 것 유지하고 싶다. -> 이를 위해 RedirectAttributes가 필요
+        // redirection하면서 열릴 페이지에 내가 만들었던 그룹 유지하고 싶다. -> 이를 위해 RedirectAttributes 사용함
         redirectAttrs.addAttribute("groupName", interestGroupRequest.groupName());
 
         var response = GithubUserInfoResponse.fromDto(githubUserInfoService.loadGithubUserInfo((githubUser.unchangeableId())));
         Double fee = response.fee();
         interestGroupService.upsertInterestGroup(interestGroupRequest.toDto(githubUser.unchangeableId(), fee));
 
-        return "redirect:/interest-group"; // redirection : PRG pattern (POST REDIRECT GET)
+        return "redirect:/interest-group";
     }
 
-    // 내 interest group 목록 조회
+
     @GetMapping("/interest-group/my-groups")
-    public String myGroups(@AuthenticationPrincipal GithubUser githubUser,
-                           Model model) {
+    public String getMyInterestGroupList(@AuthenticationPrincipal GithubUser githubUser, Model model) {
         List<SimpleInterestGroupResponse> interestGroups = interestGroupService.loadMyGroups(githubUser.unchangeableId())
                 .stream()
                 .map(SimpleInterestGroupResponse::fromDto)
@@ -83,28 +77,20 @@ public class InterestGroupController {
         return "my-groups";
     }
 
-    // 내 interest group 삭제
     @PostMapping("/interest-group/my-groups/{groupName}")
-    public String deleteMyGroup(
-            @AuthenticationPrincipal GithubUser githubUser,
-            @PathVariable String groupName
-    ){
+    public String deleteInterestGroup(@AuthenticationPrincipal GithubUser githubUser,
+                                      @PathVariable String groupName) {
         interestGroupService.deleteInterestGroup(githubUser.unchangeableId(), groupName);
         return "redirect:/interest-group/my-groups"; // redirection : PRG pattern (POST REDIRECT GET)
     }
 
 
-
-
-
-    // 기본 interest group
-    private InterestGroupWithCurrentInfoResponse defaultInterestGroup(String groupName) {
+    private InterestGroupWithCurrentInfoResponse defaultInterestGroup() {
         return new InterestGroupWithCurrentInfoResponse(
-                groupName != null ? groupName : null, // groupName 받았으면 그대로 쓰고, 안받았으면 null
-                "Arile",
+                null,
+                null,
                 List.of(
-                        new InterestStockWithCurrentInfoResponse("삼성전자", null, null, null, null, 1, null, null, null, null, null, null, null)
-                )
+                        new InterestStockWithCurrentInfoResponse("삼성전자", null, null, null, null, 1, null, null, null, null, null, null, null))
         );
     }
 
