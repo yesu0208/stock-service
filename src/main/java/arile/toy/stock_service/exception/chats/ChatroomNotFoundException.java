@@ -4,6 +4,7 @@ import arile.toy.stock_service.exception.ClientErrorException;
 import org.springframework.http.HttpStatus;
 
 public class ChatroomNotFoundException extends ClientErrorException {
+
     public ChatroomNotFoundException() {
         super(HttpStatus.NOT_FOUND, "Chatroom not found");
     }
