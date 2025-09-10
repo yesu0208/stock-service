@@ -7,7 +7,7 @@ import arile.toy.stock_service.dto.interestdto.InterestGroupWithCurrentInfoDto;
 import arile.toy.stock_service.dto.interestdto.InterestStockDto;
 import arile.toy.stock_service.dto.interestdto.InterestStockWithCurrentInfoDto;
 import arile.toy.stock_service.exception.group.GroupNotFoundException;
-import arile.toy.stock_service.repository.InterestGroupRepository;
+import arile.toy.stock_service.repository.interest.InterestGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

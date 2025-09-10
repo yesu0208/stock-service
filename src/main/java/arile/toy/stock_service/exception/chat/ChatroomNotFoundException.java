@@ -1,4 +1,4 @@
-package arile.toy.stock_service.exception.chats;
+package arile.toy.stock_service.exception.chat;
 
 import arile.toy.stock_service.exception.ClientErrorException;
 import org.springframework.http.HttpStatus;

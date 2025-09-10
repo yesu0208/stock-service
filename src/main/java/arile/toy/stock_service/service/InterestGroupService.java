@@ -3,7 +3,7 @@ package arile.toy.stock_service.service;
 import arile.toy.stock_service.dto.interestdto.InterestGroupDto;
 import arile.toy.stock_service.dto.interestdto.InterestGroupWithCurrentInfoDto;
 import arile.toy.stock_service.exception.group.GroupNotFoundException;
-import arile.toy.stock_service.repository.InterestGroupRepository;
+import arile.toy.stock_service.repository.interest.InterestGroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -8,7 +8,7 @@ import arile.toy.stock_service.dto.interestdto.InterestStockDto;
 import arile.toy.stock_service.dto.interestdto.InterestStockWithCurrentInfoDto;
 import arile.toy.stock_service.exception.user.UserNotFoundException;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
-import arile.toy.stock_service.repository.InterestStockRepository;
+import arile.toy.stock_service.repository.interest.InterestStockRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

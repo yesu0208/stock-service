@@ -1,4 +1,4 @@
-package arile.toy.stock_service.repository;
+package arile.toy.stock_service.repository.interest;
 
 import arile.toy.stock_service.domain.interest.InterestGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,7 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InterestGroupRepository extends JpaRepository<InterestGroup, Long> {
+
     List<InterestGroup> findByUnchangeableId(String unchangeableId);
+
     Optional<InterestGroup> findByUnchangeableIdAndGroupName(String unchangeableId, String groupName);
+
     void deleteByUnchangeableIdAndGroupName(String unchangeableId, String groupName);
+
 }

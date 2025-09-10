@@ -1,6 +1,7 @@
 package arile.toy.stock_service.repository;
 
 import arile.toy.stock_service.domain.post.Reply;
+import arile.toy.stock_service.repository.post.ReplyRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

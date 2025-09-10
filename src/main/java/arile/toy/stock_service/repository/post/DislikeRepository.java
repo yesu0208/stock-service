@@ -1,4 +1,4 @@
-package arile.toy.stock_service.repository;
+package arile.toy.stock_service.repository.post;
 
 import arile.toy.stock_service.domain.post.Dislike;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface DislikeRepository extends JpaRepository<Dislike, Long> {
+
     Optional<Dislike> findByGithubUserInfoUnchangeableIdAndPostPostId(String unchangeableId, Long postId);
+
 }

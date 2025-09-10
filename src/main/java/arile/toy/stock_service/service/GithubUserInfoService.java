@@ -6,7 +6,7 @@ import arile.toy.stock_service.dto.interestdto.InterestStockDto;
 import arile.toy.stock_service.dto.interestdto.InterestStockWithCurrentInfoDto;
 import arile.toy.stock_service.exception.user.UserNotFoundException;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
-import arile.toy.stock_service.repository.InterestStockRepository;
+import arile.toy.stock_service.repository.interest.InterestStockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

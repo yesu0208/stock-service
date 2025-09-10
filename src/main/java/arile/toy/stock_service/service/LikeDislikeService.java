@@ -1,7 +1,7 @@
 package arile.toy.stock_service.service;
 
-import arile.toy.stock_service.repository.DislikeRepository;
-import arile.toy.stock_service.repository.LikeRepository;
+import arile.toy.stock_service.repository.post.DislikeRepository;
+import arile.toy.stock_service.repository.post.LikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
