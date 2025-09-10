@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Table(name = "github_user_chatroom_mappings")
@@ -38,5 +39,27 @@ public class GithubUserChatroomMapping {
 
     public static GithubUserChatroomMapping of(GithubUserInfo githubUserInfo, Chatroom chatroom) {
         return new GithubUserChatroomMapping(githubUserInfo, chatroom);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof GithubUserChatroomMapping that)) return false;
+
+        if (getGithubUserChatroomMappingId() == null) {
+            return Objects.equals(this.getGithubUserInfo(), that.getGithubUserInfo()) &&
+                    Objects.equals(this.getChatroom(), that.getChatroom()) &&
+                    Objects.equals(this.getLastCheckedAt(), that.getLastCheckedAt());
+        }
+
+        return Objects.equals(this.getGithubUserChatroomMappingId(), that.getGithubUserChatroomMappingId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (getGithubUserChatroomMappingId() == null) {
+            return Objects.hash(getGithubUserInfo(), getChatroom(), getLastCheckedAt());
+        }
+        return Objects.hash(getGithubUserChatroomMappingId());
     }
 }
