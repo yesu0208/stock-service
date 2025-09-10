@@ -6,8 +6,8 @@ import arile.toy.stock_service.dto.response.post.PostResponse;
 import arile.toy.stock_service.dto.response.post.ReplyResponse;
 import arile.toy.stock_service.dto.response.post.SimplePostResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
-import arile.toy.stock_service.service.PostService;
-import arile.toy.stock_service.service.ReplyService;
+import arile.toy.stock_service.service.post.PostService;
+import arile.toy.stock_service.service.post.ReplyService;
 import arile.toy.stock_service.service.StaticStockInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,15 +33,15 @@ public class PostReplyController {
                         @RequestParam(required = false) Long postId,
                        Model model) {
 
-        List<String> stockNames = stockInfoService.loadStockNameList();
+        List<String> stockNames = stockInfoService.getStockNameList();
 
         // postId(x) : sample post, postId(o) : 해당 postId의 post 조회
         PostResponse post = (postId != null) ?
-                PostResponse.fromDto(postService.loadPost(githubUser.unchangeableId(), postId)) : defaultPost(githubUser);
+                PostResponse.fromDto(postService.getPost(githubUser.unchangeableId(), postId)) : defaultPost(githubUser);
 
         // postId(x) : sample reply(null), postId(o) : 해당 postId의 reply 조회
         List<ReplyResponse> replies = (postId != null) ?
-                replyService.loadAllRepliesByPostId(postId)
+                replyService.getAllRepliesByPostId(postId)
                         .stream()
                         .map(ReplyResponse::fromDto)
                         .toList(): null;
@@ -59,7 +59,7 @@ public class PostReplyController {
     @GetMapping("/posts")
     public String getAllSimplePostList(Model model) {
 
-        List<SimplePostResponse> posts = postService.loadAllSimplePosts()
+        List<SimplePostResponse> posts = postService.getAllSimplePosts()
                         .stream()
                         .map(SimplePostResponse::fromDto)
                         .toList();
@@ -71,7 +71,7 @@ public class PostReplyController {
     public String getAllMySimplePostList(@AuthenticationPrincipal GithubUser githubUser,
                                     Model model) {
 
-        List<SimplePostResponse> posts = postService.loadAllMySimplePosts(githubUser.unchangeableId())
+        List<SimplePostResponse> posts = postService.getAllMySimplePosts(githubUser.unchangeableId())
                 .stream()
                 .map(SimplePostResponse::fromDto)
                 .toList();

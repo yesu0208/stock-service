@@ -9,6 +9,7 @@ import arile.toy.stock_service.dto.interestdto.InterestStockWithCurrentInfoDto;
 import arile.toy.stock_service.exception.user.UserNotFoundException;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import arile.toy.stock_service.repository.interest.InterestStockRepository;
+import arile.toy.stock_service.service.interest.InterestStockCurrentInfoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +48,7 @@ class GithubUserInfoServiceTest {
         given(githubUserInfoRepository.findById(unchangeableId)).willReturn(Optional.of(githubUserInfo));
 
         // When
-        GithubUserInfoDto result = sut.loadGithubUserInfo(unchangeableId);
+        GithubUserInfoDto result = sut.getGithubUserInfo(unchangeableId);
 
         // Then
         assertThat(result)
@@ -68,7 +69,7 @@ class GithubUserInfoServiceTest {
         given(githubUserInfoRepository.findById(unchangeableId)).willReturn(Optional.empty());
 
         // When
-        Throwable thrown = catchThrowable(() -> sut.loadGithubUserInfo(unchangeableId));
+        Throwable thrown = catchThrowable(() -> sut.getGithubUserInfo(unchangeableId));
 
         // Then
         assertThat(thrown)
@@ -135,7 +136,7 @@ class GithubUserInfoServiceTest {
                 InterestStockDto.fromEntity(interestStocks.getFirst()), unchangeableId)).willReturn(interestStockWithCurrentInfoDtos.getFirst());
 
         // When
-        GithubUserCurrentAccountDto result = sut.loadGithubUserCurrentAccount(unchangeableId);
+        GithubUserCurrentAccountDto result = sut.getGithubUserCurrentAccount(unchangeableId);
 
         // Then
         assertThat(result)

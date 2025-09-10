@@ -1,6 +1,6 @@
 package arile.toy.stock_service.config;
 
-import arile.toy.stock_service.service.GithubOAuth2UserService;
+import arile.toy.stock_service.service.security.GithubOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;

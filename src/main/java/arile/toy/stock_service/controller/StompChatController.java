@@ -4,7 +4,7 @@ import arile.toy.stock_service.domain.chat.Message;
 import arile.toy.stock_service.domain.constant.MessageType;
 import arile.toy.stock_service.dto.chatdto.ChatMessage;
 import arile.toy.stock_service.dto.security.GithubUser;
-import arile.toy.stock_service.service.ChatService;
+import arile.toy.stock_service.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;

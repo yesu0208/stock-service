@@ -1,8 +1,7 @@
-package arile.toy.stock_service.repository;
+package arile.toy.stock_service.repository.post;
 
 
 import arile.toy.stock_service.domain.post.Like;
-import arile.toy.stock_service.repository.post.LikeRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

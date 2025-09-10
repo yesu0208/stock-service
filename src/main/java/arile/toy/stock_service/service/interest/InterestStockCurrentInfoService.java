@@ -1,20 +1,23 @@
-package arile.toy.stock_service.service;
+package arile.toy.stock_service.service.interest;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.naverstock.NaverStockResponse;
 import arile.toy.stock_service.dto.interestdto.InterestStockDto;
 import arile.toy.stock_service.dto.interestdto.InterestStockWithCurrentInfoDto;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
+import arile.toy.stock_service.service.StaticStockInfoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 import java.util.Objects;
 
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class InterestStockCurrentInfoService {
 
@@ -24,15 +27,14 @@ public class InterestStockCurrentInfoService {
 
     public InterestStockWithCurrentInfoDto getInterestStockSimpleCurrentInfo(InterestStockDto dto, String unchangeableId) {
 
-        String shortCode = stockInfoService.loadShortCodeByStockName(dto.stockName());
+        String shortCode = stockInfoService.getShortCodeByStockName(dto.stockName());
 
         String stringResponse = restClient
                 .get()
                 .uri("https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:" + shortCode)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
-                    // 외부 API 호출 예외 처리(실패할 경우)
-                    throw new RuntimeException(); // 추후 예외 추가
+                    throw new RuntimeException();
                 })
                 .body(String.class);
 
@@ -41,10 +43,10 @@ public class InterestStockCurrentInfoService {
         try {
             response = mapper.readValue(stringResponse, NaverStockResponse.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e); // 추후 예외 추가
+            throw new RuntimeException(e);
         }
 
-        // rf(rise or fall)에 따라서 cv(change value)의 부호 변환
+        // rf(rise or fall)에 따라서 cv(change value)의 부호 변환(cv 값은 항상 양수로 내려옴)
         String riseOrFall = response.result().areas().getFirst().datas().getFirst().rf();
         Integer changeValue = response.result().areas().getFirst().datas().getFirst().cv();
         Double changeRate = response.result().areas().getFirst().datas().getFirst().cr();

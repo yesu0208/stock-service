@@ -11,6 +11,8 @@ import arile.toy.stock_service.repository.post.DislikeRepository;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import arile.toy.stock_service.repository.post.LikeRepository;
 import arile.toy.stock_service.repository.post.PostRepository;
+import arile.toy.stock_service.service.post.LikeDislikeService;
+import arile.toy.stock_service.service.post.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +53,7 @@ class PostServiceTest {
         given(postRepository.findById(postId)).willReturn(Optional.of(post));
 
         // When
-        PostDto result = sut.loadPost(unchangeableId, postId);
+        PostDto result = sut.getPost(unchangeableId, postId);
 
         // Then
         assertThat(result)
@@ -72,7 +74,7 @@ class PostServiceTest {
         given(postRepository.findById(postId)).willReturn(Optional.empty());
 
         // When
-        Throwable thrown = catchThrowable(() -> sut.loadPost(unchangeableId, postId));
+        Throwable thrown = catchThrowable(() -> sut.getPost(unchangeableId, postId));
 
         // Then
         assertThat(thrown)
@@ -90,7 +92,7 @@ class PostServiceTest {
         given(postRepository.findAll()).willReturn(posts);
 
         // When
-        List<SimplePostDto> result = sut.loadAllSimplePosts();
+        List<SimplePostDto> result = sut.getAllSimplePosts();
 
         // Then
         assertThat(result)
@@ -111,7 +113,7 @@ class PostServiceTest {
         given(postRepository.findAllByUserUnchangeableId(unchangeableId)).willReturn(posts);
 
         // When
-        List<SimplePostDto> result = sut.loadAllMySimplePosts(unchangeableId);
+        List<SimplePostDto> result = sut.getAllMySimplePosts(unchangeableId);
 
         // Then
         assertThat(result)

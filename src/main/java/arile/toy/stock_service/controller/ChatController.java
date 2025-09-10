@@ -5,7 +5,7 @@ import arile.toy.stock_service.dto.request.chat.ChatroomRequest;
 import arile.toy.stock_service.dto.response.chat.ChatroomResponse;
 import arile.toy.stock_service.dto.response.chat.ChatroomWithCurrentStockResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
-import arile.toy.stock_service.service.ChatService;
+import arile.toy.stock_service.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -78,7 +78,7 @@ public class ChatController {
     @GetMapping("/total")
     public List<ChatroomResponse> getAllChatroomListExceptJoinedChatroom(@AuthenticationPrincipal GithubUser githubUser) {
 
-        return chatService.getAllChatroomListExceptJoined(githubUser.unchangeableId())
+        return chatService.getAllChatroomListExceptJoinedChatroom(githubUser.unchangeableId())
                 .stream()
                 .map(ChatroomResponse::fromDto)
                 .toList();

@@ -1,4 +1,4 @@
-package arile.toy.stock_service.service;
+package arile.toy.stock_service.service.post;
 
 import arile.toy.stock_service.domain.post.Dislike;
 import arile.toy.stock_service.domain.GithubUserInfo;
@@ -29,7 +29,7 @@ public class PostService {
     private final DislikeRepository dislikeRepository;
 
     @Transactional(readOnly = true)
-    public PostDto loadPost(String unchangeableId, Long postId) {
+    public PostDto getPost(String unchangeableId, Long postId) {
 
         Boolean isLiking = likeDislikeService.doesUserLikePost(unchangeableId, postId);
 
@@ -43,7 +43,8 @@ public class PostService {
 
 
     @Transactional(readOnly = true)
-    public List<SimplePostDto> loadAllSimplePosts() {
+    public List<SimplePostDto> getAllSimplePosts() {
+
         return postRepository.findAll()
                 .stream()
                 .map(SimplePostDto::fromEntity)
@@ -51,7 +52,8 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<SimplePostDto> loadAllMySimplePosts(String unchangeableId) {
+    public List<SimplePostDto> getAllMySimplePosts(String unchangeableId) {
+
         return postRepository.findAllByUserUnchangeableId(unchangeableId)
                 .stream()
                 .map(SimplePostDto::fromEntity)
@@ -73,6 +75,7 @@ public class PostService {
 
     }
 
+
     public void deletePost(String unchangeableId, Long postId) {
 
         postRepository.deleteByUserUnchangeableIdAndPostId(unchangeableId, postId);
@@ -80,6 +83,7 @@ public class PostService {
 
 
     public PostDto toggleLike(String unchangeableId, Long postId) {
+
         var post = postRepository.findById(postId) // Optional<PostEntity>
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
@@ -96,7 +100,7 @@ public class PostService {
             return PostDto.fromEntity(postRepository.save(post), false, false);
         } else { // 존재하지 않는다면, 추가
             likeRepository.save(Like.of(githubUserInfo, post));
-            if (dislike.isPresent()) { // 만약, 싫어요를 눌렀다면 싫어요를 취소하고 좋아요로 변환
+            if (dislike.isPresent()) { // 만약, 싫어요를 눌렀었다면 싫어요를 취소하고 좋아요로 변환
                 dislikeRepository.delete(dislike.get());
                 post.setDislikesCount(post.getDislikesCount() - 1);
             }
@@ -123,7 +127,7 @@ public class PostService {
             return (PostDto.fromEntity(postRepository.save(post), false, false));
         } else { // 존재하지 않는다면, 추가
             dislikeRepository.save(Dislike.of(githubUserInfo, post));
-            if (like.isPresent()) { // 만약, 싫어요를 눌렀다면 싫어요를 취소하고 좋아요로 변환
+            if (like.isPresent()) { // 만약, 좋아요를 눌렀었다면 좋아요를 취소하고 싫어요로 변환
                 likeRepository.delete(like.get());
                 post.setLikesCount(post.getLikesCount() - 1);
             }

@@ -25,10 +25,10 @@ public class UserAccountController {
     public String getMyAccount(@AuthenticationPrincipal GithubUser githubUser, Model model) {
 
         GithubUserInfoResponse response =
-                GithubUserInfoResponse.fromDto(githubUserInfoService.loadGithubUserInfo(githubUser.unchangeableId()));
+                GithubUserInfoResponse.fromDto(githubUserInfoService.getGithubUserInfo(githubUser.unchangeableId()));
 
         GithubUserCurrentAccountResponse current_response =
-                GithubUserCurrentAccountResponse.fromDto(githubUserInfoService.loadGithubUserCurrentAccount(githubUser.unchangeableId()));
+                GithubUserCurrentAccountResponse.fromDto(githubUserInfoService.getGithubUserCurrentAccount(githubUser.unchangeableId()));
 
         model.addAttribute("nickname", githubUser.name());
         model.addAttribute("unchangeableId", githubUser.unchangeableId());

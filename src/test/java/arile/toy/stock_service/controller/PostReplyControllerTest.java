@@ -5,9 +5,9 @@ import arile.toy.stock_service.dto.postdto.PostDto;
 import arile.toy.stock_service.dto.request.post.PostRequest;
 import arile.toy.stock_service.dto.request.post.ReplyRequest;
 import arile.toy.stock_service.dto.security.GithubUser;
-import arile.toy.stock_service.service.GithubOAuth2UserService;
-import arile.toy.stock_service.service.PostService;
-import arile.toy.stock_service.service.ReplyService;
+import arile.toy.stock_service.service.security.GithubOAuth2UserService;
+import arile.toy.stock_service.service.post.PostService;
+import arile.toy.stock_service.service.post.ReplyService;
 import arile.toy.stock_service.service.StaticStockInfoService;
 import arile.toy.stock_service.util.FormDataEncoder;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +48,7 @@ class PostReplyControllerTest {
 
         // Given
         var githubUser = new GithubUser("12345", "test-id", "test-name", "test@eamil.com");
-        given(stockInfoService.loadStockNameList()).willReturn(List.of());
+        given(stockInfoService.getStockNameList()).willReturn(List.of());
 
         // When & Then
         mvc.perform(get("/post")
@@ -63,7 +63,7 @@ class PostReplyControllerTest {
 //                .andExpect(model().attributeExists("replies"))
                 .andExpect(model().attribute("currentUserId", githubUser.unchangeableId()))
                 .andExpect(view().name("post"));
-        then(stockInfoService).should().loadStockNameList();
+        then(stockInfoService).should().getStockNameList();
         then(postService).shouldHaveNoInteractions();
         then(replyService).shouldHaveNoInteractions();
     }
@@ -76,12 +76,12 @@ class PostReplyControllerTest {
         // Given
         var githubUser = new GithubUser("12345", "test-id", "test-name", "test@eamil.com");
         Long postId = 1L;
-        given(stockInfoService.loadStockNameList()).willReturn(List.of());
-        given(postService.loadPost(githubUser.unchangeableId(), postId)).willReturn(
+        given(stockInfoService.getStockNameList()).willReturn(List.of());
+        given(postService.getPost(githubUser.unchangeableId(), postId)).willReturn(
                 PostDto.of(1L, "post", "삼성전자", "삼성전자", 0L,
                         1L, 1L, LocalDateTime.now(), LocalDateTime.now(), "test-name",
                         "12345", true, false));
-        given(replyService.loadAllRepliesByPostId(postId)).willReturn(List.of());
+        given(replyService.getAllRepliesByPostId(postId)).willReturn(List.of());
 
         // When & Then
         mvc.perform(get("/post")
@@ -96,9 +96,9 @@ class PostReplyControllerTest {
                 .andExpect(model().attribute("replies", List.of()))
                 .andExpect(model().attribute("currentUserId", githubUser.unchangeableId()))
                 .andExpect(view().name("post"));
-        then(stockInfoService).should().loadStockNameList();
-        then(postService).should().loadPost(githubUser.unchangeableId(), postId);
-        then(replyService).should().loadAllRepliesByPostId(postId);
+        then(stockInfoService).should().getStockNameList();
+        then(postService).should().getPost(githubUser.unchangeableId(), postId);
+        then(replyService).should().getAllRepliesByPostId(postId);
     }
 
 
@@ -109,7 +109,7 @@ class PostReplyControllerTest {
 
         // Given
         var githubUser = new GithubUser("12345", "test-id", "test-name", "test@eamil.com");
-        given(postService.loadAllSimplePosts()).willReturn(List.of());
+        given(postService.getAllSimplePosts()).willReturn(List.of());
 
         // When & Then
         mvc.perform(get("/posts")
@@ -119,7 +119,7 @@ class PostReplyControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(model().attribute("posts", List.of()))
                 .andExpect(view().name("posts"));
-        then(postService).should().loadAllSimplePosts();
+        then(postService).should().getAllSimplePosts();
     }
 
 
@@ -130,7 +130,7 @@ class PostReplyControllerTest {
 
         // Given
         var githubUser = new GithubUser("12345", "test-id", "test-name", "test@eamil.com");
-        given(postService.loadAllMySimplePosts(githubUser.unchangeableId())).willReturn(List.of());
+        given(postService.getAllMySimplePosts(githubUser.unchangeableId())).willReturn(List.of());
 
         // When & Then
         mvc.perform(get("/my-posts")
@@ -140,7 +140,7 @@ class PostReplyControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(model().attribute("posts", List.of()))
                 .andExpect(view().name("my-posts"));
-        then(postService).should().loadAllMySimplePosts(githubUser.unchangeableId());
+        then(postService).should().getAllMySimplePosts(githubUser.unchangeableId());
     }
 
 

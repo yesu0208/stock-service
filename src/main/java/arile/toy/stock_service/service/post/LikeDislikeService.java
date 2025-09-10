@@ -1,4 +1,4 @@
-package arile.toy.stock_service.service;
+package arile.toy.stock_service.service.post;
 
 import arile.toy.stock_service.repository.post.DislikeRepository;
 import arile.toy.stock_service.repository.post.LikeRepository;

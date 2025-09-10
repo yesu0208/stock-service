@@ -7,7 +7,7 @@ import arile.toy.stock_service.dto.response.interest.InterestStockWithCurrentInf
 import arile.toy.stock_service.dto.response.interest.SimpleInterestGroupResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.GithubUserInfoService;
-import arile.toy.stock_service.service.InterestGroupService;
+import arile.toy.stock_service.service.interest.InterestGroupService;
 import arile.toy.stock_service.service.StaticStockInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,10 +36,10 @@ public class InterestGroupController {
 
         // 비로그인 or (로그인 + groupName x) : sample(default) group, 로그인 : 해당 groupName의 interest group 조회
         InterestGroupWithCurrentInfoResponse interestGroup = (githubUser != null && groupName != null) ?
-                InterestGroupWithCurrentInfoResponse.fromDto(interestGroupService.loadMyGroup(githubUser.unchangeableId(), groupName)) :
+                InterestGroupWithCurrentInfoResponse.fromDto(interestGroupService.getMyGroup(githubUser.unchangeableId(), groupName)) :
                 defaultInterestGroup();
 
-        List<String> stockNames = stockInfoService.loadStockNameList();
+        List<String> stockNames = stockInfoService.getStockNameList();
 
         model.addAttribute("interestGroup", interestGroup);
         model.addAttribute("stockNames", stockNames);
@@ -57,7 +57,7 @@ public class InterestGroupController {
         // redirection하면서 열릴 페이지에 내가 만들었던 그룹 유지하고 싶다. -> 이를 위해 RedirectAttributes 사용함
         redirectAttrs.addAttribute("groupName", interestGroupRequest.groupName());
 
-        var response = GithubUserInfoResponse.fromDto(githubUserInfoService.loadGithubUserInfo((githubUser.unchangeableId())));
+        var response = GithubUserInfoResponse.fromDto(githubUserInfoService.getGithubUserInfo((githubUser.unchangeableId())));
         Double fee = response.fee();
         interestGroupService.upsertInterestGroup(interestGroupRequest.toDto(githubUser.unchangeableId(), fee));
 
@@ -67,7 +67,7 @@ public class InterestGroupController {
 
     @GetMapping("/interest-group/my-groups")
     public String getMyInterestGroupList(@AuthenticationPrincipal GithubUser githubUser, Model model) {
-        List<SimpleInterestGroupResponse> interestGroups = interestGroupService.loadMyGroups(githubUser.unchangeableId())
+        List<SimpleInterestGroupResponse> interestGroups = interestGroupService.getMyGroupList(githubUser.unchangeableId())
                 .stream()
                 .map(SimpleInterestGroupResponse::fromDto)
                 .toList();

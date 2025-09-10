@@ -1,4 +1,4 @@
-package arile.toy.stock_service.service;
+package arile.toy.stock_service.service.security;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.dto.security.GithubUser;

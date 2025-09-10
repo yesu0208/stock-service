@@ -27,7 +27,7 @@ public class MainController {
     @GetMapping("/chats")
     public String chatPage(@AuthenticationPrincipal GithubUser githubUser, Model model) {
 
-        List<String> stockNames = stockInfoService.loadStockNameList();
+        List<String> stockNames = stockInfoService.getStockNameList();
 
         model.addAttribute("stompBrokerUrl", "https://stock-service-89300edadb9e.herokuapp.com/stomp/chats");
         model.addAttribute("currentUser", githubUser.getName());

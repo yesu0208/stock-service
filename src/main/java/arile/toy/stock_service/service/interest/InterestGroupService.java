@@ -1,4 +1,4 @@
-package arile.toy.stock_service.service;
+package arile.toy.stock_service.service.interest;
 
 import arile.toy.stock_service.dto.interestdto.InterestGroupDto;
 import arile.toy.stock_service.dto.interestdto.InterestGroupWithCurrentInfoDto;
@@ -21,7 +21,8 @@ public class InterestGroupService {
     private final InterestStockCurrentInfoService interestStockCurrentInfoService;
 
     @Transactional(readOnly = true)
-    public List<InterestGroupDto> loadMyGroups(String unchangeableId) {
+    public List<InterestGroupDto> getMyGroupList(String unchangeableId) {
+
         return interestGroupRepository.findByUnchangeableId(unchangeableId)
                 .stream()
                 .map(InterestGroupDto::fromEntity)
@@ -30,11 +31,11 @@ public class InterestGroupService {
 
 
     @Transactional(readOnly = true)
-    public InterestGroupWithCurrentInfoDto loadMyGroup(String unchangeableId, String groupName) {
+    public InterestGroupWithCurrentInfoDto getMyGroup(String unchangeableId, String groupName) {
+
         var interestGroupDto = interestGroupRepository.findByUnchangeableIdAndGroupName(unchangeableId, groupName)
                 .map(InterestGroupDto::fromEntity)
-                // Optional
-                .orElseThrow(() -> new GroupNotFoundException(unchangeableId, groupName)); // optional이므로
+                .orElseThrow(() -> new GroupNotFoundException(unchangeableId, groupName));
 
         var interestStockWithCurrentInfoDtos = interestGroupDto.interestStockDtos()
                 .stream()
@@ -58,7 +59,9 @@ public class InterestGroupService {
         return response;
     }
 
+
     public void upsertInterestGroup(InterestGroupDto dto){
+
         interestGroupRepository.findByUnchangeableIdAndGroupName(dto.unchangeableId(), dto.groupName())
                 .ifPresentOrElse( // Optional
                         entity -> interestGroupRepository.save(dto.updateEntity(entity)),

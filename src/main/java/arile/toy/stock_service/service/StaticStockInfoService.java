@@ -14,14 +14,16 @@ public class StaticStockInfoService {
 
     private final StaticStockInfoRepository staticStockInfoRepository;
 
-    public String loadShortCodeByStockName(String stockName){
+    public String getShortCodeByStockName(String stockName){
+
         return staticStockInfoRepository.findByStockName(stockName)
                 .map(StaticStockInfo::getShortCode)
                 // Optional
                 .orElseThrow(() -> new StaticStockInfoNotFoundException(stockName));
     }
 
-    public List<String> loadStockNameList() {
+    public List<String> getStockNameList() {
+
         List<StaticStockInfo> staticStockInfoList = staticStockInfoRepository.findAll();
 
         return staticStockInfoList.stream()

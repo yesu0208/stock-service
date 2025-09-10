@@ -12,6 +12,7 @@ import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import arile.toy.stock_service.repository.chat.ChatroomRepository;
 import arile.toy.stock_service.repository.chat.GithubUserChatroomMappingRepository;
 import arile.toy.stock_service.repository.chat.MessageRepository;
+import arile.toy.stock_service.service.chat.ChatService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -210,7 +211,7 @@ class ChatServiceTest {
         given(chatroomRepository.findAll()).willReturn(chatrooms);
 
         // When
-        List<ChatroomDto> result = sut.getAllChatroomListExceptJoined(unchangeableId);
+        List<ChatroomDto> result = sut.getAllChatroomListExceptJoinedChatroom(unchangeableId);
 
         // Then
         assertThat(result)

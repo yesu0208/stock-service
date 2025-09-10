@@ -1,7 +1,6 @@
-package arile.toy.stock_service.repository.chats;
+package arile.toy.stock_service.repository.chat;
 
 import arile.toy.stock_service.domain.chat.GithubUserChatroomMapping;
-import arile.toy.stock_service.repository.chat.GithubUserChatroomMappingRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,7 @@ package arile.toy.stock_service.controller;
 import arile.toy.stock_service.config.SecurityConfig;
 import arile.toy.stock_service.dto.CurrentStockInfoDto;
 import arile.toy.stock_service.service.CurrentStockInfoService;
-import arile.toy.stock_service.service.GithubOAuth2UserService;
+import arile.toy.stock_service.service.security.GithubOAuth2UserService;
 import arile.toy.stock_service.service.StaticStockInfoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class CurrentStockInfoControllerTest {
     @Test
     void givenNothing_whenRequesting_thenShowsStocksView() throws Exception {
         // Given
-        given(stockInfoService.loadStockNameList()).willReturn(List.of());
+        given(stockInfoService.getStockNameList()).willReturn(List.of());
 
         // When & Then
         mvc.perform(get("/stocks"))
@@ -47,7 +47,7 @@ class CurrentStockInfoControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(model().attributeExists("stockNames"))
                 .andExpect(view().name("stocks"));
-        then(stockInfoService).should().loadStockNameList();
+        then(stockInfoService).should().getStockNameList();
     }
 
     @DisplayName("[GET] 종목명 -> 종목정보 (정상)")

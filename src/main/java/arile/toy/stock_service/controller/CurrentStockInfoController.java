@@ -22,7 +22,7 @@ public class CurrentStockInfoController {
     @GetMapping("/stocks")
     public String stockPage(Model model) {
 
-        List<String> stockNames = stockInfoService.loadStockNameList();
+        List<String> stockNames = stockInfoService.getStockNameList();
         model.addAttribute("stockNames", stockNames);
         return "stocks";
     }

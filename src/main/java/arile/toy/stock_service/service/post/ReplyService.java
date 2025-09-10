@@ -1,4 +1,4 @@
-package arile.toy.stock_service.service;
+package arile.toy.stock_service.service.post;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.post.Reply;
@@ -25,12 +25,14 @@ public class ReplyService {
     private final PostRepository postRepository;
 
     @Transactional(readOnly = true)
-    public List<ReplyDto> loadAllRepliesByPostId(Long postId) {
+    public List<ReplyDto> getAllRepliesByPostId(Long postId) {
+
         return replyRepository.findAllByPostPostId(postId)
                 .stream()
                 .map(ReplyDto::fromEntity)
                 .toList();
     }
+
 
     public void upsertReply(ReplyDto dto, Long postId, Long replyId){
 
@@ -47,7 +49,9 @@ public class ReplyService {
                 );
     }
 
+
     public void deleteReply(String unchangeableId, Long postId, Long replyId) {
+
         Reply reply = replyRepository.findById(replyId)
                 .orElseThrow(() -> new ReplyNotFoundException(replyId));
         var post = reply.getPost();

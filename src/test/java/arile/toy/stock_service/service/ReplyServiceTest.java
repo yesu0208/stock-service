@@ -7,6 +7,7 @@ import arile.toy.stock_service.dto.postdto.ReplyDto;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import arile.toy.stock_service.repository.post.PostRepository;
 import arile.toy.stock_service.repository.post.ReplyRepository;
+import arile.toy.stock_service.service.post.ReplyService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,8 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class ReplyServiceTest {
 
-    @InjectMocks ReplyService sut;
+    @InjectMocks
+    ReplyService sut;
 
     @Mock ReplyRepository replyRepository;
     @Mock GithubUserInfoRepository githubUserInfoRepository;
@@ -43,7 +45,7 @@ class ReplyServiceTest {
         given(replyRepository.findAllByPostPostId(postId)).willReturn(replies);
 
         // When
-        List<ReplyDto> result = sut.loadAllRepliesByPostId(postId);
+        List<ReplyDto> result = sut.getAllRepliesByPostId(postId);
 
         // Then
         assertThat(result)

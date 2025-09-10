@@ -1,4 +1,4 @@
-package arile.toy.stock_service.service;
+package arile.toy.stock_service.service.chat;
 
 import arile.toy.stock_service.domain.chat.Chatroom;
 import arile.toy.stock_service.domain.chat.GithubUserChatroomMapping;
@@ -14,6 +14,7 @@ import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import arile.toy.stock_service.repository.chat.ChatroomRepository;
 import arile.toy.stock_service.repository.chat.GithubUserChatroomMappingRepository;
 import arile.toy.stock_service.repository.chat.MessageRepository;
+import arile.toy.stock_service.service.CurrentStockInfoService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,6 @@ public class ChatService {
     private final GithubUserInfoRepository githubUserInfoRepository;
     private final CurrentStockInfoService currentStockInfoService;
 
-    // 채팅방 생성 기능
     public ChatroomDto createChatroom(String unchangeableId, String title, String stockName, String createdBy) {
 
         GithubUserInfo githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
@@ -45,27 +45,24 @@ public class ChatService {
 
         Chatroom chatroom = Chatroom.of(newTitle, LocalDateTime.now(ZoneId.of("Asia/Seoul")), stockName, createdBy, unchangeableId);
 
-        // 부모 먼저 넣고
         chatroom = chatroomRepository.save(chatroom);
 
         // 채팅방 만든 사람은 바로 입장
         GithubUserChatroomMapping githubUserChatroomMapping = chatroom.addGithubUserInfo(githubUserInfo);
 
-        // 자식 넣고
         githubUserChatroomMappingRepository.save(githubUserChatroomMapping);
 
         return ChatroomDto.fromEntity(chatroom);
     }
 
 
-    // 다른 사람이 만든 채팅방에 참여
     public Boolean joinChatroom(String unchangeableId, Long newChatroomId, Long currentChatroomId) {
 
         GithubUserInfo githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
                 .orElseThrow(() -> new UserNotFoundException(unchangeableId));
 
-        if (currentChatroomId != null) { // 기존 채팅방(current)에서 새로운 채팅방(new)으로 이동
-            updateLastCheckedAt(githubUserInfo, currentChatroomId); // 기존 채팅방에 LastCheckedAt 정보 setting
+        if (currentChatroomId != null) {
+            updateLastCheckedAt(githubUserInfo, currentChatroomId);
         }
 
         if(githubUserChatroomMappingRepository.existsByGithubUserInfoUnchangeableIdAndChatroomChatroomId(
@@ -73,7 +70,6 @@ public class ChatService {
             // 이미 참여
             return false;
         }
-
 
         Chatroom chatroom = chatroomRepository.findById(newChatroomId)
                 .orElseThrow(() -> new ChatroomNotFoundException(newChatroomId));
@@ -86,6 +82,7 @@ public class ChatService {
         return true;
     }
 
+
     private void updateLastCheckedAt(GithubUserInfo githubUserInfo, Long currentChatroomId) {
         GithubUserChatroomMapping githubUserChatroomMapping =
                 githubUserChatroomMappingRepository.findByGithubUserInfoUnchangeableIdAndChatroomChatroomId(
@@ -97,7 +94,7 @@ public class ChatService {
         githubUserChatroomMappingRepository.save(githubUserChatroomMapping);
     }
 
-    // 단일 채팅방 정보 가져오기
+
     public ChatroomWithCurrentStockDto getChatroomWithCurrentStock(Long chatroomId) {
         var chatroomDto = chatroomRepository.findById(chatroomId)
                 .map(ChatroomDto::fromEntity)
@@ -112,7 +109,6 @@ public class ChatService {
     }
 
 
-    // 단일 채팅방 삭제하기 (생성한 유저만 가능)
     public void deleteChatroom(String unchangeableId, Long chatroomId) {
         var chatroomDto = chatroomRepository.findById(chatroomId)
                 .map(ChatroomDto::fromEntity)
@@ -126,7 +122,7 @@ public class ChatService {
 
     }
 
-    // 참여한 방에서 나오기
+
     public Boolean leaveChatroom(String unchangeableId, Long chatroomId) {
 
         if(!githubUserChatroomMappingRepository.existsByGithubUserInfoUnchangeableIdAndChatroomChatroomId(
@@ -141,7 +137,6 @@ public class ChatService {
     }
 
 
-    // 사용자 참여 채팅방 목록 조회
     public List<ChatroomDto> getChatroomList(String unchangeableId) {
         List<GithubUserChatroomMapping> githubUserChatroomMappings =
                 githubUserChatroomMappingRepository.findAllByGithubUserInfoUnchangeableId(unchangeableId);
@@ -158,8 +153,7 @@ public class ChatService {
     }
 
 
-    // 모든 채팅방 목록 조회 (내가 참여한 채팅방 제외)
-    public List<ChatroomDto> getAllChatroomListExceptJoined(String unchangeableId) {
+    public List<ChatroomDto> getAllChatroomListExceptJoinedChatroom(String unchangeableId) {
 
         List<Long> joinedChatroomIds = githubUserChatroomMappingRepository
                 .findAllByGithubUserInfoUnchangeableId(unchangeableId).stream()
@@ -175,22 +169,20 @@ public class ChatService {
                 .toList();
     }
 
-    // 메시지 저장
+
     public Message saveMessage(String unchangeableId, Long chatroomId, String text, MessageType messageType) {
         Chatroom chatroom = chatroomRepository.findById(chatroomId)
                 .orElseThrow(() -> new ChatroomNotFoundException(chatroomId));
 
-        // Dto로 변경 필요(사실은)
         GithubUserInfo githubUserInfo = githubUserInfoRepository.findById(unchangeableId)
                 .orElseThrow(() -> new UserNotFoundException(unchangeableId));;
-
 
         Message message = Message.of(text, githubUserInfo, chatroom, LocalDateTime.now(ZoneId.of("Asia/Seoul")), messageType);
 
         return messageRepository.save(message);
     }
 
-    // 채팅방의 메시지(목록) 조회
+
     public List<Message> getMessageList(Long chatroomId) {
         return  messageRepository.findAllByChatroomChatroomId(chatroomId);
     }
