@@ -2,9 +2,9 @@ package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.dto.request.post.PostRequest;
 import arile.toy.stock_service.dto.request.post.ReplyRequest;
-import arile.toy.stock_service.dto.response.PostResponse;
-import arile.toy.stock_service.dto.response.ReplyResponse;
-import arile.toy.stock_service.dto.response.SimplePostResponse;
+import arile.toy.stock_service.dto.response.post.PostResponse;
+import arile.toy.stock_service.dto.response.post.ReplyResponse;
+import arile.toy.stock_service.dto.response.post.SimplePostResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.PostService;
 import arile.toy.stock_service.service.ReplyService;

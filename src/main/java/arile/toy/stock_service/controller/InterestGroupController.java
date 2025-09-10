@@ -2,9 +2,9 @@ package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.dto.request.interest.InterestGroupRequest;
 import arile.toy.stock_service.dto.response.GithubUserInfoResponse;
-import arile.toy.stock_service.dto.response.InterestGroupWithCurrentInfoResponse;
-import arile.toy.stock_service.dto.response.InterestStockWithCurrentInfoResponse;
-import arile.toy.stock_service.dto.response.SimpleInterestGroupResponse;
+import arile.toy.stock_service.dto.response.interest.InterestGroupWithCurrentInfoResponse;
+import arile.toy.stock_service.dto.response.interest.InterestStockWithCurrentInfoResponse;
+import arile.toy.stock_service.dto.response.interest.SimpleInterestGroupResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.GithubUserInfoService;
 import arile.toy.stock_service.service.InterestGroupService;

@@ -1,4 +1,4 @@
-package arile.toy.stock_service.dto.response;
+package arile.toy.stock_service.dto.response.post;
 
 import arile.toy.stock_service.dto.ReplyDto;
 
