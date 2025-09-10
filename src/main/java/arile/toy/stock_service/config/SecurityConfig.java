@@ -24,8 +24,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/",
-                                "interest-group",
-                                "stocks/**"
+                                "/interest-group",
+                                "/stocks/**"
                         ).permitAll() // 해당 정보는 허용
                         .anyRequest().authenticated() // 나머지는 인증 필요
                 )
@@ -36,12 +36,4 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }
-
-//    @Bean
-//    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService() {
-//        final DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
-//
-//        // OAuth2UserService : @FunctionalInterface - 람다식 지원
-//        return userRequest -> GithubUser.from(delegate.loadUser(userRequest).getAttributes());
-//    }
 }
