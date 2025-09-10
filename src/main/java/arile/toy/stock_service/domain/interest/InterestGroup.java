@@ -13,7 +13,12 @@ import java.util.Set;
 
 @Getter
 @ToString(callSuper = true)
-@Table(name = "interest_groups")
+@Table(
+        name = "interest_groups",
+        indexes = {
+                @Index(name = "idx_interest_groups_unchangeable_id", columnList = "unchangeable_id")
+        }
+)
 @Entity
 public class InterestGroup extends AuditingFields {
 

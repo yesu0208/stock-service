@@ -45,7 +45,9 @@ CREATE TABLE posts (
         FOREIGN KEY (stock_name)
         REFERENCES static_stock_information(stock_name)
         ON DELETE CASCADE
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+    INDEX idx_posts_unchangeable_id (unchangeable_id),
+    INDEX idx_posts_stock_name (stock_name)
 );
 
 CREATE TABLE interest_groups (
@@ -60,7 +62,8 @@ CREATE TABLE interest_groups (
         FOREIGN KEY (unchangeable_id)
         REFERENCES github_user_information(unchangeable_id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+    INDEX idx_interest_groups_unchangeable_id (unchangeable_id)
 );
 
 CREATE TABLE chatrooms (
@@ -79,9 +82,10 @@ CREATE TABLE chatrooms (
         FOREIGN KEY (stock_name)
         REFERENCES static_stock_information(stock_name)
         ON DELETE CASCADE
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+    INDEX idx_chatrooms_unchangeable_id (unchangeable_id),
+    INDEX idx_chatrooms_stock_name (stock_name)
 );
-
 
 CREATE TABLE replies (
     reply_id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -99,7 +103,9 @@ CREATE TABLE replies (
         FOREIGN KEY (unchangeable_id)
         REFERENCES github_user_information(unchangeable_id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+    INDEX idx_replies_post_id (post_id),
+    INDEX idx_replies_unchangeable_id (unchangeable_id)
 );
 
 CREATE TABLE likes (
@@ -115,7 +121,9 @@ CREATE TABLE likes (
         FOREIGN KEY (post_id)
         REFERENCES posts(post_id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+    INDEX idx_likes_unchangeable_id (unchangeable_id),
+    INDEX idx_likes_post_id (post_id)
 );
 
 CREATE TABLE dislikes (
@@ -131,7 +139,9 @@ CREATE TABLE dislikes (
         FOREIGN KEY (post_id)
         REFERENCES posts(post_id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+    INDEX idx_dislikes_unchangeable_id (unchangeable_id),
+    INDEX idx_dislikes_post_id (post_id)
 );
 
 CREATE TABLE interest_stocks (
@@ -156,7 +166,9 @@ CREATE TABLE interest_stocks (
         FOREIGN KEY (stock_name)
         REFERENCES static_stock_information(stock_name)
         ON DELETE CASCADE
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+    INDEX idx_interest_stocks_interest_group_id (interest_group_id),
+    INDEX idx_interest_stocks_stock_name (stock_name)
 );
 
 CREATE TABLE github_user_chatroom_mappings (
@@ -173,7 +185,9 @@ CREATE TABLE github_user_chatroom_mappings (
         FOREIGN KEY (unchangeable_id)
         REFERENCES github_user_information(unchangeable_id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+    INDEX idx_github_user_chatroom_mappings_chatroom_id (chatroom_id),
+    INDEX idx_github_user_chatroom_mappings_unchangeable_id (unchangeable_id)
 );
 
 CREATE TABLE messages (
@@ -192,5 +206,7 @@ CREATE TABLE messages (
         FOREIGN KEY (chatroom_id)
         REFERENCES chatrooms(chatroom_id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+    INDEX idx_messages_chatroom_id (chatroom_id),
+    INDEX idx_messages_unchangeable_id (unchangeable_id)
 );

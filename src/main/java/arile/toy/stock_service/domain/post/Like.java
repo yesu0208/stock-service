@@ -9,7 +9,13 @@ import java.util.Objects;
 
 @Getter
 @ToString
-@Table(name = "likes")
+@Table(
+        name = "likes",
+        indexes = {
+                @Index(name = "idx_likes_unchangeable_id", columnList = "unchangeable_id"),
+                @Index(name = "idx_likes_post_id", columnList = "post_id")
+        }
+)
 @Entity
 public class Like {
 

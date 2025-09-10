@@ -11,7 +11,13 @@ import java.util.Objects;
 
 @Getter
 @ToString
-@Table(name = "messages")
+@Table(
+        name = "messages",
+        indexes = {
+                @Index(name = "idx_messages_unchangeable_id", columnList = "unchangeable_id"),
+                @Index(name = "idx_messages_chatroom_id", columnList = "chatroom_id")
+        }
+)
 @Entity
 public class Message {
 

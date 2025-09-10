@@ -11,7 +11,13 @@ import java.util.Objects;
 
 @Getter
 @ToString
-@Table(name = "github_user_chatroom_mappings")
+@Table(
+        name = "github_user_chatroom_mappings",
+        indexes = {
+                @Index(name = "idx_gucm_unchangeable_id", columnList = "unchangeable_id"),
+                @Index(name = "idx_gucm_chatroom_id", columnList = "chatroom_id")
+        }
+)
 @Entity
 public class GithubUserChatroomMapping {
 
