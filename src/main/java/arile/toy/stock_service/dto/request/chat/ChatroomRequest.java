@@ -1,4 +1,4 @@
-package arile.toy.stock_service.dto.request;
+package arile.toy.stock_service.dto.request.chat;
 
 public record ChatroomRequest(
         String title,

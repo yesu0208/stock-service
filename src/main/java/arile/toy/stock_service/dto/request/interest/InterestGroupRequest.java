@@ -1,4 +1,4 @@
-package arile.toy.stock_service.dto.request;
+package arile.toy.stock_service.dto.request.interest;
 
 import arile.toy.stock_service.dto.InterestGroupDto;
 
@@ -28,5 +28,4 @@ public record InterestGroupRequest(
         );
     }
 
-    // Dto -> request는 필요 x (request는 주는 것은 아니므로)
 }

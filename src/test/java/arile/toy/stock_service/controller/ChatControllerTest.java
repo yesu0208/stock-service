@@ -3,7 +3,7 @@ package arile.toy.stock_service.controller;
 import arile.toy.stock_service.config.SecurityConfig;
 import arile.toy.stock_service.dto.ChatroomDto;
 import arile.toy.stock_service.dto.ChatroomWithCurrentStockDto;
-import arile.toy.stock_service.dto.request.ChatroomRequest;
+import arile.toy.stock_service.dto.request.chat.ChatroomRequest;
 import arile.toy.stock_service.dto.security.GithubUser;
 import arile.toy.stock_service.service.ChatService;
 import arile.toy.stock_service.service.GithubOAuth2UserService;

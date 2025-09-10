@@ -1,4 +1,4 @@
-package arile.toy.stock_service.dto.request;
+package arile.toy.stock_service.dto.request.post;
 
 import arile.toy.stock_service.dto.PostDto;
 

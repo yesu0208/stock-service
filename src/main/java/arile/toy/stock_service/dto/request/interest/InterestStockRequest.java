@@ -1,13 +1,11 @@
-package arile.toy.stock_service.dto.request;
+package arile.toy.stock_service.dto.request.interest;
 
 import arile.toy.stock_service.dto.InterestStockDto;
 
 public record InterestStockRequest(
-//        StockInfo stockInfo,
         String stockName, // StockInfo 대신 stockName을 받음
         Integer buyingPrice,
         Integer numOfStocks,
-//        Integer breakEvenPrice,
         Integer fieldOrder
 ) {
     // static method
@@ -40,5 +38,4 @@ public record InterestStockRequest(
         );
     }
 
-    // Dto -> request는 필요 x (request는 주는 것은 아니므로)
 }

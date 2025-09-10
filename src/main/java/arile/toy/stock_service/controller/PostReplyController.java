@@ -1,7 +1,7 @@
 package arile.toy.stock_service.controller;
 
-import arile.toy.stock_service.dto.request.PostRequest;
-import arile.toy.stock_service.dto.request.ReplyRequest;
+import arile.toy.stock_service.dto.request.post.PostRequest;
+import arile.toy.stock_service.dto.request.post.ReplyRequest;
 import arile.toy.stock_service.dto.response.PostResponse;
 import arile.toy.stock_service.dto.response.ReplyResponse;
 import arile.toy.stock_service.dto.response.SimplePostResponse;
