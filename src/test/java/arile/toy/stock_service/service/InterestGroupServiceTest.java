@@ -1,7 +1,7 @@
 package arile.toy.stock_service.service;
 
-import arile.toy.stock_service.domain.InterestGroup;
-import arile.toy.stock_service.domain.InterestStock;
+import arile.toy.stock_service.domain.interest.InterestGroup;
+import arile.toy.stock_service.domain.interest.InterestStock;
 import arile.toy.stock_service.dto.InterestGroupDto;
 import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
 import arile.toy.stock_service.dto.InterestStockDto;

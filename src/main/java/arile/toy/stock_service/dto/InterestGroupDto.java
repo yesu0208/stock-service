@@ -1,6 +1,6 @@
 package arile.toy.stock_service.dto;
 
-import arile.toy.stock_service.domain.InterestGroup;
+import arile.toy.stock_service.domain.interest.InterestGroup;
 
 import java.time.LocalDateTime;
 import java.util.Set;

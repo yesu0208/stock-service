@@ -1,5 +1,6 @@
-package arile.toy.stock_service.domain;
+package arile.toy.stock_service.domain.interest;
 
+import arile.toy.stock_service.domain.auditing.AuditingFields;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,26 +12,45 @@ import java.util.Objects;
 @ToString(callSuper = true)
 @Table(name = "interest_stocks")
 @Entity
-public class InterestStock extends AuditingFields{
+public class InterestStock extends AuditingFields {
 
     @Id
+    @Column(name = "interest_stock_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long interestStockId;
 
     @Setter
-    @JoinColumn(name = "interest_group_id")
-    @ManyToOne(optional = false) // 반드시 interestGroup을 가져야 함.
+    @JoinColumn(name = "interest_group_id", nullable = false)
+    @ManyToOne(optional = false)
     private InterestGroup interestGroup;
 
-    @Setter @Column(nullable = false) private String stockName;
-    @Setter @Column private Integer buyingPrice;
-    @Setter @Column private Integer numOfStocks;
-    @Setter @Column private Integer breakEvenPrice;
-    @Setter @Column private Integer totalBuyingPrice;
-    @Setter @Column(nullable = false) private Integer fieldOrder;
+    @Setter
+    @Column(name = "stock_name", nullable = false)
+    private String stockName;
+
+    @Setter
+    @Column (name = "buying_price")
+    private Integer buyingPrice;
+
+    @Setter
+    @Column (name = "num_of_stocks")
+    private Integer numOfStocks;
+
+    @Setter
+    @Column (name = "break_even_price")
+    private Integer breakEvenPrice;
+
+    @Setter
+    @Column (name = "total_buying_price")
+    private Integer totalBuyingPrice;
+
+    @Setter
+    @Column(name = "field_order", nullable = false)
+    private Integer fieldOrder;
 
 
     protected InterestStock() {}
+
 
     public InterestStock(String stockName, Integer buyingPrice, Integer numOfStocks, Integer breakEvenPrice, Integer totalBuyingPrice, Integer fieldOrder){
         this.stockName = stockName;
@@ -40,6 +60,7 @@ public class InterestStock extends AuditingFields{
         this.totalBuyingPrice = totalBuyingPrice;
         this.fieldOrder = fieldOrder;
     }
+
 
     public static InterestStock of(String stockName, Integer buyingPrice, Integer numOfStocks, Integer breakEvenPrice, Integer totalBuyingPrice, Integer fieldOrder) {
         return new InterestStock(stockName, buyingPrice, numOfStocks, breakEvenPrice, totalBuyingPrice, fieldOrder);
@@ -62,6 +83,7 @@ public class InterestStock extends AuditingFields{
         }
         return Objects.equals(this.getInterestStockId(), that.getInterestStockId());
     }
+
 
     @Override
     public int hashCode() {

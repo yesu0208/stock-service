@@ -1,5 +1,6 @@
-package arile.toy.stock_service.domain;
+package arile.toy.stock_service.domain.interest;
 
+import arile.toy.stock_service.domain.auditing.AuditingFields;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,43 +18,49 @@ import java.util.Set;
 public class InterestGroup extends AuditingFields {
 
     @Id
+    @Column(name = "interest_group_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long interestGroupId;
 
     @Setter
-    @Column(nullable = false)
+    @Column(name = "group_name", nullable = false)
     private String groupName;
 
     @Setter
-    @Column(nullable = false)
+    @Column(name = "unchangeable_id", nullable = false)
     private String unchangeableId;
 
-    // final은 합당 : 여기에 새로운 LinkedHashSet을 넣는 것이 아닌 단순 add, delete만 하므로
     @ToString.Exclude
     @OrderBy("fieldOrder ASC")
     @OneToMany(mappedBy = "interestGroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final Set<InterestStock> interestStocks = new LinkedHashSet<>(); // 순서가 있는 set : 관심종목은 순서가 있다.
+    private final Set<InterestStock> interestStocks = new LinkedHashSet<>();
+
 
     protected InterestGroup() {
     }
+
 
     public InterestGroup(String groupName, String unchangeableId) {
         this.groupName = groupName;
         this.unchangeableId = unchangeableId;
     }
 
+
     public static InterestGroup of(String groupName, String unchangeableId) {
         return new InterestGroup(groupName, unchangeableId);
     }
+
 
     public void addInterestStocks(Collection<InterestStock> interestStocks) {
         interestStocks.forEach(this::addInterestStock);
     }
 
+
     public void addInterestStock(InterestStock interestStock) {
         interestStocks.add(interestStock);
         interestStock.setInterestGroup(this);
     }
+
 
     public void clearInterestStocks() {
         interestStocks.clear();
@@ -71,6 +78,7 @@ public class InterestGroup extends AuditingFields {
         }
         return Objects.equals(this.getInterestGroupId(), that.getInterestGroupId());
     }
+
 
     @Override
     public int hashCode() {

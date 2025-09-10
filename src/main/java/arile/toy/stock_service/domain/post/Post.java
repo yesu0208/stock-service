@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -13,50 +12,50 @@ import java.util.Objects;
 
 @Getter
 @ToString
-@DynamicUpdate // JPA가 변경된 필드만 UPDATE SQL에 포함시킵니다.
 @Table(name = "posts")
 @Entity
 public class Post {
 
     @Id
+    @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
 
     @Setter
-    @Column
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Setter
-    @Column
+    @Column(name = "stock_name", nullable = false)
     private String stockName;
 
     @Setter
-    @Column(columnDefinition = "TEXT") // 긴 문자열
+    @Column(name = "body", columnDefinition = "TEXT")
     private String body;
 
     @Setter
-    @Column
+    @Column(name = "replies_count", nullable = false)
     private Long repliesCount = 0L;
 
     @Setter
-    @Column
+    @Column(name = "likes_count", nullable = false)
     private Long likesCount = 0L;
 
     @Setter
-    @Column
+    @Column(name = "dislikes_count", nullable = false)
     private Long dislikesCount = 0L;
 
     @Setter
-    @Column(columnDefinition = "DATETIME")
+    @Column(name = "created_at", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime createdAt;
 
     @Setter
-    @Column(columnDefinition = "DATETIME")
+    @Column(name = "modified_at", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime modifiedAt;
 
     @Setter
     @ManyToOne
-    @JoinColumn(name = "unchangeable_id")
+    @JoinColumn(name = "unchangeable_id", nullable = false)
     private GithubUserInfo user;
 
     protected Post() {}
@@ -72,6 +71,7 @@ public class Post {
         this.user = user;
     }
 
+
     public static Post of(String title, String stockName, String body, Long repliesCount,
                           Long likesCount, Long dislikesCount, GithubUserInfo user) {
         return new Post(title, stockName, body, repliesCount, likesCount, dislikesCount, user);
@@ -84,10 +84,12 @@ public class Post {
         this.modifiedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
+
     @PreUpdate
     private void preUpdate() {
         this.modifiedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
+
 
     @Override
     public boolean equals(Object object) {
@@ -106,6 +108,7 @@ public class Post {
         }
         return Objects.equals(this.getPostId(), that.getPostId());
     }
+
 
     @Override
     public int hashCode() {

@@ -1,6 +1,6 @@
 package arile.toy.stock_service.repository;
 
-import arile.toy.stock_service.domain.InterestStock;
+import arile.toy.stock_service.domain.interest.InterestStock;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

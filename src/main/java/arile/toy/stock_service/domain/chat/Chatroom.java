@@ -1,8 +1,10 @@
-package arile.toy.stock_service.domain;
+package arile.toy.stock_service.domain.chat;
 
+import arile.toy.stock_service.domain.GithubUserInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -10,39 +12,42 @@ import java.util.Objects;
 import java.util.Set;
 
 @Getter
+@ToString
 @Table(name = "chatrooms")
 @Entity
 public class Chatroom {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chatroom_id")
     @Id
-    Long chatroomId;
+    @Column(name = "chatroom_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long chatroomId;
 
-    @Column
-    String title;
+    @Column(name = "title", nullable = false)
+    private String title;
 
-    @Column
+    @ToString.Exclude
     @OneToMany(mappedBy = "chatroom", cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<GithubUserChatroomMapping> githubUserChatroomMappings = new HashSet<>();
+    private Set<GithubUserChatroomMapping> githubUserChatroomMappings = new HashSet<>();
 
-    @Column(columnDefinition = "DATETIME")
-    LocalDateTime createdAt;
+    @Column(name = "created_at", columnDefinition = "DATETIME", nullable = false)
+    private LocalDateTime createdAt;
 
-    @Column
-    String stockName;
+    @Column(name = "stock_name", nullable = false)
+    private String stockName;
 
-    @Column
-    String createdBy;
+    @Column(name = "created_by", nullable = false)
+    private String createdBy;
 
-    @Column
-    String unchangeableId;
+    @Column(name = "unchangeable_id", nullable = false)
+    private String unchangeableId;
 
     @Setter
     @Transient
-    Boolean hasNewMessage;
+    private Boolean hasNewMessage;
+
 
     public Chatroom() {}
+
 
     public Chatroom(String title, LocalDateTime createdAt, String stockName, String createdBy, String unchangeableId) {
         this.title = title;
@@ -52,9 +57,11 @@ public class Chatroom {
         this.unchangeableId = unchangeableId;
     }
 
+
     public static Chatroom of(String title, LocalDateTime createdAt, String stockName, String createdBy, String unchangeableId) {
         return new Chatroom(title, createdAt, stockName, createdBy, unchangeableId);
     }
+
 
     // 테스트용
     public Chatroom(Long chatroomId, String title, Set<GithubUserChatroomMapping> githubUserChatroomMappings,
@@ -73,6 +80,7 @@ public class Chatroom {
         return new Chatroom(chatroomId, title, githubUserChatroomMappings, createdAt, stockName, createdBy, unchangeableId);
     }
 
+
     public GithubUserChatroomMapping addGithubUserInfo(GithubUserInfo githubUserInfo) {
 
         GithubUserChatroomMapping githubUserChatroomMapping =
@@ -82,6 +90,7 @@ public class Chatroom {
 
         return  githubUserChatroomMapping;
     }
+
 
     @Override
     public boolean equals(Object object) {
@@ -98,6 +107,7 @@ public class Chatroom {
 
         return Objects.equals(this.getChatroomId(), that.getChatroomId());
     }
+
 
     @Override
     public int hashCode() {

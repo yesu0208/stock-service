@@ -1,6 +1,6 @@
-package arile.toy.stock_service.domain;
+package arile.toy.stock_service.domain.post;
 
-import arile.toy.stock_service.domain.post.Post;
+import arile.toy.stock_service.domain.GithubUserInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,24 +14,28 @@ import java.util.Objects;
 public class Dislike {
 
     @Id
+    @Column(name = "dislike_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long dislikeId;
 
     @ManyToOne
-    @JoinColumn(name = "unchangeableId")
+    @JoinColumn(name = "unchangeable_id", nullable = false)
     private GithubUserInfo githubUserInfo;
 
     @ManyToOne
-    @JoinColumn(name = "postId")
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
+
 
     protected Dislike() {
     }
+
 
     public Dislike(GithubUserInfo githubUserInfo, Post post) {
         this.githubUserInfo = githubUserInfo;
         this.post = post;
     }
+
 
     public static Dislike of(GithubUserInfo githubUserInfo, Post post) {
         return new Dislike(githubUserInfo, post);
@@ -50,6 +54,7 @@ public class Dislike {
 
         return Objects.equals(this.getDislikeId(), that.getDislikeId());
     }
+
 
     @Override
     public int hashCode() {

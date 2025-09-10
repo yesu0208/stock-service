@@ -1,7 +1,7 @@
 package arile.toy.stock_service.dto;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
-import arile.toy.stock_service.domain.Reply;
+import arile.toy.stock_service.domain.post.Reply;
 import arile.toy.stock_service.domain.post.Post;
 
 import java.time.LocalDateTime;

@@ -14,24 +14,26 @@ import java.util.Objects;
 public class StaticStockInfo {
 
     @Id
+    @Column(name = "stock_name")
     private String stockName;
 
-    @Column(nullable = false)
+    @Column(name = "short_code", nullable = false)
     private String shortCode;
 
-    @Column(nullable = false)
+    @Column(name = "market_class", nullable = false)
     @Enumerated(EnumType.STRING)
     private MarketClass marketClass;
 
 
+    protected StaticStockInfo() {}
 
-    protected StaticStockInfo() {} // JPA Entity는 기본생성자 반드시 필요(프록시 생성을 위해)
 
     public StaticStockInfo(String stockName, String shortCode, MarketClass marketClass) {
         this.stockName = stockName;
         this.shortCode = shortCode;
         this.marketClass = marketClass;
     }
+
 
     public StaticStockInfo(String stockName) {
         this.stockName = stockName;
@@ -47,6 +49,7 @@ public class StaticStockInfo {
                     Objects.equals(this.getShortCode(), that.getShortCode()) &&
                     Objects.equals(this.getMarketClass(), that.getMarketClass());
     }
+
 
     @Override
     public int hashCode() {

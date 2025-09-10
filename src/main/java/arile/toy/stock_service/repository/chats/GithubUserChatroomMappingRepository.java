@@ -1,6 +1,6 @@
 package arile.toy.stock_service.repository.chats;
 
-import arile.toy.stock_service.domain.GithubUserChatroomMapping;
+import arile.toy.stock_service.domain.chat.GithubUserChatroomMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

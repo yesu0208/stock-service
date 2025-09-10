@@ -1,6 +1,6 @@
 package arile.toy.stock_service.repository;
 
-import arile.toy.stock_service.domain.Like;
+import arile.toy.stock_service.domain.post.Like;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

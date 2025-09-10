@@ -1,6 +1,6 @@
 package arile.toy.stock_service.repository;
 
-import arile.toy.stock_service.domain.InterestGroup;
+import arile.toy.stock_service.domain.interest.InterestGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

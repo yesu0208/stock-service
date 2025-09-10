@@ -1,6 +1,6 @@
-package arile.toy.stock_service.domain;
+package arile.toy.stock_service.domain.post;
 
-import arile.toy.stock_service.domain.post.Post;
+import arile.toy.stock_service.domain.GithubUserInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,28 +14,33 @@ import java.util.Objects;
 public class Like {
 
     @Id
+    @Column(name = "like_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long likeId;
 
     @ManyToOne
-    @JoinColumn(name = "unchangeableId")
+    @JoinColumn(name = "unchangeable_id", nullable = false)
     private GithubUserInfo githubUserInfo;
 
     @ManyToOne
-    @JoinColumn(name = "postId")
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
+
 
     protected Like() {
     }
+
 
     public Like(GithubUserInfo githubUserInfo, Post post) {
         this.githubUserInfo = githubUserInfo;
         this.post = post;
     }
 
+
     public static Like of(GithubUserInfo githubUserInfo, Post post) {
         return new Like(githubUserInfo, post);
     }
+
 
     @Override
     public boolean equals(Object object) {
@@ -49,6 +54,7 @@ public class Like {
 
         return Objects.equals(this.getLikeId(), that.getLikeId());
     }
+
 
     @Override
     public int hashCode() {

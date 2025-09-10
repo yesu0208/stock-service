@@ -1,6 +1,6 @@
-package arile.toy.stock_service.domain;
+package arile.toy.stock_service.domain.post;
 
-import arile.toy.stock_service.domain.post.Post;
+import arile.toy.stock_service.domain.GithubUserInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,38 +17,42 @@ import java.util.Objects;
 public class Reply {
 
     @Id
+    @Column(name = "reply_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long replyId;
 
     @Setter
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "body", columnDefinition = "TEXT")
     private String body;
 
     @Setter
-    @Column(columnDefinition = "DATETIME")
+    @Column(name = "created_at", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime createdAt;
 
     @Setter
-    @Column(columnDefinition = "DATETIME")
+    @Column(name = "modified_at", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime modifiedAt;
 
     @Setter
     @ManyToOne
-    @JoinColumn(name = "unchangeable_id")
+    @JoinColumn(name = "unchangeable_id", nullable = false)
     private GithubUserInfo user;
 
     @Setter
     @ManyToOne
-    @JoinColumn(name = "postId")
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+
     protected Reply() {}
+
 
     public Reply(String body, GithubUserInfo user, Post post) {
         this.body = body;
         this.user = user;
         this.post = post;
     }
+
 
     public static Reply of(String body, GithubUserInfo user, Post post) {
         return new Reply(body, user, post);
@@ -60,6 +64,7 @@ public class Reply {
         this.createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         this.modifiedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
+
 
     @PreUpdate
     private void preUpdate() {
@@ -81,6 +86,7 @@ public class Reply {
         }
         return Objects.equals(this.getReplyId(), that.getReplyId());
     }
+
 
     @Override
     public int hashCode() {

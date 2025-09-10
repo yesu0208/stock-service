@@ -1,6 +1,6 @@
 package arile.toy.stock_service.controller;
 
-import arile.toy.stock_service.domain.Message;
+import arile.toy.stock_service.domain.chat.Message;
 import arile.toy.stock_service.domain.constant.MessageType;
 import arile.toy.stock_service.dto.ChatMessage;
 import arile.toy.stock_service.dto.security.GithubUser;

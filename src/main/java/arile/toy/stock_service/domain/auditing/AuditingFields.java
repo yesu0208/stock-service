@@ -1,4 +1,4 @@
-package arile.toy.stock_service.domain;
+package arile.toy.stock_service.domain.auditing;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -21,10 +21,10 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class AuditingFields {
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) // 표준 date로 변경 (ISO)
-    @CreatedDate // 자동으로 setting
-    @Column(nullable = false, updatable = false, columnDefinition = "DATETIME") // 생성과 관련된 정보는 update 되어서는 안된다.
-    protected LocalDateTime createdAt; // protected : 자식 class가 참조할 수 있도록 private(x)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @CreatedDate
+    @Column(nullable = false, updatable = false, columnDefinition = "DATETIME")
+    protected LocalDateTime createdAt;
 
     @CreatedBy
     @Column(nullable = false, updatable = false)

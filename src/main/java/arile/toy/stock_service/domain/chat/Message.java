@@ -1,41 +1,47 @@
-package arile.toy.stock_service.domain;
+package arile.toy.stock_service.domain.chat;
 
+import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.constant.MessageType;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
+@ToString
 @Table(name = "messages")
 @Entity
 public class Message {
 
     @Id
+    @Column(name = "message_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long messageId;
+    private Long messageId;
 
-    @Column(columnDefinition = "TEXT")
-    String text;
+    @Column(name = "text", columnDefinition = "TEXT", nullable = false)
+    private String text;
 
-    @ManyToOne
-    @JoinColumn(name = "unchangeable_id")
-    GithubUserInfo githubUserInfo;
+    @JoinColumn(name = "unchangeable_id", nullable = false)
+    @ManyToOne(optional = false)
+    private GithubUserInfo githubUserInfo;
 
-    @ManyToOne
-    @JoinColumn(name = "chatroom_id")
-    Chatroom chatroom;
+    @JoinColumn(name = "chatroom_id", nullable = false)
+    @ManyToOne(optional = false)
+    private Chatroom chatroom;
 
-    @Column(columnDefinition = "DATETIME")
-    LocalDateTime createdAt;
+    @Column(columnDefinition = "DATETIME", nullable = false)
+    private LocalDateTime createdAt;
 
-    @Column
+    @Column(name = "message_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    MessageType messageType;
+    private MessageType messageType;
+
 
     public Message() {
     }
+
 
     public Message(String text, GithubUserInfo githubUserInfo, Chatroom chatroom, LocalDateTime createdAt, MessageType messageType) {
         this.text = text;
@@ -45,9 +51,11 @@ public class Message {
         this.messageType = messageType;
     }
 
+
     public static Message of(String text, GithubUserInfo githubUserInfo, Chatroom chatroom, LocalDateTime createdAt, MessageType messageType) {
         return new Message(text, githubUserInfo, chatroom, createdAt, messageType);
     }
+
 
     @Override
     public boolean equals(Object object) {
@@ -64,6 +72,7 @@ public class Message {
 
         return Objects.equals(this.getMessageId(), that.getMessageId());
     }
+
 
     @Override
     public int hashCode() {
