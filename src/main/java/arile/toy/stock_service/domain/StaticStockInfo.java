@@ -14,10 +14,6 @@ import java.util.Objects;
 public class StaticStockInfo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long staticStockInfoId;
-
-    @Column(nullable = false)
     private String stockName;
 
     @Column(nullable = false)
@@ -47,19 +43,15 @@ public class StaticStockInfo {
         if (this == object) return true;
         if (!(object instanceof StaticStockInfo that)) return false;
 
-        if (getStaticStockInfoId() == null) {
-            return Objects.equals(this.getStockName(), that.getStockName()) &&
+        return Objects.equals(this.getStockName(), that.getStockName()) &&
                     Objects.equals(this.getShortCode(), that.getShortCode()) &&
                     Objects.equals(this.getMarketClass(), that.getMarketClass());
-        }
-        return Objects.equals(this.getStaticStockInfoId(), that.getStaticStockInfoId());
     }
 
     @Override
     public int hashCode() {
-        if (getStaticStockInfoId() == null) {
-            return Objects.hash(getStockName(), getShortCode(), getMarketClass());
-        }
-        return Objects.hash(getStaticStockInfoId());
+
+        return Objects.hash(getStockName(), getShortCode(), getMarketClass());
+
     }
 }

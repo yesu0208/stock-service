@@ -21,9 +21,8 @@ CREATE TABLE github_user_information (
 );
 
 CREATE TABLE static_stock_information (
-    static_stock_info_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    stock_name VARCHAR(255) PRIMARY KEY,
     short_code VARCHAR(255),
-    stock_name VARCHAR(255),
     market_class ENUM('KONEX','KOSDAQ','KOSDAQGLOBAL','KOSPI')
 );
 
@@ -42,6 +41,11 @@ CREATE TABLE posts (
     CONSTRAINT fk_posts_unchangeable_id
         FOREIGN KEY (unchangeable_id)
         REFERENCES github_user_information(unchangeable_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_posts_stock_name
+        FOREIGN KEY (stock_name)
+        REFERENCES static_stock_information(stock_name)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
@@ -74,8 +78,14 @@ CREATE TABLE chatrooms (
         FOREIGN KEY (unchangeable_id)
         REFERENCES github_user_information(unchangeable_id)
         ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_chatrooms_stock_name
+        FOREIGN KEY (stock_name)
+        REFERENCES static_stock_information(stock_name)
+        ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+
 
 -- 5️⃣ replies
 CREATE TABLE replies (
@@ -148,6 +158,11 @@ CREATE TABLE interest_stocks (
     CONSTRAINT fk_interest_stocks_interest_group_id
         FOREIGN KEY (interest_group_id)
         REFERENCES interest_groups(interest_group_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_interest_stocks_stock_name
+        FOREIGN KEY (stock_name)
+        REFERENCES static_stock_information(stock_name)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
