@@ -1,6 +1,6 @@
 package arile.toy.stock_service.dto.response.interest;
 
-import arile.toy.stock_service.dto.InterestGroupDto;
+import arile.toy.stock_service.dto.interestdto.InterestGroupDto;
 
 import java.time.LocalDateTime;
 

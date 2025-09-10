@@ -1,6 +1,6 @@
 package arile.toy.stock_service.controller;
 
-import arile.toy.stock_service.dto.ChatMessage;
+import arile.toy.stock_service.dto.chatdto.ChatMessage;
 import arile.toy.stock_service.dto.request.chat.ChatroomRequest;
 import arile.toy.stock_service.dto.response.chat.ChatroomResponse;
 import arile.toy.stock_service.dto.response.chat.ChatroomWithCurrentStockResponse;

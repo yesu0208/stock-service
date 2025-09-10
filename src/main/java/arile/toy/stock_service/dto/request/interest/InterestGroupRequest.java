@@ -1,6 +1,6 @@
 package arile.toy.stock_service.dto.request.interest;
 
-import arile.toy.stock_service.dto.InterestGroupDto;
+import arile.toy.stock_service.dto.interestdto.InterestGroupDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

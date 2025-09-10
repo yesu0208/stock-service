@@ -1,7 +1,7 @@
 package arile.toy.stock_service.service;
 
-import arile.toy.stock_service.dto.InterestGroupDto;
-import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
+import arile.toy.stock_service.dto.interestdto.InterestGroupDto;
+import arile.toy.stock_service.dto.interestdto.InterestGroupWithCurrentInfoDto;
 import arile.toy.stock_service.exception.group.GroupNotFoundException;
 import arile.toy.stock_service.repository.InterestGroupRepository;
 import lombok.RequiredArgsConstructor;

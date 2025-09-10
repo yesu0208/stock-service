@@ -1,6 +1,6 @@
 package arile.toy.stock_service.dto.response.post;
 
-import arile.toy.stock_service.dto.SimplePostDto;
+import arile.toy.stock_service.dto.postdto.SimplePostDto;
 
 import java.time.LocalDateTime;
 

@@ -2,10 +2,10 @@ package arile.toy.stock_service.service;
 
 import arile.toy.stock_service.domain.interest.InterestGroup;
 import arile.toy.stock_service.domain.interest.InterestStock;
-import arile.toy.stock_service.dto.InterestGroupDto;
-import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
-import arile.toy.stock_service.dto.InterestStockDto;
-import arile.toy.stock_service.dto.InterestStockWithCurrentInfoDto;
+import arile.toy.stock_service.dto.interestdto.InterestGroupDto;
+import arile.toy.stock_service.dto.interestdto.InterestGroupWithCurrentInfoDto;
+import arile.toy.stock_service.dto.interestdto.InterestStockDto;
+import arile.toy.stock_service.dto.interestdto.InterestStockWithCurrentInfoDto;
 import arile.toy.stock_service.exception.group.GroupNotFoundException;
 import arile.toy.stock_service.repository.InterestGroupRepository;
 import org.junit.jupiter.api.DisplayName;

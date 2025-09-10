@@ -8,6 +8,7 @@ public record StaticStockInfoDto(
         String shortCode,
         MarketClass marketClass
 ) {
+    // entity -> dto
     public static StaticStockInfoDto fromEntity(StaticStockInfo entity) {
         return new StaticStockInfoDto(
                 entity.getStockName(),

@@ -2,7 +2,7 @@ package arile.toy.stock_service.service;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.post.Reply;
-import arile.toy.stock_service.dto.ReplyDto;
+import arile.toy.stock_service.dto.postdto.ReplyDto;
 import arile.toy.stock_service.exception.post.PostNotFoundException;
 import arile.toy.stock_service.exception.reply.ReplyNotFoundException;
 import arile.toy.stock_service.exception.user.UserNotFoundException;

@@ -1,4 +1,4 @@
-package arile.toy.stock_service.dto;
+package arile.toy.stock_service.dto.chatdto;
 
 import arile.toy.stock_service.domain.constant.MessageType;
 

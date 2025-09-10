@@ -1,4 +1,4 @@
-package arile.toy.stock_service.dto;
+package arile.toy.stock_service.dto.postdto;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.post.Reply;

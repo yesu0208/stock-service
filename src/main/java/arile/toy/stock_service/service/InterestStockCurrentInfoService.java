@@ -2,8 +2,8 @@ package arile.toy.stock_service.service;
 
 import arile.toy.stock_service.domain.GithubUserInfo;
 import arile.toy.stock_service.domain.naverstock.NaverStockResponse;
-import arile.toy.stock_service.dto.InterestStockDto;
-import arile.toy.stock_service.dto.InterestStockWithCurrentInfoDto;
+import arile.toy.stock_service.dto.interestdto.InterestStockDto;
+import arile.toy.stock_service.dto.interestdto.InterestStockWithCurrentInfoDto;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

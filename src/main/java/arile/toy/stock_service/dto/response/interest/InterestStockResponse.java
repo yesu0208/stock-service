@@ -1,7 +1,7 @@
 package arile.toy.stock_service.dto.response.interest;
 
 
-import arile.toy.stock_service.dto.InterestStockDto;
+import arile.toy.stock_service.dto.interestdto.InterestStockDto;
 
 public record InterestStockResponse(
         String stockName,

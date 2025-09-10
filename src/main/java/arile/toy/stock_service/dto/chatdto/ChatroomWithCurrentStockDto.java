@@ -1,4 +1,4 @@
-package arile.toy.stock_service.dto;
+package arile.toy.stock_service.dto.chatdto;
 
 import java.time.LocalDateTime;
 

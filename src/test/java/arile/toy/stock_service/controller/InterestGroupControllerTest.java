@@ -2,7 +2,7 @@ package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.config.SecurityConfig;
 import arile.toy.stock_service.dto.GithubUserInfoDto;
-import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
+import arile.toy.stock_service.dto.interestdto.InterestGroupWithCurrentInfoDto;
 import arile.toy.stock_service.dto.request.interest.InterestGroupRequest;
 import arile.toy.stock_service.dto.request.interest.InterestStockRequest;
 import arile.toy.stock_service.dto.security.GithubUser;

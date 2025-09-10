@@ -1,6 +1,6 @@
 package arile.toy.stock_service.dto.response.interest;
 
-import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
+import arile.toy.stock_service.dto.interestdto.InterestGroupWithCurrentInfoDto;
 
 import java.util.List;
 

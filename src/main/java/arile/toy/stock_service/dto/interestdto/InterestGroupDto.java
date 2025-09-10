@@ -1,4 +1,4 @@
-package arile.toy.stock_service.dto;
+package arile.toy.stock_service.dto.interestdto;
 
 import arile.toy.stock_service.domain.interest.InterestGroup;
 
@@ -23,7 +23,7 @@ public record InterestGroupDto(
                 entity.getInterestGroupId(),
                 entity.getGroupName(),
                 entity.getUnchangeableId(),
-                entity.getInterestStocks().stream() // DTO로 변환
+                entity.getInterestStocks().stream()
                         .map(InterestStockDto::fromEntity)
                         .collect(Collectors.toUnmodifiableSet()), // 불변성
                 entity.getCreatedAt(),
@@ -59,7 +59,7 @@ public record InterestGroupDto(
     // Dto -> Entity
     public InterestGroup createEntity() {
         InterestGroup entity = InterestGroup.of(groupName, unchangeableId);
-        entity.addInterestStocks(interestStockDtos.stream().map(InterestStockDto::createEntity).toList()); // Collection을 받을 수 있도록 설계 .toSet()이 없으니, .toList()를 사용
+        entity.addInterestStocks(interestStockDtos.stream().map(InterestStockDto::createEntity).toList());
 
         return entity;
     }

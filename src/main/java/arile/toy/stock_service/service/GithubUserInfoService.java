@@ -2,8 +2,8 @@ package arile.toy.stock_service.service;
 
 import arile.toy.stock_service.dto.GithubUserCurrentAccountDto;
 import arile.toy.stock_service.dto.GithubUserInfoDto;
-import arile.toy.stock_service.dto.InterestStockDto;
-import arile.toy.stock_service.dto.InterestStockWithCurrentInfoDto;
+import arile.toy.stock_service.dto.interestdto.InterestStockDto;
+import arile.toy.stock_service.dto.interestdto.InterestStockWithCurrentInfoDto;
 import arile.toy.stock_service.exception.user.UserNotFoundException;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
 import arile.toy.stock_service.repository.InterestStockRepository;

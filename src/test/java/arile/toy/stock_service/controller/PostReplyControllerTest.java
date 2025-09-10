@@ -1,7 +1,7 @@
 package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.config.SecurityConfig;
-import arile.toy.stock_service.dto.PostDto;
+import arile.toy.stock_service.dto.postdto.PostDto;
 import arile.toy.stock_service.dto.request.post.PostRequest;
 import arile.toy.stock_service.dto.request.post.ReplyRequest;
 import arile.toy.stock_service.dto.security.GithubUser;

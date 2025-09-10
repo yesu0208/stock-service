@@ -1,6 +1,6 @@
 package arile.toy.stock_service.dto.request.post;
 
-import arile.toy.stock_service.dto.PostDto;
+import arile.toy.stock_service.dto.postdto.PostDto;
 
 public record PostRequest(
         String title,

@@ -1,6 +1,6 @@
 package arile.toy.stock_service.dto.request.interest;
 
-import arile.toy.stock_service.dto.InterestStockDto;
+import arile.toy.stock_service.dto.interestdto.InterestStockDto;
 
 public record InterestStockRequest(
         String stockName, // StockInfo 대신 stockName을 받음
