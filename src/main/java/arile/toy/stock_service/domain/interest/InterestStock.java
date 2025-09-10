@@ -10,7 +10,13 @@ import java.util.Objects;
 
 @Getter
 @ToString(callSuper = true)
-@Table(name = "interest_stocks")
+@Table(
+        name = "interest_stocks",
+        indexes = {
+                @Index(name = "idx_interest_stocks_interest_group_id", columnList = "interest_group_id"),
+                @Index(name = "idx_interest_stocks_stock_name", columnList = "stock_name")
+        }
+)
 @Entity
 public class InterestStock extends AuditingFields {
 

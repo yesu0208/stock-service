@@ -12,7 +12,13 @@ import java.util.Objects;
 
 @Getter
 @ToString
-@Table(name = "replies")
+@Table(
+        name = "replies",
+        indexes = {
+                @Index(name = "idx_replies_unchangeable_id", columnList = "unchangeable_id"),
+                @Index(name = "idx_replies_post_id", columnList = "post_id")
+        }
+)
 @Entity
 public class Reply {
 

@@ -13,7 +13,13 @@ import java.util.Set;
 
 @Getter
 @ToString
-@Table(name = "chatrooms")
+@Table(
+        name = "chatrooms",
+        indexes = {
+                @Index(name = "idx_chatrooms_stock_name", columnList = "stock_name"),
+                @Index(name = "idx_chatrooms_unchangeable_id", columnList = "unchangeable_id")
+        }
+)
 @Entity
 public class Chatroom {
 
