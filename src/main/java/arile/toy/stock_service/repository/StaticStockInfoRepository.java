@@ -14,6 +14,7 @@ public interface StaticStockInfoRepository extends JpaRepository<StaticStockInfo
     @NonNull
     @Cacheable(value = "stockNames")
     List<StaticStockInfo> findAll();
+
     Optional<StaticStockInfo> findByStockName(String stockName);
 
 }

@@ -18,7 +18,6 @@ public class StaticStockInfoService {
 
         return staticStockInfoRepository.findByStockName(stockName)
                 .map(StaticStockInfo::getShortCode)
-                // Optional
                 .orElseThrow(() -> new StaticStockInfoNotFoundException(stockName));
     }
 
