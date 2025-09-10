@@ -23,7 +23,7 @@ public class CurrentStockInfoService {
 
     public CurrentStockInfoDto getCurrentStockInfo(String stockName) {
 
-        String shortCode = stockInfoService.loadShortCodeByStockName(stockName);
+        String shortCode = stockInfoService.getShortCodeByStockName(stockName);
 
         String stringResponse = restClient
                 .get()

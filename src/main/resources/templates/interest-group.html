@@ -105,7 +105,7 @@
                 <span th:unless="*{groupName == null}">관심종목 그룹 수정하기</span>
             </h2>
 
-            <!-- 🔹 경고메시지 영역 -->
+            <!-- 경고메시지 영역 -->
             <div id="form-error" class="hidden mb-4 text-red-600 text-sm font-medium">
                 ❗ 최소 1개 이상의 종목을 추가해야 합니다.
             </div>
@@ -339,22 +339,6 @@
 
     interestStockList.on('updated', list => resetData(list));
 
-<!--    document.getElementById('add-row').addEventListener('click', () => {-->
-<!--        interestStockList.add({});-->
-<!--        const lastRow = interestStockList.items.at(-1).elm;-->
-
-<!--        lastRow.querySelectorAll(-->
-<!--            '.buying-price-name, .num-of-stocks-name, .total-buying-price-name, .valuation-name, .unrealized-pl-name, .realized-pl-name, .rate-of-return-name, .break-even-price-name, .current-price-name, .change-value-name, .change-rate-name'-->
-<!--        ).forEach(input => input.value = '');-->
-
-<!--        const selectBox = lastRow.querySelector('select');-->
-<!--        if (selectBox) selectBox.selectedIndex = 0;-->
-
-<!--        enrollDeleteRowEvent(lastRow.querySelector('.delete-row'), interestStockList);-->
-<!--        attachNumberFormatting();-->
-
-<!--        document.getElementById('form-error').classList.add('hidden');-->
-<!--    });-->
 
     function enrollDeleteRowEvent(btn, list) {
     btn.addEventListener('click', e => {

@@ -1,16 +1,18 @@
 package arile.toy.stock_service.service;
 
-import arile.toy.stock_service.domain.Dislike;
+import arile.toy.stock_service.domain.post.Dislike;
 import arile.toy.stock_service.domain.GithubUserInfo;
-import arile.toy.stock_service.domain.Like;
+import arile.toy.stock_service.domain.post.Like;
 import arile.toy.stock_service.domain.post.Post;
-import arile.toy.stock_service.dto.PostDto;
-import arile.toy.stock_service.dto.SimplePostDto;
+import arile.toy.stock_service.dto.postdto.PostDto;
+import arile.toy.stock_service.dto.postdto.SimplePostDto;
 import arile.toy.stock_service.exception.post.PostNotFoundException;
-import arile.toy.stock_service.repository.DislikeRepository;
+import arile.toy.stock_service.repository.post.DislikeRepository;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
-import arile.toy.stock_service.repository.LikeRepository;
-import arile.toy.stock_service.repository.PostRepository;
+import arile.toy.stock_service.repository.post.LikeRepository;
+import arile.toy.stock_service.repository.post.PostRepository;
+import arile.toy.stock_service.service.post.LikeDislikeService;
+import arile.toy.stock_service.service.post.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +53,7 @@ class PostServiceTest {
         given(postRepository.findById(postId)).willReturn(Optional.of(post));
 
         // When
-        PostDto result = sut.loadPost(unchangeableId, postId);
+        PostDto result = sut.getPost(unchangeableId, postId);
 
         // Then
         assertThat(result)
@@ -72,7 +74,7 @@ class PostServiceTest {
         given(postRepository.findById(postId)).willReturn(Optional.empty());
 
         // When
-        Throwable thrown = catchThrowable(() -> sut.loadPost(unchangeableId, postId));
+        Throwable thrown = catchThrowable(() -> sut.getPost(unchangeableId, postId));
 
         // Then
         assertThat(thrown)
@@ -90,7 +92,7 @@ class PostServiceTest {
         given(postRepository.findAll()).willReturn(posts);
 
         // When
-        List<SimplePostDto> result = sut.loadAllSimplePosts();
+        List<SimplePostDto> result = sut.getAllSimplePosts();
 
         // Then
         assertThat(result)
@@ -111,7 +113,7 @@ class PostServiceTest {
         given(postRepository.findAllByUserUnchangeableId(unchangeableId)).willReturn(posts);
 
         // When
-        List<SimplePostDto> result = sut.loadAllMySimplePosts(unchangeableId);
+        List<SimplePostDto> result = sut.getAllMySimplePosts(unchangeableId);
 
         // Then
         assertThat(result)

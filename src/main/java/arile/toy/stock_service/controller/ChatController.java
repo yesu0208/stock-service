@@ -1,11 +1,11 @@
 package arile.toy.stock_service.controller;
 
-import arile.toy.stock_service.dto.ChatMessage;
-import arile.toy.stock_service.dto.request.ChatroomRequest;
-import arile.toy.stock_service.dto.response.ChatroomResponse;
-import arile.toy.stock_service.dto.response.ChatroomWithCurrentStockResponse;
+import arile.toy.stock_service.dto.chatdto.ChatMessage;
+import arile.toy.stock_service.dto.request.chat.ChatroomRequest;
+import arile.toy.stock_service.dto.response.chat.ChatroomResponse;
+import arile.toy.stock_service.dto.response.chat.ChatroomWithCurrentStockResponse;
 import arile.toy.stock_service.dto.security.GithubUser;
-import arile.toy.stock_service.service.ChatService;
+import arile.toy.stock_service.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,11 +27,11 @@ public class ChatController {
         var chatroomResponse = ChatroomResponse.fromDto(chatService.createChatroom(
                 githubUser.unchangeableId(), chatroomRequest.title(), chatroomRequest.stockName(), githubUser.name()));
 
-        // STOMP로 새 채팅방 알림
         simpMessagingTemplate.convertAndSend("/sub/chats/room-created", chatroomResponse);
 
         return chatroomResponse;
     }
+
 
     @PostMapping("/{chatroomId}")
     public Boolean joinChatroom(@AuthenticationPrincipal GithubUser githubUser,
@@ -54,9 +54,9 @@ public class ChatController {
 
         chatService.deleteChatroom(githubUser.unchangeableId(), chatroomId);
 
-        // STOMP로 모든 구독자에게 삭제 알림 전송
         simpMessagingTemplate.convertAndSend("/sub/chats/room-deleted", chatroomId);
     }
+
 
     @DeleteMapping("/{chatroomId}")
     public Boolean leaveChatroom(@AuthenticationPrincipal GithubUser githubUser,
@@ -64,17 +64,21 @@ public class ChatController {
         return chatService.leaveChatroom(githubUser.unchangeableId(), chatroomId);
     }
 
+
     @GetMapping
     public List<ChatroomResponse> getChatroomList(@AuthenticationPrincipal GithubUser githubUser) {
+
         return chatService.getChatroomList(githubUser.unchangeableId())
                 .stream()
                 .map(ChatroomResponse::fromDto)
                 .toList();
     }
 
+
     @GetMapping("/total")
-    public List<ChatroomResponse> getAllChatroomListExceptJoined(@AuthenticationPrincipal GithubUser githubUser) {
-        return chatService.getAllChatroomListExceptJoined(githubUser.unchangeableId())
+    public List<ChatroomResponse> getAllChatroomListExceptJoinedChatroom(@AuthenticationPrincipal GithubUser githubUser) {
+
+        return chatService.getAllChatroomListExceptJoinedChatroom(githubUser.unchangeableId())
                 .stream()
                 .map(ChatroomResponse::fromDto)
                 .toList();
@@ -83,6 +87,7 @@ public class ChatController {
 
     @GetMapping("/{chatroomId}/messages")
     public List<ChatMessage> getMessagelist(@PathVariable Long chatroomId) {
+
         return chatService.getMessageList(chatroomId).stream()
                 .map(message -> new ChatMessage(message.getGithubUserInfo().getName(),
                         message.getText(),message.getCreatedAt(), message.getMessageType(), message.getGithubUserInfo().getUnchangeableId()))

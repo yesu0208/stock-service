@@ -21,10 +21,12 @@ public class CurrentStockInfoController {
 
     @GetMapping("/stocks")
     public String stockPage(Model model) {
-        List<String> stockNames = stockInfoService.loadStockNameList();
+
+        List<String> stockNames = stockInfoService.getStockNameList();
         model.addAttribute("stockNames", stockNames);
-        return "stocks"; // stocks.html 렌더링
+        return "stocks";
     }
+
 
     @ResponseBody
     @GetMapping("/stocks/info")

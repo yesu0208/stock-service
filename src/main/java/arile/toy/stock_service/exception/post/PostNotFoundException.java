@@ -4,6 +4,7 @@ import arile.toy.stock_service.exception.ClientErrorException;
 import org.springframework.http.HttpStatus;
 
 public class PostNotFoundException extends ClientErrorException {
+
     public PostNotFoundException() {
         super(HttpStatus.NOT_FOUND, "Post not found");
     }

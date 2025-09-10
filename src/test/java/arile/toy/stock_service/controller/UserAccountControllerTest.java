@@ -5,7 +5,7 @@ import arile.toy.stock_service.dto.GithubUserCurrentAccountDto;
 import arile.toy.stock_service.dto.GithubUserInfoDto;
 import arile.toy.stock_service.dto.request.GithubUserInfoRequest;
 import arile.toy.stock_service.dto.security.GithubUser;
-import arile.toy.stock_service.service.GithubOAuth2UserService;
+import arile.toy.stock_service.service.security.GithubOAuth2UserService;
 import arile.toy.stock_service.service.GithubUserInfoService;
 import arile.toy.stock_service.util.FormDataEncoder;
 import org.junit.jupiter.api.DisplayName;
@@ -42,10 +42,10 @@ class UserAccountControllerTest {
     void givenAuthenticatedUser_whenRequesting_thenShowMyAccountView() throws Exception {
         // Given
         var githubUser = new GithubUser("12345", "test-id", "test-name", "test@eamil.com");
-        given(githubUserInfoService.loadGithubUserInfo(githubUser.unchangeableId()))
+        given(githubUserInfoService.getGithubUserInfo(githubUser.unchangeableId()))
                 .willReturn(GithubUserInfoDto.of(
                         githubUser.unchangeableId(), githubUser.id(), githubUser.name(), githubUser.email(), LocalDateTime.now(), 0.01));
-        given(githubUserInfoService.loadGithubUserCurrentAccount(githubUser.unchangeableId()))
+        given(githubUserInfoService.getGithubUserCurrentAccount(githubUser.unchangeableId()))
                 .willReturn(GithubUserCurrentAccountDto.of(
                         githubUser.unchangeableId(), 1000, 1000, 1000, 1000, "10.0%"));
 
@@ -68,8 +68,8 @@ class UserAccountControllerTest {
                 .andExpect(model().attributeExists("rateOfReturn"))
                 .andExpect(model().attributeExists("totalRealizedPL"))
                 .andExpect(view().name("my-account"));
-        then(githubUserInfoService).should().loadGithubUserInfo(githubUser.unchangeableId());
-        then(githubUserInfoService).should().loadGithubUserCurrentAccount(githubUser.unchangeableId());
+        then(githubUserInfoService).should().getGithubUserInfo(githubUser.unchangeableId());
+        then(githubUserInfoService).should().getGithubUserCurrentAccount(githubUser.unchangeableId());
 
     }
 

@@ -2,13 +2,13 @@ package arile.toy.stock_service.controller;
 
 import arile.toy.stock_service.config.SecurityConfig;
 import arile.toy.stock_service.dto.GithubUserInfoDto;
-import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
-import arile.toy.stock_service.dto.request.InterestGroupRequest;
-import arile.toy.stock_service.dto.request.InterestStockRequest;
+import arile.toy.stock_service.dto.interestdto.InterestGroupWithCurrentInfoDto;
+import arile.toy.stock_service.dto.request.interest.InterestGroupRequest;
+import arile.toy.stock_service.dto.request.interest.InterestStockRequest;
 import arile.toy.stock_service.dto.security.GithubUser;
-import arile.toy.stock_service.service.GithubOAuth2UserService;
+import arile.toy.stock_service.service.security.GithubOAuth2UserService;
 import arile.toy.stock_service.service.GithubUserInfoService;
-import arile.toy.stock_service.service.InterestGroupService;
+import arile.toy.stock_service.service.interest.InterestGroupService;
 import arile.toy.stock_service.service.StaticStockInfoService;
 import arile.toy.stock_service.util.FormDataEncoder;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +49,7 @@ class InterestGroupControllerTest {
     @Test
     void givenNothing_whenRequesting_thenShowsInterestGroupView() throws Exception {
         // Given
-        given(stockInfoService.loadStockNameList()).willReturn(List.of());
+        given(stockInfoService.getStockNameList()).willReturn(List.of());
 
         // When & Then
         mvc.perform(get("/interest-group"))
@@ -58,7 +58,7 @@ class InterestGroupControllerTest {
                 .andExpect(model().attributeExists("interestGroup"))
                 .andExpect(model().attributeExists("stockNames"))
                 .andExpect(view().name("interest-group"));
-        then(stockInfoService).should().loadStockNameList();
+        then(stockInfoService).should().getStockNameList();
         then(interestGroupService).shouldHaveNoInteractions();
     }
 
@@ -68,8 +68,8 @@ class InterestGroupControllerTest {
         // Given
         var githubUser = new GithubUser("12345", "test-id", "test-name", "test@eamil.com");
         var groupName = "group-name";
-        given(stockInfoService.loadStockNameList()).willReturn(List.of());
-        given(interestGroupService.loadMyGroup(githubUser.unchangeableId(), groupName)).willReturn(
+        given(stockInfoService.getStockNameList()).willReturn(List.of());
+        given(interestGroupService.getMyGroup(githubUser.unchangeableId(), groupName)).willReturn(
                 InterestGroupWithCurrentInfoDto.of(1L, groupName, githubUser.unchangeableId(), Set.of(),
                         LocalDateTime.now(), "me", LocalDateTime.now(), "me")
         );
@@ -85,8 +85,8 @@ class InterestGroupControllerTest {
                 .andExpect(model().attributeExists("stockNames"))
                 .andExpect(content().string(containsString(groupName)))
                 .andExpect(view().name("interest-group")); // html 전체 검사하므로 정확하지 않은 테스트 방식
-        then(stockInfoService).should().loadStockNameList();
-        then(interestGroupService).should().loadMyGroup(githubUser.unchangeableId(), groupName);
+        then(stockInfoService).should().getStockNameList();
+        then(interestGroupService).should().getMyGroup(githubUser.unchangeableId(), groupName);
     }
 
 
@@ -104,7 +104,7 @@ class InterestGroupControllerTest {
                         InterestStockRequest.of("LG에너지솔루션", 350000, 50, 3)
                 )
         );
-        given(githubUserInfoService.loadGithubUserInfo(githubUser.unchangeableId())).willReturn(
+        given(githubUserInfoService.getGithubUserInfo(githubUser.unchangeableId())).willReturn(
                 GithubUserInfoDto.of(githubUser.unchangeableId(), "test-id", "test-name", "test@email.com", LocalDateTime.now(), fee));
         willDoNothing().given(interestGroupService).upsertInterestGroup(request.toDto(githubUser.unchangeableId(), fee));
 
@@ -118,7 +118,7 @@ class InterestGroupControllerTest {
         )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlTemplate("/interest-group?groupName={groupName}", request.groupName()));
-        then(githubUserInfoService).should().loadGithubUserInfo(githubUser.unchangeableId());
+        then(githubUserInfoService).should().getGithubUserInfo(githubUser.unchangeableId());
         then(interestGroupService).should().upsertInterestGroup(request.toDto(githubUser.unchangeableId(), fee));
     }
 
@@ -128,7 +128,7 @@ class InterestGroupControllerTest {
     void givenAuthenticatedUser_whenRequesting_thenShowMyInterestGroup() throws Exception {
         // Given
         var githubUser = new GithubUser("12345", "test-id", "test-name", "test@eamil.com");
-        given(interestGroupService.loadMyGroups(githubUser.unchangeableId())).willReturn(List.of());
+        given(interestGroupService.getMyGroupList(githubUser.unchangeableId())).willReturn(List.of());
 
         // When & Then
         mvc.perform(get("/interest-group/my-groups")
@@ -138,7 +138,7 @@ class InterestGroupControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(model().attribute("interestGroups", List.of()))
                 .andExpect(view().name("my-groups"));
-        then(interestGroupService).should().loadMyGroups(githubUser.unchangeableId());
+        then(interestGroupService).should().getMyGroupList(githubUser.unchangeableId());
     }
 
 

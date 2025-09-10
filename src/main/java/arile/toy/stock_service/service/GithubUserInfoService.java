@@ -2,11 +2,12 @@ package arile.toy.stock_service.service;
 
 import arile.toy.stock_service.dto.GithubUserCurrentAccountDto;
 import arile.toy.stock_service.dto.GithubUserInfoDto;
-import arile.toy.stock_service.dto.InterestStockDto;
-import arile.toy.stock_service.dto.InterestStockWithCurrentInfoDto;
+import arile.toy.stock_service.dto.interestdto.InterestStockDto;
+import arile.toy.stock_service.dto.interestdto.InterestStockWithCurrentInfoDto;
 import arile.toy.stock_service.exception.user.UserNotFoundException;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
-import arile.toy.stock_service.repository.InterestStockRepository;
+import arile.toy.stock_service.repository.interest.InterestStockRepository;
+import arile.toy.stock_service.service.interest.InterestStockCurrentInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +21,16 @@ public class GithubUserInfoService {
     private final InterestStockCurrentInfoService interestStockCurrentInfoService;
     private final InterestStockRepository interestStockRepository;
 
-    public GithubUserInfoDto loadGithubUserInfo(String unchangeableId) {
+    public GithubUserInfoDto getGithubUserInfo(String unchangeableId) {
 
         return githubUserInfoRepository.findById(unchangeableId)
                 .map(GithubUserInfoDto::fromEntity)
                 .orElseThrow(() -> new UserNotFoundException(unchangeableId));
     }
 
+
     public void updateGithubUserFee(String unchangeableId, Double feeRate) {
+
         githubUserInfoRepository.findById(unchangeableId)
                 .ifPresentOrElse(
                         entity -> {
@@ -38,7 +41,9 @@ public class GithubUserInfoService {
                 );
     }
 
-    public GithubUserCurrentAccountDto loadGithubUserCurrentAccount(String unchangeableId) {
+
+    public GithubUserCurrentAccountDto getGithubUserCurrentAccount(String unchangeableId) {
+
         List<InterestStockDto> interestStockDtos
                 = interestStockRepository.findAllByInterestGroupUnchangeableId(unchangeableId)
                 .stream()

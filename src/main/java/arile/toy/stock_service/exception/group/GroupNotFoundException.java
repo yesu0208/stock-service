@@ -4,6 +4,7 @@ import arile.toy.stock_service.exception.ClientErrorException;
 import org.springframework.http.HttpStatus;
 
 public class GroupNotFoundException extends ClientErrorException {
+
     public GroupNotFoundException() {
         super(HttpStatus.NOT_FOUND, "Group not found");
     }
@@ -15,5 +16,6 @@ public class GroupNotFoundException extends ClientErrorException {
     public GroupNotFoundException(String unchangeableId, String groupName) {
         super(HttpStatus.NOT_FOUND, "Group with groupName " + groupName + " not found in user unchangeableId : " + unchangeableId);
     }
+
 }
 

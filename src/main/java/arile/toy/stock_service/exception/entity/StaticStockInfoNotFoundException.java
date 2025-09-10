@@ -4,6 +4,7 @@ import arile.toy.stock_service.exception.ClientErrorException;
 import org.springframework.http.HttpStatus;
 
 public class StaticStockInfoNotFoundException extends ClientErrorException {
+
     public StaticStockInfoNotFoundException() {
         super(HttpStatus.NOT_FOUND, "Stock not found");
     }

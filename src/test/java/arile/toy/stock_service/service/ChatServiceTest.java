@@ -1,17 +1,18 @@
 package arile.toy.stock_service.service;
 
 
-import arile.toy.stock_service.domain.Chatroom;
-import arile.toy.stock_service.domain.GithubUserChatroomMapping;
+import arile.toy.stock_service.domain.chat.Chatroom;
+import arile.toy.stock_service.domain.chat.GithubUserChatroomMapping;
 import arile.toy.stock_service.domain.GithubUserInfo;
-import arile.toy.stock_service.domain.Message;
-import arile.toy.stock_service.dto.ChatroomDto;
-import arile.toy.stock_service.dto.ChatroomWithCurrentStockDto;
+import arile.toy.stock_service.domain.chat.Message;
+import arile.toy.stock_service.dto.chatdto.ChatroomDto;
+import arile.toy.stock_service.dto.chatdto.ChatroomWithCurrentStockDto;
 import arile.toy.stock_service.dto.CurrentStockInfoDto;
 import arile.toy.stock_service.repository.GithubUserInfoRepository;
-import arile.toy.stock_service.repository.chats.ChatroomRepository;
-import arile.toy.stock_service.repository.chats.GithubUserChatroomMappingRepository;
-import arile.toy.stock_service.repository.chats.MessageRepository;
+import arile.toy.stock_service.repository.chat.ChatroomRepository;
+import arile.toy.stock_service.repository.chat.GithubUserChatroomMappingRepository;
+import arile.toy.stock_service.repository.chat.MessageRepository;
+import arile.toy.stock_service.service.chat.ChatService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -210,7 +211,7 @@ class ChatServiceTest {
         given(chatroomRepository.findAll()).willReturn(chatrooms);
 
         // When
-        List<ChatroomDto> result = sut.getAllChatroomListExceptJoined(unchangeableId);
+        List<ChatroomDto> result = sut.getAllChatroomListExceptJoinedChatroom(unchangeableId);
 
         // Then
         assertThat(result)

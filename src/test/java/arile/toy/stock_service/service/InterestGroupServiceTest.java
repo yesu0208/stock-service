@@ -1,13 +1,15 @@
 package arile.toy.stock_service.service;
 
-import arile.toy.stock_service.domain.InterestGroup;
-import arile.toy.stock_service.domain.InterestStock;
-import arile.toy.stock_service.dto.InterestGroupDto;
-import arile.toy.stock_service.dto.InterestGroupWithCurrentInfoDto;
-import arile.toy.stock_service.dto.InterestStockDto;
-import arile.toy.stock_service.dto.InterestStockWithCurrentInfoDto;
+import arile.toy.stock_service.domain.interest.InterestGroup;
+import arile.toy.stock_service.domain.interest.InterestStock;
+import arile.toy.stock_service.dto.interestdto.InterestGroupDto;
+import arile.toy.stock_service.dto.interestdto.InterestGroupWithCurrentInfoDto;
+import arile.toy.stock_service.dto.interestdto.InterestStockDto;
+import arile.toy.stock_service.dto.interestdto.InterestStockWithCurrentInfoDto;
 import arile.toy.stock_service.exception.group.GroupNotFoundException;
-import arile.toy.stock_service.repository.InterestGroupRepository;
+import arile.toy.stock_service.repository.interest.InterestGroupRepository;
+import arile.toy.stock_service.service.interest.InterestGroupService;
+import arile.toy.stock_service.service.interest.InterestStockCurrentInfoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +49,7 @@ class InterestGroupServiceTest {
         given(interestGroupRepository.findByUnchangeableId(unchangeableId)).willReturn(interestGroups);
 
         // When
-        List<InterestGroupDto> result = sut.loadMyGroups(unchangeableId);
+        List<InterestGroupDto> result = sut.getMyGroupList(unchangeableId);
 
         // Then
         assertThat(result)
@@ -82,7 +84,7 @@ class InterestGroupServiceTest {
                 .willReturn(interestStockWithCurrentInfoDtos.stream().findFirst().orElse(null));
 
         // When
-        InterestGroupWithCurrentInfoDto result = sut.loadMyGroup(unchangeableId, groupName);
+        InterestGroupWithCurrentInfoDto result = sut.getMyGroup(unchangeableId, groupName);
 
         // Then
         assertThat(result)
@@ -103,7 +105,7 @@ class InterestGroupServiceTest {
                 .willReturn(Optional.empty());
 
         // When
-        Throwable thrown = catchThrowable(() -> sut.loadMyGroup(unchangeableId, groupName));
+        Throwable thrown = catchThrowable(() -> sut.getMyGroup(unchangeableId, groupName));
 
         // Then
         assertThat(thrown)

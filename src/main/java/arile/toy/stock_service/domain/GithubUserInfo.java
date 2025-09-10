@@ -21,23 +21,25 @@ public class GithubUserInfo {
     @Id
     private String unchangeableId;
 
-    @Column(nullable = false)
+    @Column(name = "id", nullable = false)
     private String id;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column
+    @Column(name = "email")
     private String email;
 
-    @Column(columnDefinition = "DATETIME")
+    @Column(name = "last_login_at", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime lastLoginAt;
 
-    @Column
+    @Column(name = "fee", nullable = false)
     private Double fee;
+
 
     public GithubUserInfo() {
     }
+
 
     public GithubUserInfo(String unchangeableId, String id, String name, String email, Double fee) {
         this.unchangeableId = unchangeableId;
@@ -46,6 +48,7 @@ public class GithubUserInfo {
         this.email = email;
         this.fee = fee;
     }
+
 
     public static GithubUserInfo of(String unchangeableId, String id, String name, String email, Double fee) {
         return new GithubUserInfo(unchangeableId, id, name, email, fee);
@@ -67,6 +70,7 @@ public class GithubUserInfo {
 
         return Objects.equals(this.getUnchangeableId(), that.getUnchangeableId());
     }
+
 
     @Override
     public int hashCode() {
