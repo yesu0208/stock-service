@@ -35,7 +35,7 @@ public class GithubUserChatroomMapping {
     private Chatroom chatroom;
 
     @Setter
-    @Column(name = "last_checked_at", columnDefinition = "DATETIME", nullable = false)
+    @Column(name = "last_checked_at", columnDefinition = "DATETIME")
     private LocalDateTime lastCheckedAt;
 
 
