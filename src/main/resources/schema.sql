@@ -175,7 +175,7 @@ CREATE TABLE github_user_chatroom_mappings (
     github_user_chatroom_mapping_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     chatroom_id BIGINT NOT NULL,
     unchangeable_id VARCHAR(255) NOT NULL,
-    last_checked_at DATETIME NOT NULL,
+    last_checked_at DATETIME,
     CONSTRAINT fk_github_user_chatroom_mappings_chatroom_id
         FOREIGN KEY (chatroom_id)
         REFERENCES chatrooms(chatroom_id)
