@@ -15,7 +15,7 @@
 설계 및 제작 기간은 2025.08 ~ 2025.09(약 30일)이며, 설계부터 구현까지 100% 기여하였습니다.
 
 
-~~베포 URL : https://stock-service-89300edadb9e.herokuapp.com/~~
+베포 URL : [https://stock-service-89300edadb9e.herokuapp.com/](https://stock-service-89300edadb9e.herokuapp.com/)
 
 ## 개발 환경
 - Intellij IDEA Ultimate
